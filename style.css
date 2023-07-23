@@ -1,0 +1,382 @@
+*{
+  margin: 0;
+  padding: 0;
+}
+@font-face{
+  font-family: bilboSwash;
+  src: url('fonts/BilboSwash.ttf');
+}
+@font-face {
+  font-family: patua;
+  src: url('fonts/PatuaOne-Regular.ttf');
+}
+@font-face {
+  font-family: rampart;
+  src: url('fonts/RampartOne-Regular.ttf');
+}
+@font-face {
+  font-family: samarkan;
+  src: url('fonts/SAMAN___.TTF');
+}
+.body{
+  background-color:aliceblue;
+}
+
+.home{
+  background: url('images/jas-bg.jpg');
+  display: flex;
+  flex-direction: column;
+}
+
+.space-between{
+  justify-content: space-between;
+}
+
+.library-logo{
+  text-decoration: none;
+  color: #000;
+  font-family: samarkan;
+}
+.burger{
+  cursor: pointer;
+  display: none;
+}
+.navbar{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width:auto;
+  height: auto;
+  align-items: center;
+  padding: 0 5vh 0 2vh;
+}
+.leftNav{
+  
+  font-family:Arial, Helvetica, sans-serif;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-left: 50px;
+}
+
+.navbar-nav li{
+  list-style: none;
+  margin-left: 20px;
+}
+.n-item{
+  text-decoration: none;
+  color: #ff4500;
+  font-family:sans-serif;
+  font-weight: bold;
+  font-size: larger;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+  cursor: pointer;
+
+  display: inline-block;
+  padding-bottom: 7px;
+  padding-right: 2px;
+  background-image: linear-gradient(to right, #ff4500 0%, #ff4500 100%);
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  background-size: 0%;
+  transition: background-size 0.3s ease;
+}
+.n-item:hover{
+
+  
+  color: white;
+  background-size: 100% 3px;
+  
+}
+
+.profile .top-right{
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  margin: 0;
+  transform: translateX(100%);
+  animation: slideRight 0.3s forwards
+}
+
+@keyframes slideRight {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+
+.background{
+
+  background: url('images/bg.jpg');
+  background-size: cover;
+  background-blend-mode: darken;
+
+}
+
+.dialog {
+  
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+
+} 
+
+.dialog-content {
+
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  align-items: center;
+}
+
+.dialog-content h2{
+  margin-bottom: 20px;
+}
+.dialog-content input{
+  
+  display:block;
+  border: none;
+  border-bottom: 2px solid black;
+  margin-bottom: 20px;
+  height: 20px;
+  width: 50%;
+
+  
+}
+
+
+.open-dialog {
+  cursor: pointer;
+}
+
+.close-dialog {
+  cursor: pointer;
+  margin-top: 10px;
+  width: 100%;
+}
+
+.line{
+  width: 25px;
+  background-color: white;
+  height: 3px;
+  margin: 3px;
+  border-radius: 2px ;
+}
+
+.intro{
+  padding: 15%;
+}
+
+.quote{
+
+  font-family:bilboSwash;
+  color: #ffd700;
+  text-shadow: 0 7px 7px black, 0 5px 5px black;
+}
+
+.top-books{ 
+  background-color: aliceblue;
+}
+
+.collection-body{
+  background-color:#fffff0;
+}
+
+.footer{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10%;
+  height: 20%;
+  width: auto;
+  background: url('images/blurred-bg.jpg');
+  padding-left: 5%;
+  padding-right: 5%;
+  justify-content: center;
+  align-items: center;
+
+}
+.footer-links{
+  display: flex;
+  gap: 20px;
+}
+
+.footer-links a{
+  text-decoration: none;
+  color: aliceblue;
+  font-family:Arial, Helvetica, sans-serif;
+
+}
+.footer-links a:hover{
+  color:purple;
+}
+
+.footer img{
+  height: 100px;
+}
+
+.overlay {
+
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #00000080;
+  z-index: 1;
+  pointer-events: auto;
+}
+
+.close-btn{
+  
+  top: 10px;
+  right: 10px;
+  border: none;
+  width: 30px;
+  height: 30px;
+  background-color: lightgray;
+  color: white;
+  text-align: center;
+  line-height: 30px;
+  cursor: pointer;
+  border-radius: 0 10px 0 0;
+}
+
+.close-btn:hover{
+  background-color: red;
+}
+
+.no-scroll{
+  overflow: hidden;
+}
+
+.lower-section button{
+  width:175px;
+  height:30px;
+  background-color:#ffa500;
+  border: none;
+}
+.lower-section button:hover{
+  box-shadow: 0 5px 5px 0 rgba(0, 0, 0, 0.2);
+  
+}
+.add-btn{
+  display: none;
+}
+
+.remove-btn{
+  display: none;
+}
+
+.col-btn{
+  width: 20rem;
+}
+
+.login-section{
+  display: none;
+	width: 350px;
+	height: 500px;
+	background: red;
+	overflow: hidden;
+	background-color:#573b8a;
+	border-radius: 10px;
+	box-shadow: 5px 20px 50px #000;
+}
+#chk{
+	display: none;
+}
+
+
+
+.btn-close:hover{
+
+  background-color: red;
+  
+}
+
+
+.signUpDialog{
+	position: relative;
+	width:100%;
+	height: 100%;
+}
+
+.shifter{
+	color: #fff;
+	font-size: 2.3em;
+	justify-content: center;
+	display: flex;
+	margin: 40px;
+	font-weight: bold;
+	cursor: pointer;
+	transition: .5s ease-in-out;
+}
+
+.loginField{
+  
+	background: #e0dede;
+	justify-content: center;
+	display: flex;
+	margin: 10px auto;
+	padding: 10px;
+	border: none;
+	outline: none;
+	border-radius: 5px;
+}
+.signUpBtn,.loginBtn{
+	width: 60%;
+	height: 40px;
+	margin: 10px auto;
+	justify-content: center;
+	display: block;
+	color: #fff;
+	background: #573b8a;
+	font-size: 1em;
+	font-weight: bold;
+	margin-top: 30px;
+	outline: none;
+	border: none;
+	border-radius: 5px;
+	transition: .2s ease-in;
+	cursor: pointer;
+}
+
+.signUpBtn{
+  background: #fff;
+  color: #573b8a;
+}
+.login-section button:hover{
+  box-shadow: 0 5px 5px 0 rgba(0, 0, 0, 0.2);;
+}
+
+.signInDialog{
+  margin-top: 70px;
+	height: 460px;
+	background: #eee;
+	border-radius: 60% / 10%;
+	transform: translateY(-180px);
+	transition: .8s ease-in-out;
+}
+.signInDialog label{
+	color: #573b8a;
+	transform: scale(.6);
+}
+
+#chk:checked ~ .signInDialog{
+	transform: translateY(-500px);
+}
+#chk:checked ~ .signInDialog label{
+	transform: scale(1);	
+}
+#chk:checked ~ .signUpDialog label{
+	transform: scale(.6);
+}
