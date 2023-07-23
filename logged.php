@@ -83,7 +83,7 @@ include('db.php');
 
   <div id="add-modal" class="modal z-4 add-book" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
-      <form class="modal-content" id="add-form" action="db.php" enctype="multipart/form-data" method='post'>
+      <form class="modal-content" action="" enctype="multipart/form-data" method='post'>
         <div class="modal-header">
           <h5 class="modal-title">Add Book Details</h5>
         </div>
@@ -106,7 +106,7 @@ include('db.php');
           </div>
         </div>
         <div class="modal-footer">
-          <button type="submit" id="addBook" class="btn btn-primary">Add Book</button>
+          <button type="submit" name='add-book' class="btn btn-primary">Add Book</button>
           <button type="button" class="btn btn-secondary" onclick="toggleAddBookModal()">Cancel</button>
         </div>
       </form>
@@ -118,8 +118,33 @@ include('db.php');
   </div>
 </body>
 <script>
-  
-  
+  <?php
+  if (isset($_POST['add-book'])) {
+
+    $cover = addslashes(file_get_contents($_FILES['setCover']['tmp_name']));
+    $title = $_POST['setTitle'];
+    $author = $_POST['setAuthor'];
+    $description = $_POST['setDescription'];
+
+    $stmt = $conn->prepare('INSERT INTO all_books (cover, title, author, description) VALUES (?, ?, ?, ?)');
+    $stmt->bind_param('bsss', $cover, $title, $author, $description);
+
+    if ($stmt->execute()) {
+      echo 'Book Added Successfully';
+    } else {
+      echo 'Error: ' . $stmt->error;
+    }
+  }
+
+  ?>
+
+  function showToast(message) {
+    var toast = $('<div class="toast">' + message + '</div>');
+    $('body').append(toast);
+    toast.fadeIn(400).delay(2000).fadeOut(400, function() {
+      $(this).remove();
+    });
+  }
 
   function log_out() {
     <?php

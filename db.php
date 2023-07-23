@@ -13,11 +13,4 @@ function generateSessionToken($length = 4)
     return $token;
 }
 
-
-if (isset($_POST['add-book'])) {
-        var_dump($_POST); // Dump the $_POST array for debugging purposes
-        exit; // Terminate further processing for debugging purposes
-    
-}
-
 ?>

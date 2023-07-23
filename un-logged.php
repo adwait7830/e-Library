@@ -112,6 +112,7 @@ include('db.php');
         $_SESSION['uid'] = $uid;
         echo 'window.location.replace("index.php");';
       } else {
+        echo 'window.location.replace("un-logged.php");';
       }
     } catch (Exception $e) {
       echo "Error " . $e->getMessage();
