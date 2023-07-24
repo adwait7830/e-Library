@@ -1,11 +1,4 @@
-class AuthenticationError extends Error {
 
-  constructor(message) {
-    super(message);
-    this.name = "ValidationError";
-  }
-
-}
 const topBooks = {
   12322: {
     id: 12322,
@@ -273,7 +266,7 @@ function openBookInfo(book) {
     $('.config-btn').hide();
   }
 
-  $('e-btn').on({
+  $('edit-btn').on({
     click: function () {
       console.log(`${book.id} is saved`);
       var newCover = $('#setCover').val();

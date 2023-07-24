@@ -1,4 +1,13 @@
 <?php
+session_start();
+if (ini_get('register_globals'))
+{
+    foreach ($_SESSION as $key=>$value)
+    {
+        if (isset($GLOBALS[$key]))
+            unset($GLOBALS[$key]);
+    }
+}
 include('db.php');
 ?>
 <!DOCTYPE html>
@@ -66,7 +75,7 @@ include('db.php');
         <label class="shifter" for="chk" aria-hidden="true">Sign in</label>
         <input class='loginField' id="username" name="username" placeholder="Username" required="">
         <input class='loginField' id="password" type="password" name="password" placeholder="Password" required="">
-        <button class="loginBtn" name="signIn" onclick="sign_in()">Log in</button>
+        <button class="loginBtn" name="signIn">Log in</button>
       </form>
     </div>
   </div>
@@ -84,15 +93,10 @@ include('db.php');
       <h3><a href="https://www.linkedin.com/in/divyanshu-naugai" target="_blank">Linkedin</a></h3>
       <h3><a href="https://github.com/adwait7830" target="_blank">Github</a></h3>
     </div>
-    <div class="footer-logo"><img src="images/logo.png" alt="logo"></div>
   </div>
   <div class="overlay" style="display: none;"></div>
 </body>
 <script>
-  function clicked() {
-    console.log("Clicked");
-  }
-
   <?php
   if (isset($_POST['signIn'])) {
 
@@ -103,13 +107,16 @@ include('db.php');
     $stmt = $conn->prepare("SELECT * FROM users WHERE username = ? AND password = ?");
     $stmt2 = $conn->prepare("UPDATE users SET uid = ? WHERE username = ?");
 
-    $stmt->bind_param('ss', $userName, $password);
-    $stmt2->bind_param('ss', $uid, $userName);
+    $stmt->bind_param('ss', $username, $password);
+    $stmt2->bind_param('ss', $uid, $username);
+
     try {
-      $result = $stmt->execute();
-      if ($result) {
+      $stmt->execute();
+      $result = $stmt->get_result();
+
+      if ($result->num_rows > 0) {
         $stmt2->execute();
-        $_SESSION['uid'] = $uid;
+        $_SESSION['token']= $uid;
         echo 'window.location.replace("index.php");';
       } else {
         echo 'window.location.replace("un-logged.php");';
@@ -119,7 +126,9 @@ include('db.php');
     }
   }
 
+
   if (isset($_POST['signUp'])) {
+
     $uid = generateSessionToken();
     $name = $_POST['setName'];
     $username = $_POST['setUsername'];
@@ -132,9 +141,10 @@ include('db.php');
     try {
       $result = $stmt->execute();
       if ($result) {
-        $_SESSION['uid'] = $uid;
+        $_SESSION['token']= $uid;
         echo 'window.location.replace("index.php");';
       } else {
+        echo 'window.location.replace("un-logged.php");';
       }
     } catch (Exception $e) {
       echo "Error " . $e->getMessage();

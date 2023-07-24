@@ -118,16 +118,6 @@
     transform: translateX(0);
   }
 }
-
-
-.background{
-
-  background: url('images/bg.jpg');
-  background-size: cover;
-  background-blend-mode: darken;
-
-}
-
 .dialog {
   
   position: fixed;

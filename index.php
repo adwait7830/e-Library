@@ -1,6 +1,14 @@
 <?php
 session_start();
-?>
+if (ini_get('register_globals'))
+{
+    foreach ($_SESSION as $key=>$value)
+    {
+        if (isset($GLOBALS[$key]))
+            unset($GLOBALS[$key]);
+    }
+}
+ ?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -62,7 +70,7 @@ session_start();
                 splashScreen.style.display = "none";
 
                 <?php
-                if (isset($_SESSION['uid'])) {
+                if (isset($_SESSION['token'])) {
                     echo 'window.location.replace("logged.php");';
                 } else {
                     

@@ -1,5 +1,4 @@
 <?php
-session_start();
 $serverName = "localhost";
 $port = 3307;
 $userName = "root";
@@ -12,5 +11,3 @@ function generateSessionToken($length = 4)
     $token = bin2hex(random_bytes($length)); // Using PHP's random_bytes() for secure random data
     return $token;
 }
-
-?>

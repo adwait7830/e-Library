@@ -1,7 +1,12 @@
 <?php
-
+session_start();
+if (ini_get('register_globals')) {
+  foreach ($_SESSION as $key => $value) {
+    if (isset($GLOBALS[$key]))
+      unset($GLOBALS[$key]);
+  }
+}
 include('db.php');
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -44,42 +49,51 @@ include('db.php');
 
   <?php
 
-  $name = 'Ankita Sharma';
-  $email = 'example123@gmail.com';
-  $profession = 'Student';
+  $token = $_SESSION['token'];
+  $stmt = $conn->prepare("SELECT * FROM users WHERE uid = ?");
+  $stmt->bind_param('s', $token);
+  $stmt->execute();
+  $result = $stmt->get_result();
+  $user = $result->fetch_assoc();
 
-  echo '
-    <div class="modal profile" id="profileModal" tabindex="-1" aria-labelledby="exampleModalLabel"
-      aria-hidden="true">
-      <div class="modal-dialog top-right">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h1 class="modal-title fs-5" id="exampleModalLabel">My Profile</h1>
-          </div>
-          <div class="modal-body p-0">
-            <div class="card m-0 rounded-0" style="width: 18rem;">
-              <div class="card-body">
-                <h5 class="card-title">' . $name . '</h5>
-                <h6 class="card-subtitle mb-2 text-body-secondary">' . $profession . '</h6>
-                <h6 class="card-subtitle mb-2 text-body-secondary">' . $email . '</h6>
-              </div>
-              <ul class="list-group list-group-flush">
-                <li class="list-group-item"><button class="btn border-0" href="#collection">My Collection</button></li>
-                <li class="list-group-item"><button class="btn border-0" onclick="toggleAddBookModal()">Add a book</button></li>
-                <li class="list-group-item"><button class="btn border-0">Edit Profile</button></li>
-              </ul>
+  if ($user) {
+    $name = $user['name'];
+    $email = $user['email'];
+  } else {
+    echo 'Error';
+  }
+
+  $stmt->close();
+  $profession = 'Student';
+  ?>
+
+  <div class="modal profile" id="profileModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog top-right">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">My Profile</h1>
+        </div>
+        <div class="modal-body p-0">
+          <div class="card m-0 rounded-0" style="width: 18rem;">
+            <div class="card-body">
+              <h5 class="card-title"><?php echo $name ?></h5>
+              <h6 class="card-subtitle mb-2 text-body-secondary"><?php echo $profession ?></h6>
+              <h6 class="card-subtitle mb-2 text-body-secondary"><?php echo $email ?></h6>
             </div>
-          </div>
-          <div class="modal-footer justify-content-between">
-            <button type="submit" class="btn btn-danger" name="log-out" onclick="log_out()" >Log out<i
-                class="fa-solid fa-right-from-bracket ms-2"></i></button>
-            <button type="button" class="btn btn-secondary" onclick="toggleProfileModal()">Close</button>
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item"><button class="btn border-0" href="#collection">My Collection</button></li>
+              <li class="list-group-item"><button class="btn border-0" onclick="toggleAddBookModal()">Add a book</button></li>
+              <li class="list-group-item"><button class="btn border-0">Edit Profile</button></li>
+            </ul>
           </div>
         </div>
+        <form class="modal-footer justify-content-between" action="" method="post">
+          <button type="submit" class="btn btn-danger" name="log-out" onclick="log_out()">Log out<i class="fa-solid fa-right-from-bracket ms-2"></i></button>
+          <button type="button" class="btn btn-secondary" onclick="toggleProfileModal()">Close</button>
+        </form>
       </div>
     </div>
-    ';
-  ?>
+  </div>
 
   <div id="add-modal" class="modal z-4 add-book" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
@@ -118,6 +132,7 @@ include('db.php');
   </div>
 </body>
 <script>
+
   <?php
   if (isset($_POST['add-book'])) {
 
@@ -136,26 +151,16 @@ include('db.php');
     }
   }
 
-  ?>
-
-  function showToast(message) {
-    var toast = $('<div class="toast">' + message + '</div>');
-    $('body').append(toast);
-    toast.fadeIn(400).delay(2000).fadeOut(400, function() {
-      $(this).remove();
-    });
-  }
-
-  function log_out() {
-    <?php
+  if(isset($_POST['log-out'])){
     session_destroy();
     echo 'window.location.replace("index.php");';
-
-    ?>
-
-
-
   }
+
+  if(!isset($_SESSION['token'])){
+    echo 'window.location.replace("index.php");';
+  }
+
+  ?>
 </script>
 <script src="js/jquery.js" type="text/javascript"></script>
 <script src="js/script.js" type="text/javascript"></script>
