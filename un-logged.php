@@ -36,7 +36,7 @@ include('db.php');
         <div class="collapse navbar-collapse justify-content-lg-end" id="toggle-nav">
           <ul class="navbar-nav text-lg-center align-items-lg-center ">
             <li class="nav-item"><a class="n-item fs-4" href="#topBooks">Top Books</a></li>
-            <li class="nav-item"><a class="n-item fs-4" href="home.php">Contact Us</a></li>
+            <li class="nav-item"><a class="n-item fs-4" onclick="openContactForm()">Contact Us</a></li>
             <li class="nav-item login-hook" onclick="openLoginDialog()"><a class="n-item  fs-4" href="#">Sign Up</a>
             </li>
             <li class="nav-item"><a class="n-item fs-4" href="#about">About</a></li>
@@ -81,7 +81,35 @@ include('db.php');
   </div>
   <div class="books-body mt-2">
     <h2 class="text-center fs-1" id="topBooks">Top Books</h2>
-    <div class="top-books p-2 d-flex flex-wrap align-items-center justify-content-center"></div>
+    <div class="topBooks p-2 d-flex flex-wrap align-items-center justify-content-center">
+    <?php
+    $stmt = $conn->prepare('SELECT * FROM top_books');
+    $stmt->execute();
+    $result = $stmt->get_result();
+    while ($book = $result->fetch_assoc()) {
+      echo '
+
+      <div class=" book-card card m-3" style="width:15rem; height:27rem; cursor:pointer;" onclick="openBookInfo('.$book['id'].')" id="${books[book].id}">
+      <img class="card-img-top h-75" src="data:image/jpeg;base64,' . base64_encode($book['cover']) . '" alt="Book Image">
+        <div class="card-body">
+          <h5 class="card-title">'.$book['title'].'</h5>
+          <h6 class="card-subtitle text-body-secondary">'.$book['author'].'</h6>
+        </div>
+      </div>
+      <style>
+        .book-card{
+          background-color:inherit;
+        }
+        .book-card:hover{
+          box-shadow: 0 3px 5px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        }
+      </style>
+
+        
+              ';
+    }
+    ?>
+    </div>
   </div>
   <div class="user-collection collection-body mt-2" style="display:none;">
     <h2 class="text-center fs-1" id="userCollection">My Collection</h2>
