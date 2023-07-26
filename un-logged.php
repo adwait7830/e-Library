@@ -1,12 +1,10 @@
 <?php
 session_start();
-if (ini_get('register_globals'))
-{
-    foreach ($_SESSION as $key=>$value)
-    {
-        if (isset($GLOBALS[$key]))
-            unset($GLOBALS[$key]);
-    }
+if (ini_get('register_globals')) {
+  foreach ($_SESSION as $key => $value) {
+    if (isset($GLOBALS[$key]))
+      unset($GLOBALS[$key]);
+  }
 }
 include('db.php');
 ?>
@@ -26,7 +24,7 @@ include('db.php');
   <div class="home">
     <nav class="navbar navbar-expand-lg d-flex justify-content-between">
       <div class="container-fluid">
-        <a class=" library-logo display-2 d-none d-lg-block" onclick="clicked()">e Library</a>
+        <a class=" library-logo display-2 d-none d-lg-block">e Library</a>
         <button class="navbar-toggler " type="button" data-bs-toggle="collapse" aria-expanded="false" aria-label="Toggle navigation" data-bs-target="#toggle-nav" aria-controls="toggle-nav">
           <span class="navbar-toggler-icon"></span>
         </button>
@@ -36,8 +34,8 @@ include('db.php');
         <div class="collapse navbar-collapse justify-content-lg-end" id="toggle-nav">
           <ul class="navbar-nav text-lg-center align-items-lg-center ">
             <li class="nav-item"><a class="n-item fs-4" href="#topBooks">Top Books</a></li>
-            <li class="nav-item"><a class="n-item fs-4" onclick="openContactForm()">Contact Us</a></li>
-            <li class="nav-item login-hook" onclick="openLoginDialog()"><a class="n-item  fs-4" href="#">Sign Up</a>
+            <li class="nav-item"><a class="n-item fs-4" href="#" data-bs-toggle="modal" data-bs-target="#contactForm">Contact Us</a></li>
+            <li class="nav-item login-hook"><a class="n-item  fs-4" href="#" data-bs-toggle="modal" data-bs-target="#loginModal">Sign Up</a>
             </li>
             <li class="nav-item"><a class="n-item fs-4" href="#about">About</a></li>
             <li class="nav-item d-none d-lg-block">
@@ -49,6 +47,25 @@ include('db.php');
         </div>
       </div>
     </nav>
+
+    <div class="modal fade" id="contactForm" tabindex="-1" aria-labelledby="contactFormLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content d-flex flex-column align-items-center">
+          <form class="modal-body contactUs">
+            <h2>CONTACT US</h2>
+            <input placeholder="Write your name here.."></input>
+            <input placeholder="Let us know how to contact you back.." type='email'></input>
+            <input placeholder="What would you like to tell us.."></input>
+            <button action='' method='post' name='feedback'>Send Message</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+
+
+
+
     <div class="container intro">
       <p class="quote text-center display-1">The reading of all good books is like a conversation with the finest minds
         of the past centuries.</p>
@@ -56,44 +73,58 @@ include('db.php');
     </div>
   </div>
   </div>
-  <div class="login-section dialog">
-    <input type="checkbox" id="chk" aria-hidden="true">
-    <div class="position-absolute top-0 w-100 text-end"><button type="button" class="btn-close align-end" aria-label="Close" onclick="closeLoginDialog()"></button></div>
+  <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="d-flex modal-header align-items-center justify-content-center">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Log in to e-library</h1>
+        </div>
+        <div class="modal-body">
 
-    <div class="signUpDialog">
-      <form action="" method="post">
-        <label class="shifter" for="chk" aria-hidden="true">Sign up</label>
-        <input type="text" class='loginField' id="setName" name="setName" placeholder="Name" required="">
-        <input type="text" class='loginField' id="setUsername" name="setUsername" placeholder="User name" required="">
-        <input type="email" class='loginField' id="setEmail" name="setEmail" placeholder="Email" required="">
-        <input type="password" class='loginField' id="setPassword" name="setPassword" placeholder="Password" required="">
-        <button type="submit" name="signUp" class="signUpBtn" onclick="signUp()">Log in</button>
-      </form>
-    </div>
-    <div class="signInDialog">
-      <form action="" method="post">
-        <label class="shifter" for="chk" aria-hidden="true">Sign in</label>
-        <input class='loginField' id="username" name="username" placeholder="Username" required="">
-        <input class='loginField' id="password" type="password" name="password" placeholder="Password" required="">
-        <button class="loginBtn" name="signIn">Log in</button>
-      </form>
+          <div class="d-flex flex-column align-items-center justify-content-center d-none" id="signUpDialog">
+            <form class="d-flex flex-column align-items-center justify-content-center gap-4 w-75" action="" method="post">
+              <input type="text" class="loginField w-100" id="setName" name="setName" placeholder="Name" required="">
+              <input type="text" class="loginField w-100" id="setUsername" name="setUsername" placeholder="User name" required="">
+              <input type="email" class="loginField w-100" id="setEmail" name="setEmail" placeholder="Email" required="">
+              <select class="w-100" name="setProfession" id="setProfession" required="">
+                <option disabled selected>Choose your profession</option>
+                <option value="Student">Student</option>
+                <option value="Working Professional">Working Professional</option>
+                <option value="Not available">Rather not to say</option>
+              </select>
+              <input type="password" class="loginField w-100" id="setPassword" name="setPassword" placeholder="Password" required="">
+              <button class="btn btn-primary w-50" type="submit" name="signUp">Sign Up</button>
+            </form>
+            <p class="mt-3">Already have an account? <a onclick="toggleLogin()" class="text-decoration-none text-black" style='cursor:pointer'>Sign in</a></p>
+          </div>
+
+          <div class="d-flex flex-column align-items-center justify-content-center" id="signInDialog">
+            <form class="d-flex flex-column align-items-center justify-content-center gap-4 w-75" action="" method="post">
+              <input class="loginField w-100" id="username" name="username" placeholder="Username" required="">
+              <input class="loginField w-100" id="password" type="password" name="password" placeholder="Password" required="">
+              <button class="btn btn-primary w-50" name="signIn">Sign In</button>
+            </form>
+            <p class="mt-3">New to e-Library? <a onclick="toggleLogin()" class="text-decoration-none text-black" style='cursor:pointer'>Sign up</a></p>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
   <div class="books-body mt-2">
     <h2 class="text-center fs-1" id="topBooks">Top Books</h2>
     <div class="topBooks p-2 d-flex flex-wrap align-items-center justify-content-center">
-    <?php
-    $stmt = $conn->prepare('SELECT * FROM all_books ORDER BY views DESC LIMIT 10');
-    $stmt->execute();
-    $result = $stmt->get_result();
-    while ($book = $result->fetch_assoc()) {
-      echo '
+      <?php
+      $stmt = $conn->prepare('SELECT * FROM all_books ORDER BY views DESC LIMIT 10');
+      $stmt->execute();
+      $result = $stmt->get_result();
+      while ($book = $result->fetch_assoc()) {
+        echo '
 
-      <div class=" book-card card m-3" style="width:15rem; height:27rem; cursor:pointer;" onclick="openBookInfo('.$book['id'].')" id="${books[book].id}">
+      <div class=" book-card card m-3" style="width:15rem; height:27rem; cursor:pointer;" onclick="openBookInfo(' . $book['id'] . ')" id="${books[book].id}">
       <img class="card-img-top h-75" src="data:image/jpeg;base64,' . base64_encode($book['cover']) . '" alt="Book Image">
         <div class="card-body">
-          <h5 class="card-title">'.$book['title'].'</h5>
-          <h6 class="card-subtitle text-body-secondary">'.$book['author'].'</h6>
+          <h5 class="card-title">' . $book['title'] . '</h5>
+          <h6 class="card-subtitle text-body-secondary">' . $book['author'] . '</h6>
         </div>
       </div>
       <style>
@@ -107,20 +138,13 @@ include('db.php');
 
         
               ';
-    }
-    ?>
+      }
+      ?>
     </div>
   </div>
   <div class="user-collection collection-body mt-2" style="display:none;">
     <h2 class="text-center fs-1" id="userCollection">My Collection</h2>
     <div class="collection p-2 d-flex flex-wrap align-items-center justify-content-center"></div>
-  </div>
-  <div class="footer" id="about">
-    <h3>&COPY; Divyanshu</h3>
-    <div class="footer-links">
-      <h3><a href="https://www.linkedin.com/in/divyanshu-naugai" target="_blank">Linkedin</a></h3>
-      <h3><a href="https://github.com/adwait7830" target="_blank">Github</a></h3>
-    </div>
   </div>
   <div class="overlay" style="display: none;"></div>
 
@@ -132,24 +156,14 @@ include('db.php');
       <div class="card-body">
         <div class="row">
           <div class="col-md-8">
-            <h2 id='title' class="display-4">Not Available</h2>
-            <h3 id='author'>Not Available</h3>
+            <h2 id='title' class="book-title display-4">Not Available</h2>
+            <h3 class='book-author' id='author'>Not Available</h3>
             <br>
-            <h6 id='description'>Not Available</h6>
+            <h6 class="book-description" id='description'>Not Available</h6>
           </div>
           <div class="cover col-md-4">
             <img src="" alt="Image not available" class="img-fluid">
           </div>
-        </div>
-      </div>
-      <div class="card-footer d-flex justify-content-between">
-        <div class='config-btn'>
-          <button class="dlt-btn btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i> Delete</button>
-          <button class="edit-btn btn btn-sm btn-outline-primary" data-target='#edit-modal' data-toggle='modal'><i class="fas fa-edit"></i> Edit</button>
-        </div>
-        <div class='config-btn'>
-          <button id='addBtn' class=" btn btn-sm btn-warning add-btn">Add to Collection</button>
-          <button id='removeBtn' class="btn btn-sm btn-warning remove-btn">Remove from collection</button>
         </div>
       </div>
     </div>
@@ -170,25 +184,10 @@ include('db.php');
           <div id='description' class="card-text-scroll-inner text-center">Not Available</div>
         </div>
       </div>
-      <div class="card-footer d-flex justify-content-between">
-        <div class='config-btn'>
-          <button class="dlt-btn btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
-          <button class="edit-btn btn btn-sm btn-outline-primary" data-target='#edit-modal' data-toggle='modal'><i class="fas fa-edit"></i></button>
-        </div>
-        <div class='config-btn'>
-          <button id='addBtn' class="btn btn-sm btn-warning add-btn">Add to Collection</button>
-          <button id='removeBtn' class="btn btn-sm btn-warning remove-btn">Remove from collection</button>
-        </div>
-      </div>
     </div>
   </div>
 
   <style>
-    .add-btn,
-    .remove-btn {
-      display: none;
-    }
-
     .card-text-scroll {
       height: 200px;
       overflow-y: scroll;
@@ -211,10 +210,35 @@ include('db.php');
     }
   </style>
 </body>
-<footer class=''>
 
+<footer class='container-fluid g-0 bg-secondary-subtle p-3' id='about'>
+  <div class="row justify-content-center align-items-center">
+    <div class="col-lg-4 d-none d-lg-block text-center justify-content-center align-items-center p-3 " style='border-right: 1px solid black'>
+      <p> Discover the enchanting world of <a href="https://coloredcow.com" style='text-decoration:none' target='_blank'>ColoredCow's</a> e-library, where literature comes to life in a captivating digital oasis of wisdom and imagination. </p>
+    </div>
+    <div class="col-lg-4 d-none d-lg-block text-center justify-content-center align-items-center p-3" style='border-right: 1px solid black'>
+      <a class=" library-logo display-2">e Library</a>
+    </div>
+    <div class="col-lg-4 text-center">
+      <div class='mb-1'><a class="fs-5 text-decoration-none" href="#">Divyanshu Naugai</a></div>
+      <div>
+        <a class="text-black" href="www.linkedin.com/in/divyanshu-naugai"><i class="fa-brands fa-linkedin-in m-3 fa-lg "></i></a>
+        <a class="text-black" href="https://github.com/adwait7830"><i class="fa-brands fa-github m-3 fa-lg"></i></a>
+        <a class="text-black" href="https://www.instagram.com/alone.thinktank/"><i class="fa-brands fa-instagram m-3 fa-lg"></i></i></a>
+      </div>
+    </div>
+  </div>
 </footer>
+
+
+
 <script>
+  function toggleLogin() {
+
+    $('#signInDialog').toggleClass('d-none');
+    $('#signUpDialog').toggleClass('d-none');
+  }
+
   <?php
   if (isset($_POST['signIn'])) {
 
@@ -223,10 +247,10 @@ include('db.php');
     $uid = generateSessionToken();
 
     $stmt = $conn->prepare("SELECT * FROM users WHERE username = ? AND password = ?");
-    
+
 
     $stmt->bind_param('ss', $username, $password);
-   
+
 
     try {
       $stmt->execute();
@@ -237,7 +261,7 @@ include('db.php');
         $stmt2->bind_param('ss', $uid, $username);
         $stmt2->execute();
         $stmt2->close();
-        $_SESSION['token']= $uid;
+        $_SESSION['token'] = $uid;
         echo 'window.location.replace("index.php");';
       } else {
         echo 'window.location.replace("un-logged.php");';
@@ -254,15 +278,16 @@ include('db.php');
     $name = $_POST['setName'];
     $username = $_POST['setUsername'];
     $email = $_POST['setEmail'];
+    $profession = $_POST['setProfession'];
     $password = $_POST['setPassword'];
 
-    $stmt = $conn->prepare("INSERT INTO users(uid,name,username,email,password) VALUES(?,?,?,?,?)");
-    $stmt->bind_param('sssss', $uid, $name, $username, $email, $password);
+    $stmt = $conn->prepare("INSERT INTO users(uid,name,username,email, profession, password) VALUES(?,?,?,?,?,?)");
+    $stmt->bind_param('ssssss', $uid, $name, $username, $email, $profession, $password);
 
     try {
       $result = $stmt->execute();
       if ($result) {
-        $_SESSION['token']= $uid;
+        $_SESSION['token'] = $uid;
         echo 'window.location.replace("index.php");';
       } else {
         echo 'window.location.replace("un-logged.php");';

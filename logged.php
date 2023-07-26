@@ -32,7 +32,7 @@ include('db.php');
       <div class="collapse navbar-collapse justify-content-lg-end" id="navbarID">
         <ul class="navbar-nav text-lg-center align-items-lg-center ">
           <li class="nav-item"><a class="n-item fs-4" href="#about">Genres</a></li>
-          <li class="nav-item"><a class="n-item fs-4" href="#about">Authors</a></li>
+          <li class="nav-item"><a class="n-item fs-4" href="#" data-bs-toggle="modal" data-bs-target="#contactForm">Contact Us</a></li>
           <li class="nav-item"><a class="n-item fs-4" href="#about">About</a></li>
           <li class="nav-item d-none d-lg-block">
             <button type="button" onclick="toggleProfileModal()" class=" ms-lg-2 btn rounded-circle profile-btn btn-secondary">
@@ -45,6 +45,20 @@ include('db.php');
   </nav>
 </header>
 <div class="overlay" style='display:none'></div>
+
+<div class="modal fade" id="contactForm" tabindex="-1" aria-labelledby="contactFormLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content d-flex flex-column align-items-center">
+      <form class="modal-body contactUs">
+        <h2>CONTACT US</h2>
+        <input placeholder="Write your name here.."></input>
+        <input placeholder="Let us know how to contact you back.." type='email'></input>
+        <input placeholder="What would you like to tell us.."></input>
+        <button action='' method='post' name='feedback'>Send Message</button>
+      </form>
+    </div>
+  </div>
+</div>
 
 <body class='home-body' style="background-color:aliceblue;">
 
@@ -60,12 +74,12 @@ include('db.php');
   if ($user) {
     $name = $user['name'];
     $email = $user['email'];
+    $profession = $user['profession'];
   } else {
     echo 'Error';
   }
 
   $stmt->close();
-  $profession = 'Student';
   ?>
 
   <div class=' bookInfo pc-view-card'>
@@ -76,10 +90,10 @@ include('db.php');
       <div class="card-body">
         <div class="row">
           <div class="col-md-8">
-            <h2 id='title' class="display-4">Not Available</h2>
-            <h3 id='author'>Not Available</h3>
+            <h2 id='title' class="book-title display-4">Not Available</h2>
+            <h3 id='author' class='book-author'>Not Available</h3>
             <br>
-            <h6 id='description'>Not Available</h6>
+            <h6 id='description' class='book-description'>Not Available</h6>
           </div>
           <div class="cover col-md-4">
             <img src="" alt="Image not available" class="img-fluid">
@@ -104,14 +118,14 @@ include('db.php');
       <div class="card-header d-flex justify-content-between">
         Book Information <button type="button" class="btn-close align-end" aria-label="Close" onclick="closeBookInfo()"></button>
       </div>
-      <div class="card-body">
-        <div class="d-flex align-content-center justify-content-center">
-          <img src="data:image/jpeg;base64,${book.cover}" class="img-fluid h-75 w-50" alt="...">
+      <div class="card-body d-flex flex-column align-content-center justify-content-center ">
+        <div class=" cover d-flex align-items-center justify-content-center w-75 ms-auto me-auto">
+          <img src="" class="img-fluid" alt="Cover image unavailable">
         </div>
-        <h2 id='title' class="card-title text-black text-center">${book.title}</h2>
-        <h4 id='author' class="card-subtitle text-secondary text-center">${book.author}</h4>
+        <h2 id='title' class="book-title card-title text-black text-center">Title unavailable</h2>
+        <h4 id='author' class="book-author card-subtitle text-secondary text-center">Author unavailable</h4>
         <div class="card-text-scroll mt-2">
-          <div id='description' class="card-text-scroll-inner text-center">${book.description}</div>
+          <div id='description' class="book-description card-text-scroll-inner text-center">Description unavailable</div>
         </div>
       </div>
       <div class="card-footer d-flex justify-content-between">
@@ -185,7 +199,7 @@ include('db.php');
 
   <div id="add-modal" class="modal z-4 add-book" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
-      <form class="modal-content" action="" enctype="multipart/form-data" method='post'>
+      <form class="modal-content" action="bookHandling.php" enctype="multipart/form-data" method='post'>
         <div class="modal-header">
           <h5 class="modal-title">Add Book Details</h5>
         </div>
@@ -218,15 +232,57 @@ include('db.php');
     <input class="w-50 rounded-pill border-0 px-2 bg-warning me-3" placeholder="Enter book title..." type="text">
     <button class="btn btn-sm btn-warning rounded-circle"><i class="fas fa-search m-2"></i></button>
   </div>
+
+
+  <!-- Book are getting printed here -->
+
+
   <div class="allBooks p-2 d-flex flex-wrap align-items-center justify-content-center">
+
+    <div class="container-fluid d-flex justify-content-between " style='width:84%'>
+      <select name="" id="">
+        <option value="" disabled selected>Books Per Page</option>
+        <option value=5>5</option>
+        <option value=10>10</option>
+        <option value=20>20</option>
+        <option value=50>50</option>
+      </select>
+      <select name="" id="">
+        <option value="" disabled selected>Sort</option>
+        <option value="">Alphabetically &uarr;</option>
+        <option value="">Alphabetically &darr;</option>
+        <option value="">By Upload Date &uarr;</option>
+        <option value="">By Upload Date &darr;</option>
+        <option value="">By View Count &uarr;</option>
+        <option value="">By View Count &darr;</option>
+
+
+      </select>
+    </div>
+
+
     <?php
     $stmt = $conn->prepare('SELECT * FROM all_books');
     $stmt->execute();
-    $result = $stmt->get_result();
+    $result1 = $stmt->get_result();
+    $noOfBooks = $result1->num_rows;
+    $booksPerPage = 5;
+    $currentPage = 1;
+    $startFrom = 0;
+    if (isset($_GET['page'])) {
+      $currentPage = $_GET['page'];
+      $startFrom = ($currentPage - 1) * 5;
+    }
+    $noOfPages = ceil($noOfBooks / $booksPerPage);
+    $stmt->close();
+    $stmt2 = $conn->prepare('SELECT * FROM all_books LIMIT  ?,?');
+    $stmt2->bind_param('ii', $startFrom, $booksPerPage);
+    $stmt2->execute();
+    $result = $stmt2->get_result();
     while ($book = $result->fetch_assoc()) {
       echo '
 
-      <div class=" book-card card m-3" style="width:15rem; height:27rem; cursor:pointer;" onclick="openBookInfo(' . $book['id'] . ')" id="${books[book].id}">
+      <div class=" book-card card m-5" style="width:15rem; height:27rem; cursor:pointer;" onclick="openBookInfo(' . $book['id'] . ')" id="${books[book].id}">
       <img class="card-img-top h-75" src="data:image/jpeg;base64,' . base64_encode($book['cover']) . '" alt="Book Image">
         <div class="card-body">
           <h5 class="card-title">' . $book['title'] . '</h5>
@@ -247,29 +303,47 @@ include('db.php');
     }
     ?>
   </div>
+
+  <nav aria-label="Page navigation">
+    <ul class="pagination justify-content-center">
+      <?php for ($i = 1; $i <= $noOfPages; $i++) {
+        $class = '';
+        if ($i == $currentPage) {
+          $class = 'active';
+        }
+      ?>
+        <li class="page-item <?php echo $class ?>"><a class="page-link" href="?page=<?php echo $i ?>"><?php echo $i ?></a></li>
+      <?php } ?>
+    </ul>
+  </nav>
 </body>
+
+<footer class='container-fluid g-0 bg-secondary-subtle p-3' id='about'>
+  <div class="row justify-content-center align-items-center">
+    <div class="col-lg-4 d-none d-lg-block text-center justify-content-center align-items-center p-3 " style='border-right: 1px solid black'>
+      <p> Discover the enchanting world of <a href="https://coloredcow.com" style='text-decoration:none' target='_blank'>ColoredCow's</a> e-library, where literature comes to life in a captivating digital oasis of wisdom and imagination. </p>
+    </div>
+    <div class="col-lg-4 d-none d-lg-block text-center justify-content-center align-items-center p-3" style='border-right: 1px solid black'>
+      <a class=" library-logo display-2">e Library</a>
+    </div>
+    <div class="col-lg-4 text-center">
+      <div class='mb-1'><a class="fs-5 text-decoration-none" href="#">Divyanshu Naugai</a></div>
+      <div>
+        <a class="text-black" href="www.linkedin.com/in/divyanshu-naugai"><i class="fa-brands fa-linkedin-in m-3 fa-lg "></i></a>
+        <a class="text-black" href="https://github.com/adwait7830"><i class="fa-brands fa-github m-3 fa-lg"></i></a>
+        <a class="text-black" href="https://www.instagram.com/alone.thinktank/"><i class="fa-brands fa-instagram m-3 fa-lg"></i></i></a>
+      </div>
+    </div>
+  </div>
+</footer>
+
 <script>
   <?php
-  if (isset($_POST['add-book'])) {
 
-    $cover = addslashes(file_get_contents($_FILES['setCover']['tmp_name']));
-    $title = $_POST['setTitle'];
-    $author = $_POST['setAuthor'];
-    $description = $_POST['setDescription'];
-
-    $stmt = $conn->prepare('INSERT INTO all_books (cover, title, author, description) VALUES (?, ?, ?, ?)');
-    $stmt->bind_param('bsss', $cover, $title, $author, $description);
-
-    if ($stmt->execute()) {
-      echo 'Book Added Successfully';
-    } else {
-      echo 'Error: ' . $stmt->error;
-    }
-  }
 
   if (isset($_POST['log-out'])) {
-    session_destroy();
     echo 'window.location.replace("index.php");';
+    session_destroy();
   }
 
   if (!isset($_SESSION['token'])) {

@@ -1,25 +1,30 @@
-*{
+* {
   margin: 0;
   padding: 0;
 }
-@font-face{
+
+@font-face {
   font-family: bilboSwash;
   src: url('fonts/BilboSwash.ttf');
 }
+
 @font-face {
   font-family: patua;
   src: url('fonts/PatuaOne-Regular.ttf');
 }
+
 @font-face {
   font-family: rampart;
   src: url('fonts/RampartOne-Regular.ttf');
 }
+
 @font-face {
   font-family: samarkan;
   src: url('fonts/SAMAN___.TTF');
 }
-.body{
-  background-color:aliceblue;
+
+.body {
+  background-color: aliceblue;
 }
 
 .toast {
@@ -34,51 +39,55 @@
   display: none;
 }
 
-.home{
+.home {
   background: url('images/jas-bg.jpg');
   display: flex;
   flex-direction: column;
 }
 
-.space-between{
+.space-between {
   justify-content: space-between;
 }
 
-.library-logo{
+.library-logo {
   text-decoration: none;
   color: #000;
   font-family: samarkan;
 }
-.burger{
+
+.burger {
   cursor: pointer;
   display: none;
 }
-.navbar{
+
+.navbar {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  width:auto;
+  width: auto;
   height: auto;
   align-items: center;
   padding: 0 5vh 0 2vh;
 }
-.leftNav{
-  
-  font-family:Arial, Helvetica, sans-serif;
+
+.leftNav {
+
+  font-family: Arial, Helvetica, sans-serif;
   display: flex;
   flex-direction: row;
   align-items: center;
   margin-left: 50px;
 }
 
-.navbar-nav li{
+.navbar-nav li {
   list-style: none;
   margin-left: 20px;
 }
-.n-item{
+
+.n-item {
   text-decoration: none;
   color: #ff4500;
-  font-family:sans-serif;
+  font-family: sans-serif;
   font-weight: bold;
   font-size: larger;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
@@ -93,15 +102,16 @@
   background-size: 0%;
   transition: background-size 0.3s ease;
 }
-.n-item:hover{
 
-  
+.n-item:hover {
+
+
   color: white;
   background-size: 100% 3px;
-  
+
 }
 
-.profile .top-right{
+.profile .top-right {
   position: fixed;
   top: 1rem;
   right: 1rem;
@@ -114,19 +124,21 @@
   0% {
     transform: translateX(100%);
   }
+
   100% {
     transform: translateX(0);
   }
 }
+
 .dialog {
-  
+
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 2;
 
-} 
+}
 
 .dialog-content {
 
@@ -141,19 +153,20 @@
   align-items: center;
 }
 
-.dialog-content h2{
+.dialog-content h2 {
   margin-bottom: 20px;
 }
-.dialog-content input{
-  
-  display:block;
+
+.dialog-content input {
+
+  display: block;
   border: none;
   border-bottom: 2px solid black;
   margin-bottom: 20px;
   height: 20px;
   width: 50%;
 
-  
+
 }
 
 
@@ -167,34 +180,34 @@
   width: 100%;
 }
 
-.line{
+.line {
   width: 25px;
   background-color: white;
   height: 3px;
   margin: 3px;
-  border-radius: 2px ;
+  border-radius: 2px;
 }
 
-.intro{
+.intro {
   padding: 15%;
 }
 
-.quote{
+.quote {
 
-  font-family:bilboSwash;
+  font-family: bilboSwash;
   color: #ffd700;
   text-shadow: 0 7px 7px black, 0 5px 5px black;
 }
 
-.top-books{ 
+.top-books {
   background-color: aliceblue;
 }
 
-.collection-body{
-  background-color:#fffff0;
+.collection-body {
+  background-color: #fffff0;
 }
 
-.footer{
+.footer {
   display: flex;
   flex-wrap: wrap;
   gap: 10%;
@@ -207,22 +220,24 @@
   align-items: center;
 
 }
-.footer-links{
+
+.footer-links {
   display: flex;
   gap: 20px;
 }
 
-.footer-links a{
+.footer-links a {
   text-decoration: none;
   color: aliceblue;
-  font-family:Arial, Helvetica, sans-serif;
+  font-family: Arial, Helvetica, sans-serif;
 
 }
-.footer-links a:hover{
-  color:purple;
+
+.footer-links a:hover {
+  color: purple;
 }
 
-.footer img{
+.footer img {
   height: 100px;
 }
 
@@ -238,8 +253,8 @@
   pointer-events: auto;
 }
 
-.close-btn{
-  
+.close-btn {
+
   top: 10px;
   right: 10px;
   border: none;
@@ -253,132 +268,210 @@
   border-radius: 0 10px 0 0;
 }
 
-.close-btn:hover{
+.close-btn:hover {
   background-color: red;
 }
 
-.no-scroll{
+.no-scroll {
   overflow: hidden;
 }
 
-.lower-section button{
-  width:175px;
-  height:30px;
-  background-color:#ffa500;
+.lower-section button {
+  width: 175px;
+  height: 30px;
+  background-color: #ffa500;
   border: none;
 }
-.lower-section button:hover{
+
+.lower-section button:hover {
   box-shadow: 0 5px 5px 0 rgba(0, 0, 0, 0.2);
-  
+
 }
-.add-btn{
+
+.add-btn {
   display: none;
 }
 
-.remove-btn{
+.remove-btn {
   display: none;
 }
 
-.col-btn{
+.col-btn {
   width: 20rem;
 }
 
-.login-section{
+.login-section {
   display: none;
-	width: 350px;
-	height: 500px;
-	background: red;
-	overflow: hidden;
-	background-color:#573b8a;
-	border-radius: 10px;
-	box-shadow: 5px 20px 50px #000;
-}
-#chk{
-	display: none;
+  width: 350px;
+  height: 500px;
+  background: red;
+  overflow: hidden;
+  background-color: #573b8a;
+  border-radius: 10px;
+  box-shadow: 5px 20px 50px #000;
 }
 
+#chk {
+  display: none;
+}
 
 
-.btn-close:hover{
+
+.btn-close:hover {
 
   background-color: red;
-  
+
 }
 
 
-.signUpDialog{
-	position: relative;
-	width:100%;
-	height: 100%;
+.signUpDialog {
+  position: relative;
+  width: 100%;
+  height: 100%;
 }
 
-.shifter{
-	color: #fff;
-	font-size: 2.3em;
-	justify-content: center;
-	display: flex;
-	margin: 40px;
-	font-weight: bold;
-	cursor: pointer;
-	transition: .5s ease-in-out;
+.shifter {
+  color: #fff;
+  font-size: 2.3em;
+  justify-content: center;
+  display: flex;
+  margin: 40px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: .5s ease-in-out;
 }
 
-.loginField{
-  
-	background: #e0dede;
-	justify-content: center;
-	display: flex;
-	margin: 10px auto;
-	padding: 10px;
-	border: none;
-	outline: none;
-	border-radius: 5px;
-}
-.signUpBtn,.loginBtn{
-	width: 60%;
-	height: 40px;
-	margin: 10px auto;
-	justify-content: center;
-	display: block;
-	color: #fff;
-	background: #573b8a;
-	font-size: 1em;
-	font-weight: bold;
-	margin-top: 30px;
-	outline: none;
-	border: none;
-	border-radius: 5px;
-	transition: .2s ease-in;
-	cursor: pointer;
+.loginField {
+
+  background: #e0dede;
+  justify-content: center;
+  display: flex;
+  margin: 10px auto;
+  padding: 10px;
+  border: none;
+  outline: none;
+  border-radius: 5px;
 }
 
-.signUpBtn{
+.signUpBtn,
+.loginBtn {
+  width: 60%;
+  height: 40px;
+  margin: 10px auto;
+  justify-content: center;
+  display: block;
+  color: #fff;
+  background: #573b8a;
+  font-size: 1em;
+  font-weight: bold;
+  margin-top: 30px;
+  outline: none;
+  border: none;
+  border-radius: 5px;
+  transition: .2s ease-in;
+  cursor: pointer;
+}
+
+.signUpBtn {
   background: #fff;
   color: #573b8a;
 }
-.login-section button:hover{
-  box-shadow: 0 5px 5px 0 rgba(0, 0, 0, 0.2);;
+
+.login-section button:hover {
+  box-shadow: 0 5px 5px 0 rgba(0, 0, 0, 0.2);
+  ;
 }
 
-.signInDialog{
+.signInDialog {
   margin-top: 70px;
-	height: 460px;
-	background: #eee;
-	border-radius: 60% / 10%;
-	transform: translateY(-180px);
-	transition: .8s ease-in-out;
-}
-.signInDialog label{
-	color: #573b8a;
-	transform: scale(.6);
+  height: 460px;
+  background: #eee;
+  border-radius: 60% / 10%;
+  transform: translateY(-180px);
+  transition: .8s ease-in-out;
 }
 
-#chk:checked ~ .signInDialog{
-	transform: translateY(-500px);
+.signInDialog label {
+  color: #573b8a;
+  transform: scale(.6);
 }
-#chk:checked ~ .signInDialog label{
-	transform: scale(1);	
+
+#chk:checked~.signInDialog {
+  transform: translateY(-500px);
 }
-#chk:checked ~ .signUpDialog label{
-	transform: scale(.6);
+
+#chk:checked~.signInDialog label {
+  transform: scale(1);
+}
+
+#chk:checked~.signUpDialog label {
+  transform: scale(.6);
+}
+
+.contactUs {
+
+  width: 100%;
+  background: #e6e6e6;
+  border-radius: 8px;
+  box-shadow: 0 0 40px -10px #000;
+  padding: 20px;
+  box-sizing: border-box;
+  font-family: 'Montserrat', sans-serif;
+
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+}
+
+.contactUs h2 {
+  margin: 20px 0;
+  padding-bottom: 10px;
+  width: 210px;
+  color: #78788c;
+  border-bottom: 3px solid #78788c
+}
+
+.contactUs input {
+
+  width: 90%;
+  padding: 20px;
+  padding-left: 0;
+  box-sizing: border-box;
+  background: none;
+  outline: none;
+  resize: none;
+  border: 0;
+  font-family: 'Montserrat', sans-serif;
+  transition: all .3s;
+  border-bottom: 2px solid #bebed2
+}
+
+.contactUs input:focus {
+  border-bottom: 2px solid #78788c
+}
+
+.contactUs input:before {
+  content: attr(type);
+  display: block;
+  margin: 28px 0 0;
+  font-size: 14px;
+  color: #5a5a5a
+}
+
+.contactUs button {
+  float: right;
+  padding: 8px 12px;
+  margin: 8px 0 0;
+  font-family: 'Montserrat', sans-serif;
+  border: 2px solid #78788c;
+  background: 0;
+  color: #5a5a6e;
+  cursor: pointer;
+  transition: all .3s
+}
+
+.contactUs button:hover {
+  background: #78788c;
+  color: #fff
 }

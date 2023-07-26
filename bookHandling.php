@@ -30,6 +30,23 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         http_response_code(400); 
         echo "Error: 'id' parameter is missing in the request.";
     }
+
+    if (isset($_POST['add-book'])) {
+
+        $cover = addslashes(file_get_contents($_FILES['setCover']['tmp_name']));
+        $title = $_POST['setTitle'];
+        $author = $_POST['setAuthor'];
+        $description = $_POST['setDescription'];
+    
+        $stmt = $conn->prepare('INSERT INTO all_books (cover, title, author, description) VALUES (?, ?, ?, ?)');
+        $stmt->bind_param('bsss', $cover, $title, $author, $description);
+    
+        if ($stmt->execute()) {
+          echo 'Book Added Successfully';
+        } else {
+          echo 'Error: ' . $stmt->error;
+        }
+      }
 } else {
     http_response_code(405); 
     echo "Error: Invalid request method. Only POST requests are allowed.";

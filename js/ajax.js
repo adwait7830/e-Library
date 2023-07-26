@@ -4,9 +4,9 @@ function openBookInfo(id) {
         id: id
     }, function (book){
         console.log(book);
-        $('#title').text(book.title);
-        $('#author').text(book.author);
-        $('#description').text(book.description);
+        $('.book-title').text(book.title);
+        $('.book-author').text(book.author);
+        $('.book-description').text(book.description);
         $('.cover').html(`<img src="data:image/jpeg;base64,${book.cover}" alt="Image" class="img-fluid">`);
 
     });
@@ -21,6 +21,10 @@ function openBookInfo(id) {
             $('.mobile-view-card').show();
         }
     }).trigger('resize');
+}
+
+function addNewBook(){
+    
 }
 
 function closeBookInfo(){
