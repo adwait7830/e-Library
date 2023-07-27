@@ -5,7 +5,7 @@ if (ini_get('register_globals'))
     foreach ($_SESSION as $key=>$value)
     {
         if (isset($GLOBALS[$key]))
-            unset($GLOBALS[$key]);
+            unset($GLOBALS[$key]); 
     }
 }
  ?>

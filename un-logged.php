@@ -7,7 +7,7 @@ if (ini_get('register_globals')) {
   }
 }
 include('db.php');
-?>
+?> 
 <!DOCTYPE html>
 <html lang="en">
 
@@ -121,7 +121,7 @@ include('db.php');
         echo '
 
       <div class=" book-card card m-3" style="width:15rem; height:27rem; cursor:pointer;" onclick="openBookInfo(' . $book['id'] . ')" id="${books[book].id}">
-      <img class="card-img-top h-75" src="data:image/jpeg;base64,' . base64_encode($book['cover']) . '" alt="Book Image">
+      <img class="card-img-top h-75" src="'.$book['cover'].'" alt="Book Image">
         <div class="card-body">
           <h5 class="card-title">' . $book['title'] . '</h5>
           <h6 class="card-subtitle text-body-secondary">' . $book['author'] . '</h6>

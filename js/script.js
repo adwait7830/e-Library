@@ -1,68 +1,22 @@
-function openLoginDialog() {
-  $(".login-section").fadeIn();
-  $('.overlay').fadeIn();
-  $('.body').css('overflow', 'hidden');
-
-}
-
+// JavaScript
 function toggleProfileModal() {
-  $('.profile').fadeToggle();
+  var profileElement = document.querySelector('.profile');
+  if (profileElement.style.display === 'none' || profileElement.style.display === '') {
+    profileElement.style.display = 'block';
+  } else {
+    profileElement.style.display = 'none';
+  }
 }
 
 function toggleAddBookModal() {
-  $('.overlay').fadeToggle();
-  $('.add-book').fadeToggle();
+  var overlayElement = document.querySelector('.overlay');
+  var addBookElement = document.querySelector('.add-book');
+
+  if (overlayElement.style.display === 'none' || overlayElement.style.display === '') {
+    overlayElement.style.display = 'block';
+    addBookElement.style.display = 'block';
+  } else {
+    overlayElement.style.display = 'none';
+    addBookElement.style.display = 'none';
+  }
 }
-
-function closeLoginDialog() {
-  $(".login-section").fadeOut();
-  $('.overlay').fadeOut();
-  $('.body').css('overflow', 'visible');
-}
-
-function addToCollection(id) {
-
-  $('.add-btn').removeClass('btn-warning');
-  $('.add-btn').addClass('btn-success');
-  $('.add-btn').text('Added to Collection');
-  myCollection[id] = {
-
-    id: id,
-    title: topBooks[id].title,
-    author: topBooks[id].author,
-    img: topBooks[id].img,
-
-  };
-  $('.collection').empty();
-  addToShelf(myCollection, '.collection');
-
-}
-
-function removeFromCollection(id) {
-  $('.remove-btn').removeClass('btn-warning');
-  $('.remove-btn').addClass('btn-danger');
-  $('.remove-btn').text('Removed from Collection');
-  delete (myCollection[id]);
-  $('.collection').empty();
-  addToShelf(myCollection, '.collection');
-}
-console.log('hello');
-
-function click() {
-  console.log('hello');
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

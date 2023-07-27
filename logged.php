@@ -5,7 +5,7 @@ if (ini_get('register_globals')) {
     if (isset($GLOBALS[$key]))
       unset($GLOBALS[$key]);
   }
-}
+} 
 include('db.php');
 ?>
 <!DOCTYPE html>
@@ -60,10 +60,10 @@ include('db.php');
   </div>
 </div>
 
-<body class='home-body' style="background-color:aliceblue;">
+<body class='home-body' id="home" style="background-color:aliceblue;">
+
 
   <?php
-
   $token = $_SESSION['token'];
   $stmt = $conn->prepare("SELECT * FROM users WHERE uid = ?");
   $stmt->bind_param('s', $token);
@@ -102,8 +102,8 @@ include('db.php');
       </div>
       <div class="card-footer d-flex justify-content-between">
         <div class='config-btn'>
-          <button class="dlt-btn btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i> Delete</button>
-          <button class="edit-btn btn btn-sm btn-outline-primary" data-target='#edit-modal' data-toggle='modal'><i class="fas fa-edit"></i> Edit</button>
+          <button class="dlt-btn btn btn-sm btn-outline-danger" data-bs-target='#delete-modal' data-bs-toggle='modal'><i class="fas fa-trash"></i> Delete</button>
+          <button class="edit-btn btn btn-sm btn-outline-primary" data-bs-target='#edit-modal' data-bs-toggle='modal'><i class="fas fa-edit"></i> Edit</button>
         </div>
         <div class='config-btn'>
           <button id='addBtn' class=" btn btn-sm btn-warning add-btn">Add to Collection</button>
@@ -119,7 +119,7 @@ include('db.php');
         Book Information <button type="button" class="btn-close align-end" aria-label="Close" onclick="closeBookInfo()"></button>
       </div>
       <div class="card-body d-flex flex-column align-content-center justify-content-center ">
-        <div class=" cover d-flex align-items-center justify-content-center w-75 ms-auto me-auto">
+        <div class="cover d-flex align-items-center justify-content-center w-75 ms-auto me-auto">
           <img src="" class="img-fluid" alt="Cover image unavailable">
         </div>
         <h2 id='title' class="book-title card-title text-black text-center">Title unavailable</h2>
@@ -130,12 +130,59 @@ include('db.php');
       </div>
       <div class="card-footer d-flex justify-content-between">
         <div class='config-btn'>
-          <button class="dlt-btn btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
-          <button class="edit-btn btn btn-sm btn-outline-primary" data-target='#edit-modal' data-toggle='modal'><i class="fas fa-edit"></i></button>
+          <button class="dlt-btn btn btn-sm btn-outline-danger" data-bs-target='#delete-modal' data-bs-toggle='modal'><i class="fas fa-trash"></i></button>
+          <button class="edit-btn btn btn-sm btn-outline-primary" data-bs-target='#edit-modal' data-bs-toggle='modal'><i class="fas fa-edit"></i></button>
         </div>
         <div class='config-btn'>
           <button id='addBtn' class="btn btn-sm btn-warning add-btn">Add to Collection</button>
           <button id='removeBtn' class="btn btn-sm btn-warning remove-btn">Remove from collection</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="edit-modal" class="modal fade" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <form class="modal-content" action="bookHandling.php" enctype="multipart/form-data" method='post'>
+        <div class="modal-header">
+          <h5 class="modal-title">Edit Book Details</h5>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <input type="hidden" name='id' id="bookId">
+          </div>
+          <div class="form-group">
+            <label for="editCover">Book Cover</label>
+            <input type="file" class="form-control-file" name='editCover' id="Cover">
+          </div>
+          <div class="form-group">
+            <label for="setTitle">Title</label>
+            <textarea class="form-control" id="newTitle" name='editTitle' rows="1"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="setAuthor">Author</label>
+            <textarea class="form-control" id="newAuthor" name="editAuthor" rows="1"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="setDescription">Description</label>
+            <textarea class="form-control" id="newDescription" name="editDescription" rows="5"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" name='edit-book' class="btn btn-primary">Save</button>
+          <button type="button" class="btn btn-secondary" data-bs-target='#edit-modal' data-bs-toggle='modal'>Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal fade" id='delete-modal' tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="d-flex justify-content-center text-center w-100">Once confirmed the book will be permanently deleted.<br>Wish to continue?</div>
+        <div class='modal-body d-flex justify-content-around'>
+          <button class='btn btn-danger'>Confirm</button>
+          <button class="btn btn-secondary" data-bs-target='#delete-modal' data-bs-toggle='modal'>Cancel</button>
         </div>
       </div>
     </div>
@@ -199,26 +246,27 @@ include('db.php');
 
   <div id="add-modal" class="modal z-4 add-book" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
-      <form class="modal-content" action="bookHandling.php" enctype="multipart/form-data" method='post'>
+      <form class="modal-content" id="addBookForm" action="bookHandling.php" method="POST"  enctype="multipart/form-data" >
+      <input type="hidden"name='addBook'>
         <div class="modal-header">
           <h5 class="modal-title">Add Book Details</h5>
         </div>
         <div class="modal-body">
           <div class="form-group">
             <label for="setCover">Book Cover</label>
-            <input type="file" class="form-control-file" name='setCover' id="newCover">
+            <input type="file" class="form-control-file" name='setCover' id="newCover" required="">
           </div>
           <div class="form-group">
             <label for="setTitle">Title</label>
-            <textarea class="form-control" id="newTitle" name='setTitle' rows="1"></textarea>
+            <textarea class="form-control" id="newTitle" name='setTitle' rows="1"  required=""></textarea>
           </div>
           <div class="form-group">
             <label for="setAuthor">Author</label>
-            <textarea class="form-control" id="newAuthor" name="setAuthor" rows="1"></textarea>
+            <textarea class="form-control" id="newAuthor" name="setAuthor" rows="1"  required=""></textarea>
           </div>
           <div class="form-group">
             <label for="setDescription">Description</label>
-            <textarea class="form-control" id="newDescription" name="setDescription" rows="5"></textarea>
+            <textarea class="form-control" id="newDescription" name="setDescription" rows="5"  required=""></textarea>
           </div>
         </div>
         <div class="modal-footer">
@@ -283,7 +331,7 @@ include('db.php');
       echo '
 
       <div class=" book-card card m-5" style="width:15rem; height:27rem; cursor:pointer;" onclick="openBookInfo(' . $book['id'] . ')" id="${books[book].id}">
-      <img class="card-img-top h-75" src="data:image/jpeg;base64,' . base64_encode($book['cover']) . '" alt="Book Image">
+      <img class="card-img-top h-75" src="'.$book['cover'].'" alt="Book Image">
         <div class="card-body">
           <h5 class="card-title">' . $book['title'] . '</h5>
           <h6 class="card-subtitle text-body-secondary">' . $book['author'] . '</h6>

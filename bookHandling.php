@@ -1,54 +1,68 @@
 <?php
-include ('db.php');
+include('db.php');
+
+function convertToImageUrl($title)
+{
+    $title = preg_replace("/[^a-zA-Z0-9\s\-]/", "", $title);
+    $title = str_replace(" ", "-", $title);
+    $title = strtolower($title);
+
+    return $title;
+}
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    if (isset($_POST["id"])) {
+
+    if (isset($_GET["id"])) {
 
         $stmt = $conn->prepare('SELECT title, description, author, cover, views FROM all_books WHERE id = ?');
-        $stmt->bind_param('i',$_POST['id']);
+        $stmt->bind_param('i', $_GET['id']);
         $stmt->execute();
-        $stmt->bind_result($title,$description,$author,$cover, $views);
+        $stmt->bind_result($title, $description, $author, $cover, $views);
         $stmt->fetch();
         $stmt->close();
-        
+
         $stmt3 = $conn->prepare('UPDATE all_books SET views = ? WHERE id = ?');
         $incrementedViews  = $views + 1;
-        $stmt3->bind_param('ii',$incrementedViews,$_POST['id']);
+        $stmt3->bind_param('ii', $incrementedViews, $_GET['id']);
         $stmt3->execute();
         $stmt3->close();
         $book = array(
-            'title'=>$title,
-            'author'=>$author,
-            'description'=>$description,
-            'cover'=>base64_encode($cover)
-            
+            'title' => $title,
+            'author' => $author,
+            'description' => $description,
+            'cover' => $cover
+
         );
         $jsonData = json_encode($book);
         header('Content-Type: application/json');
         echo $jsonData;
-        
-    } else {
-        http_response_code(400); 
-        echo "Error: 'id' parameter is missing in the request.";
     }
 
-    if (isset($_POST['add-book'])) {
+    if (isset($_POST['addBook'])) {
 
-        $cover = addslashes(file_get_contents($_FILES['setCover']['tmp_name']));
+        $cover = $_FILES['setCover'];
         $title = $_POST['setTitle'];
         $author = $_POST['setAuthor'];
         $description = $_POST['setDescription'];
-    
+
+        $target_dir = 'cover/';
+        $cover_name = convertToImageUrl($title) . "." . pathinfo($cover["name"], PATHINFO_EXTENSION);
+        $target_file = $target_dir . $cover_name;
+        move_uploaded_file($cover["tmp_name"], $target_file);
+
         $stmt = $conn->prepare('INSERT INTO all_books (cover, title, author, description) VALUES (?, ?, ?, ?)');
-        $stmt->bind_param('bsss', $cover, $title, $author, $description);
-    
+        $stmt->bind_param('ssss', $target_file, $title, $author, $description);
+
         if ($stmt->execute()) {
-          echo 'Book Added Successfully';
-        } else {
-          echo 'Error: ' . $stmt->error;
+            $stmt->close();
+        }else{
+            echo 'Error: ' . $stmt->error;
         }
-      }
+
+    }
+
+    if (isset($_POST['edit-book'])) {
+    }
 } else {
-    http_response_code(405); 
-    echo "Error: Invalid request method. Only POST requests are allowed.";
+    http_response_code(405);
+    header("Location:logged.php");
 }
-?>

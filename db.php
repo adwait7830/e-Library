@@ -1,6 +1,6 @@
 <?php
 $serverName = "localhost";
-$port = 3307;
+$port = 3307; 
 $userName = "root";
 $password = "";
 $database = "e_lib";
