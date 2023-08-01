@@ -114,24 +114,24 @@ include('db.php');
   </div>
 
   <div class='bookInfo mobile-view-card'>
-    <div class="card dialog position-fixed book-dialog " style="width: 18rem;">
+    <div class="card dialog position-fixed book-dialog " style="width:19rem;">
       <div class="card-header d-flex justify-content-between">
         Book Information <button type="button" class="btn-close align-end" aria-label="Close" onclick="closeBookInfo()"></button>
       </div>
       <div class="card-body d-flex flex-column align-content-center justify-content-center ">
-        <div class="cover d-flex align-items-center justify-content-center w-75 ms-auto me-auto">
+        <div class="cover d-flex align-items-center justify-content-center ms-auto me-auto" style="width: 70%;">
           <img src="" class="img-fluid" alt="Cover image unavailable">
         </div>
         <h2 id='title' class="book-title card-title text-black text-center">Title unavailable</h2>
         <h4 id='author' class="book-author card-subtitle text-secondary text-center">Author unavailable</h4>
-        <div class="card-text-scroll mt-2">
+        <div class="card-text-scroll mt-2" style='height:10rem'>
           <div id='description' class="book-description card-text-scroll-inner text-center">Description unavailable</div>
         </div>
       </div>
       <div class="card-footer d-flex justify-content-between">
         <div class='config-btn'>
           <button class="dlt-btn btn btn-sm btn-outline-danger" data-bs-target='#delete-modal' data-bs-toggle='modal'><i class="fas fa-trash"></i></button>
-          <button class="edit-btn btn btn-sm btn-outline-primary" data-bs-target='#edit-modal' data-bs-toggle='modal'><i class="fas fa-edit"></i></button>
+          <button class="edit-btn btn btn-sm btn-outline-primary" onclick="editModalConfig()" data-bs-target='#edit-modal' data-bs-toggle='modal'><i class="fas fa-edit"></i></button>
         </div>
         <div class='config-btn'>
           <button id='addBtn' class="btn btn-sm btn-warning add-btn">Add to Collection</button>
