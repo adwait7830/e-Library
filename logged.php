@@ -103,7 +103,7 @@ include('db.php');
       <div class="card-footer d-flex justify-content-between">
         <div class='config-btn'>
           <button class="dlt-btn btn btn-sm btn-outline-danger" data-bs-target='#delete-modal' data-bs-toggle='modal'><i class="fas fa-trash"></i> Delete</button>
-          <button class="edit-btn btn btn-sm btn-outline-primary" data-bs-target='#edit-modal' data-bs-toggle='modal'><i class="fas fa-edit"></i> Edit</button>
+          <button class="edit-btn btn btn-sm btn-outline-primary" onclick="editModalConfig()" data-bs-target='#edit-modal' data-bs-toggle='modal'><i class="fas fa-edit"></i> Edit</button>
         </div>
         <div class='config-btn'>
           <button id='addBtn' class=" btn btn-sm btn-warning add-btn">Add to Collection</button>
@@ -143,47 +143,47 @@ include('db.php');
 
   <div id="edit-modal" class="modal fade" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog" role="document">
-      <form class="modal-content" action="bookHandling.php" enctype="multipart/form-data" method='post'>
+      <form class="modal-content" id="editBookForm"  enctype="multipart/form-data">
+      <input type="hidden" name='editBook'>
         <div class="modal-header">
           <h5 class="modal-title">Edit Book Details</h5>
         </div>
         <div class="modal-body">
           <div class="form-group">
-            <input type="hidden" name='id' id="bookId">
+            <label for="newCover">Book Cover</label>
+            <input type="file" class="form-control-file" name='editCover' id="newCover">
           </div>
           <div class="form-group">
-            <label for="editCover">Book Cover</label>
-            <input type="file" class="form-control-file" name='editCover' id="Cover">
-          </div>
-          <div class="form-group">
-            <label for="setTitle">Title</label>
+            <label for="newTitle">Title</label>
             <textarea class="form-control" id="newTitle" name='editTitle' rows="1"></textarea>
           </div>
           <div class="form-group">
-            <label for="setAuthor">Author</label>
+            <label for="newAuthor">Author</label>
             <textarea class="form-control" id="newAuthor" name="editAuthor" rows="1"></textarea>
           </div>
           <div class="form-group">
-            <label for="setDescription">Description</label>
+            <label for="newDescription">Description</label>
             <textarea class="form-control" id="newDescription" name="editDescription" rows="5"></textarea>
           </div>
         </div>
         <div class="modal-footer">
-          <button type="submit" name='edit-book' class="btn btn-primary">Save</button>
+          <button type="submit" name='editBook' class="btn btn-primary">Save</button>
           <button type="button" class="btn btn-secondary" data-bs-target='#edit-modal' data-bs-toggle='modal'>Cancel</button>
         </div>
       </form>
     </div>
   </div>
 
+  
   <div class="modal fade" id='delete-modal' tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="d-flex justify-content-center text-center w-100">Once confirmed the book will be permanently deleted.<br>Wish to continue?</div>
-        <div class='modal-body d-flex justify-content-around'>
-          <button class='btn btn-danger'>Confirm</button>
-          <button class="btn btn-secondary" data-bs-target='#delete-modal' data-bs-toggle='modal'>Cancel</button>
-        </div>
+        <form class='modal-body d-flex justify-content-around' id='dltBookForm'>
+        <input type="hidden" name='dltBook'>
+          <button type="submit" class='btn btn-danger'>Confirm</button>
+          <button type="button" class="btn btn-secondary" data-bs-target='#delete-modal' data-bs-toggle='modal'>Cancel</button>
+        </form>
       </div>
     </div>
   </div>
@@ -247,26 +247,26 @@ include('db.php');
   <div id="add-modal" class="modal z-4 add-book" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
       <form class="modal-content" id="addBookForm" action="bookHandling.php" method="POST"  enctype="multipart/form-data" >
-      <input type="hidden"name='addBook'>
+      <input type="hidden" name='addBook'>
         <div class="modal-header">
           <h5 class="modal-title">Add Book Details</h5>
         </div>
         <div class="modal-body">
           <div class="form-group">
             <label for="setCover">Book Cover</label>
-            <input type="file" class="form-control-file" name='setCover' id="newCover" required="">
+            <input type="file" class="form-control-file" name='setCover' required="">
           </div>
           <div class="form-group">
             <label for="setTitle">Title</label>
-            <textarea class="form-control" id="newTitle" name='setTitle' rows="1"  required=""></textarea>
+            <textarea class="form-control" name='setTitle' rows="1"  required=""></textarea>
           </div>
           <div class="form-group">
             <label for="setAuthor">Author</label>
-            <textarea class="form-control" id="newAuthor" name="setAuthor" rows="1"  required=""></textarea>
+            <textarea class="form-control" name="setAuthor" rows="1"  required=""></textarea>
           </div>
           <div class="form-group">
             <label for="setDescription">Description</label>
-            <textarea class="form-control" id="newDescription" name="setDescription" rows="5"  required=""></textarea>
+            <textarea class="form-control" name="setDescription" rows="5"  required=""></textarea>
           </div>
         </div>
         <div class="modal-footer">
@@ -400,7 +400,6 @@ include('db.php');
 
   ?>
 </script>
-<script src="js/jquery.js" type="text/javascript"></script>
 <script src="js/script.js" type="text/javascript"></script>
 <script src="js/ajax.js" type="text/javascript"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

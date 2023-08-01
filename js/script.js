@@ -20,3 +20,11 @@ function toggleAddBookModal() {
     addBookElement.style.display = 'none';
   }
 }
+
+function editModalConfig(){
+
+  document.getElementById("newTitle").innerText = document.querySelector('.book-title').textContent;
+  document.getElementById("newAuthor").innerText = document.querySelector('.book-author').textContent;
+  document.getElementById("newDescription").innerText = document.querySelector('.book-description').textContent;
+
+}

@@ -7,7 +7,7 @@ if (ini_get('register_globals')) {
   }
 }
 include('db.php');
-?> 
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -121,7 +121,7 @@ include('db.php');
         echo '
 
       <div class=" book-card card m-3" style="width:15rem; height:27rem; cursor:pointer;" onclick="openBookInfo(' . $book['id'] . ')" id="${books[book].id}">
-      <img class="card-img-top h-75" src="'.$book['cover'].'" alt="Book Image">
+      <img class="card-img-top h-75" src="' . $book['cover'] . '" alt="Book Image">
         <div class="card-body">
           <h5 class="card-title">' . $book['title'] . '</h5>
           <h6 class="card-subtitle text-body-secondary">' . $book['author'] . '</h6>
@@ -234,10 +234,18 @@ include('db.php');
 
 <script>
   function toggleLogin() {
+    var signInDialog = document.getElementById("signInDialog");
+    var signUpDialog = document.getElementById("signUpDialog");
 
-    $('#signInDialog').toggleClass('d-none');
-    $('#signUpDialog').toggleClass('d-none');
+    if (signInDialog.classList.contains("d-none")) {
+      signInDialog.classList.remove("d-none");
+      signUpDialog.classList.add("d-none");
+    } else {
+      signInDialog.classList.add("d-none");
+      signUpDialog.classList.remove("d-none");
+    }
   }
+
 
   <?php
   if (isset($_POST['signIn'])) {
@@ -298,7 +306,6 @@ include('db.php');
   }
   ?>
 </script>
-<script src="js/jquery.js" type="text/javascript"></script>
 <script src="js/script.js" type="text/javascript"></script>
 <script src="js/ajax.js" type="text/javascript"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

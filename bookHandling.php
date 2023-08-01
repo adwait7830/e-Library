@@ -11,10 +11,12 @@ function convertToImageUrl($title)
 }
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
-    if (isset($_GET["id"])) {
+    $requestData = json_decode(file_get_contents('php://input'), true);
+
+    if (isset($requestData['showById'])) {
 
         $stmt = $conn->prepare('SELECT title, description, author, cover, views FROM all_books WHERE id = ?');
-        $stmt->bind_param('i', $_GET['id']);
+        $stmt->bind_param('i', $requestData['showById']);
         $stmt->execute();
         $stmt->bind_result($title, $description, $author, $cover, $views);
         $stmt->fetch();
@@ -22,7 +24,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         $stmt3 = $conn->prepare('UPDATE all_books SET views = ? WHERE id = ?');
         $incrementedViews  = $views + 1;
-        $stmt3->bind_param('ii', $incrementedViews, $_GET['id']);
+        $stmt3->bind_param('ii', $incrementedViews, $requestData['showById']);
         $stmt3->execute();
         $stmt3->close();
         $book = array(
@@ -54,13 +56,75 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         if ($stmt->execute()) {
             $stmt->close();
-        }else{
+        } else {
             echo 'Error: ' . $stmt->error;
         }
-
     }
 
-    if (isset($_POST['edit-book'])) {
+    if (isset($_POST['editBook'])) {
+        $id = $_POST['id'];
+        $cover = $_FILES['editCover'];
+        $title = $_POST['editTitle'];
+        $author = $_POST['editAuthor'];
+        $description = $_POST['editDescription'];
+
+        if ($cover != "") {
+            $sql = "SELECT cover FROM all_books WHERE id = ?";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("i", $id);
+            $stmt->execute();
+            $stmt->bind_result($imageName);
+
+            $stmt->fetch();
+            $stmt->close();
+
+            $imagePath = "cover/" . $imageName;
+            unlink($imagePath);
+
+            $target_dir = 'cover/';
+            $cover_name = convertToImageUrl($title) . "." . pathinfo($cover["name"], PATHINFO_EXTENSION);
+            $target_file = $target_dir . $cover_name;
+            move_uploaded_file($cover["tmp_name"], $target_file);
+
+            $stmt = $conn->prepare('UPDATE all_books SET cover = ?, title = ?, author = ?, description = ? WHERE id = ?');
+            $stmt->bind_param('ssssi', $target_file, $title, $author, $description, $id);
+        }else{
+
+            $stmt = $conn->prepare('UPDATE all_books SET title = ?, author = ?, description = ? WHERE id = ?');
+            $stmt->bind_param('sssi', $title, $author, $description, $id);
+
+        }
+
+        if ($stmt->execute()) {
+            $stmt->close();
+        } else {
+            echo 'Error: ' . $stmt->error;
+        }
+    }
+
+
+
+    if (isset($requestData['dltById'])) {
+
+        $idToDelete = $requestData['dltById'];
+
+        $sql = "SELECT cover FROM all_books WHERE id = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("i", $idToDelete);
+        $stmt->execute();
+        $stmt->bind_result($imageName);
+
+        $stmt->fetch();
+        $stmt->close();
+
+        $imagePath = "cover/" . $imageName;
+        unlink($imagePath);
+
+        $deleteSql = "DELETE FROM all_books WHERE id = ?";
+        $stmt = $conn->prepare($deleteSql);
+        $stmt->bind_param("i", $idToDelete);
+        $stmt->execute();
+        $stmt->close();
     }
 } else {
     http_response_code(405);

@@ -1,26 +1,50 @@
+function getIdFromURL() {
+  const currentURL = new URL(window.location.href);
+  return currentURL.hash.substring(1);
+}
+
 function openBookInfo(id) {
 
-  fetch(`bookHandling.php?id=${id}`, {
+  const currentURL = new URL(window.location.href);
+  const newURL = `${currentURL.origin}${currentURL.pathname}${currentURL.search}#${id}`;
+  window.history.replaceState({}, '', newURL);
+
+  fetch(`bookHandling.php`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     },
+    body: JSON.stringify({ showById: id }),
   })
     .then(response => response.json())
     .then(book => {
-      document.querySelector('.book-title').textContent = book.title;
-      document.querySelector('.book-author').textContent = book.author;
-      document.querySelector('.book-description').textContent = book.description;
 
-      const imgElement = document.createElement('img');
-      imgElement.alt = 'Image';
-      imgElement.classList.add('img-fluid');
+      document.querySelectorAll('.book-title').forEach((element) => {
+        element.textContent = book.title;
+      });
 
-      const coverElement = document.querySelector('.cover');
-      coverElement.innerHTML = '';
-      coverElement.appendChild(imgElement);
+      document.querySelectorAll('.book-author').forEach((element) => {
+        element.textContent = book.author;
+      });
 
-      imgElement.src = book.cover;
+      document.querySelectorAll('.book-description').forEach((element) => {
+        element.textContent = book.description;
+      });
+
+      const coverElements = document.querySelectorAll('.cover');
+
+      coverElements.forEach((coverElement) => {
+        const imgElement = document.createElement('img');
+        imgElement.alt = 'Image';
+        imgElement.classList.add('img-fluid');
+
+        coverElement.innerHTML = '';
+        coverElement.appendChild(imgElement);
+
+        imgElement.src = book.cover;
+      });
+
+
 
     })
     .catch(error => {
@@ -84,7 +108,6 @@ document.getElementById("addBookForm").addEventListener("submit", function (even
 
       toastContainer.appendChild(toast);
 
-      // Automatically hide the toast after 3 seconds (3000ms)
       setTimeout(() => {
         toast.classList.remove("show");
         toastContainer.removeChild(toast);
@@ -100,9 +123,70 @@ document.getElementById("addBookForm").addEventListener("submit", function (even
 });
 
 
+document.getElementById("dltBookForm").addEventListener('submit', function (event) {
+  event.preventDefault();
+  fetch('bookHandling.php', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ dltById: getIdFromURL() }),
+  })
+
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      };
+      return {};
+    })
+    .then((data) => {
+      window.location.reload();
+    })
+    .catch(error => console.log('error'));
+
+});
+
+
+
+
+document.getElementById("editBookForm").addEventListener("submit", function (event) {
+  event.preventDefault();
+
+  const formData = new FormData(event.target);
+  formData.append('id', getIdFromURL());
+
+  fetch("bookHandling.php", {
+    method: "POST",
+    body: formData,
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      };
+      return {};
+    })
+    .then(() => {
+
+      window.location.reload();
+
+    })
+    .catch((error) => {
+
+      console.log(error);
+
+    });
+});
 
 function closeBookInfo() {
-  $('.overlay').fadeOut();
-  $('.bookInfo').hide();
+
+  const currentURL = new URL(window.location.href);
+  const newURL = `${currentURL.origin}${currentURL.pathname}${currentURL.search}`;
+  window.history.replaceState({}, '', newURL);
+
+  document.querySelector(".overlay").style.display = "none";
+  document.querySelectorAll(".bookInfo").forEach((element) => {
+    element.style.display = "none";
+  });
+
 
 }
