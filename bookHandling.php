@@ -68,7 +68,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $author = $_POST['editAuthor'];
         $description = $_POST['editDescription'];
 
-        if ($cover != "") {
+        if ($cover["error"] !== 4) {
             $sql = "SELECT cover FROM all_books WHERE id = ?";
             $stmt = $conn->prepare($sql);
             $stmt->bind_param("i", $id);

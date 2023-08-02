@@ -21,10 +21,43 @@ function toggleAddBookModal() {
   }
 }
 
+function closeBookInfo() {
+
+  const currentURL = new URL(window.location.href);
+  const newURL = `${currentURL.origin}${currentURL.pathname}${currentURL.search}`;
+  window.history.replaceState({}, '', newURL);
+
+  document.querySelector(".overlay").style.display = "none";
+  document.querySelectorAll(".bookInfo").forEach((element) => {
+    element.style.display = "none";
+  });
+
+}
+
 function editModalConfig(){
 
   document.getElementById("newTitle").innerText = document.querySelector('.book-title').textContent;
   document.getElementById("newAuthor").innerText = document.querySelector('.book-author').textContent;
   document.getElementById("newDescription").innerText = document.querySelector('.book-description').textContent;
 
+}
+
+
+function changeOrder() {
+  var selectedOrder = document.getElementById("orderSelector").value;
+  fetch("logged.php", {
+    method: "POST",
+    headers: {
+      "Content-type": "application/x-www-form-urlencoded",
+    },
+    body: "order=" + selectedOrder,
+  })
+    .then((response) => response.text())
+    .then((data) => {
+      var bookContainer = document.getElementById("bookContainer");
+      bookContainer.innerHTML = data;
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+    });
 }

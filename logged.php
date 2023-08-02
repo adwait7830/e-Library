@@ -5,7 +5,7 @@ if (ini_get('register_globals')) {
     if (isset($GLOBALS[$key]))
       unset($GLOBALS[$key]);
   }
-} 
+}
 include('db.php');
 ?>
 <!DOCTYPE html>
@@ -31,7 +31,7 @@ include('db.php');
       </button>
       <div class="collapse navbar-collapse justify-content-lg-end" id="navbarID">
         <ul class="navbar-nav text-lg-center align-items-lg-center ">
-          <li class="nav-item"><a class="n-item fs-4" href="#about">Genres</a></li>
+          <li class="nav-item"><a class="n-item fs-4" href="#about">All Books</a></li>
           <li class="nav-item"><a class="n-item fs-4" href="#" data-bs-toggle="modal" data-bs-target="#contactForm">Contact Us</a></li>
           <li class="nav-item"><a class="n-item fs-4" href="#about">About</a></li>
           <li class="nav-item d-none d-lg-block">
@@ -143,8 +143,8 @@ include('db.php');
 
   <div id="edit-modal" class="modal fade" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog" role="document">
-      <form class="modal-content" id="editBookForm"  enctype="multipart/form-data">
-      <input type="hidden" name='editBook'>
+      <form class="modal-content" id="editBookForm" enctype="multipart/form-data">
+        <input type="hidden" name='editBook'>
         <div class="modal-header">
           <h5 class="modal-title">Edit Book Details</h5>
         </div>
@@ -174,13 +174,13 @@ include('db.php');
     </div>
   </div>
 
-  
+
   <div class="modal fade" id='delete-modal' tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="d-flex justify-content-center text-center w-100">Once confirmed the book will be permanently deleted.<br>Wish to continue?</div>
         <form class='modal-body d-flex justify-content-around' id='dltBookForm'>
-        <input type="hidden" name='dltBook'>
+          <input type="hidden" name='dltBook'>
           <button type="submit" class='btn btn-danger'>Confirm</button>
           <button type="button" class="btn btn-secondary" data-bs-target='#delete-modal' data-bs-toggle='modal'>Cancel</button>
         </form>
@@ -246,8 +246,8 @@ include('db.php');
 
   <div id="add-modal" class="modal z-4 add-book" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
-      <form class="modal-content" id="addBookForm" action="bookHandling.php" method="POST"  enctype="multipart/form-data" >
-      <input type="hidden" name='addBook'>
+      <form class="modal-content" id="addBookForm" action="bookHandling.php" method="POST" enctype="multipart/form-data">
+        <input type="hidden" name='addBook'>
         <div class="modal-header">
           <h5 class="modal-title">Add Book Details</h5>
         </div>
@@ -258,15 +258,15 @@ include('db.php');
           </div>
           <div class="form-group">
             <label for="setTitle">Title</label>
-            <textarea class="form-control" name='setTitle' rows="1"  required=""></textarea>
+            <textarea class="form-control" name='setTitle' rows="1" required=""></textarea>
           </div>
           <div class="form-group">
             <label for="setAuthor">Author</label>
-            <textarea class="form-control" name="setAuthor" rows="1"  required=""></textarea>
+            <textarea class="form-control" name="setAuthor" rows="1" required=""></textarea>
           </div>
           <div class="form-group">
             <label for="setDescription">Description</label>
-            <textarea class="form-control" name="setDescription" rows="5"  required=""></textarea>
+            <textarea class="form-control" name="setDescription" rows="5" required=""></textarea>
           </div>
         </div>
         <div class="modal-footer">
@@ -287,24 +287,15 @@ include('db.php');
 
   <div class="allBooks p-2 d-flex flex-wrap align-items-center justify-content-center">
 
-    <div class="container-fluid d-flex justify-content-between " style='width:84%'>
-      <select name="" id="">
-        <option value="" disabled selected>Books Per Page</option>
-        <option value=5>5</option>
-        <option value=10>10</option>
-        <option value=20>20</option>
-        <option value=50>50</option>
-      </select>
-      <select name="" id="">
+    <div class="container-fluid d-flex justify-content-end" style='width:84%'>
+      <select name="" id="orderSelector" onchange="Changed()">
         <option value="" disabled selected>Sort</option>
-        <option value="">Alphabetically &uarr;</option>
-        <option value="">Alphabetically &darr;</option>
-        <option value="">By Upload Date &uarr;</option>
-        <option value="">By Upload Date &darr;</option>
-        <option value="">By View Count &uarr;</option>
-        <option value="">By View Count &darr;</option>
-
-
+        <option value="alphaAsc">Alphabetically &uarr;</option>
+        <option value="alphaDesc">Alphabetically &darr;</option>
+        <option value="uploadAsc">By Upload Date &uarr;</option>
+        <option value="uploadDesc">By Upload Date &darr;</option>
+        <option value="viewsAsc">By View Count &uarr;</option>
+        <option value="viewsDesc">By View Count &darr;</option>
       </select>
     </div>
 
@@ -314,39 +305,86 @@ include('db.php');
     $stmt->execute();
     $result1 = $stmt->get_result();
     $noOfBooks = $result1->num_rows;
-    $booksPerPage = 5;
+    $booksPerPage = 8;
     $currentPage = 1;
-    $startFrom = 0;
-    if (isset($_GET['page'])) {
-      $currentPage = $_GET['page'];
-      $startFrom = ($currentPage - 1) * 5;
+
+    if (isset($_GET['page']) && is_numeric($_GET['page'])) {
+      $currentPage = max(1, $_GET['page']);
     }
-    $noOfPages = ceil($noOfBooks / $booksPerPage);
+    $startFrom = ($currentPage - 1) * $booksPerPage;
     $stmt->close();
-    $stmt2 = $conn->prepare('SELECT * FROM all_books LIMIT  ?,?');
+
+    $column = 'id';
+    $order = 'ASC';
+
+
+    if (isset($_POST['orderSelector'])) {
+
+      switch ($_POST['orderSelector']) {
+        case 'alphaAsc':
+          $column = 'title';
+          $order = 'ASC';
+          break;
+        case 'alphaDesc':
+          $column = 'title';
+          $order = 'DESC';
+          break;
+        case 'uploadAsc':
+          $column = 'id';
+          $order = 'ASC';
+          break;
+        case 'uploadDesc':
+          $column = 'id';
+          $order = 'DESC';
+          break;
+        case 'viewsAsc':
+          $column = 'views';
+          $order = 'ASC';
+          break;
+        case 'viewDesc':
+          $column = 'views';
+          $order = 'DESC';
+          break;
+        default:
+          $column = 'id';
+          $order = 'ASC';
+      }
+
+    }
+
+    $stmt2 = $conn->prepare("SELECT * FROM all_books ORDER BY $column $order LIMIT  ?,?");
     $stmt2->bind_param('ii', $startFrom, $booksPerPage);
     $stmt2->execute();
     $result = $stmt2->get_result();
-    while ($book = $result->fetch_assoc()) {
+
+    $noOfBooks = $result1->num_rows;
+    $noOfPages = ceil($noOfBooks / $booksPerPage);
+    $maxVisiblePages = 5;
+
+    $startPage = max($currentPage - floor($maxVisiblePages / 2), 1);
+    $endPage = min($startPage + $maxVisiblePages - 1, $noOfPages);
+
+    ?>
+
+    <style>
+      .book-card {
+        background-color: inherit;
+      }
+
+      .book-card:hover {
+        box-shadow: 0 3px 5px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+      }
+    </style>
+    <?php while ($book = $result->fetch_assoc()) {
       echo '
 
       <div class=" book-card card m-5" style="width:15rem; height:27rem; cursor:pointer;" onclick="openBookInfo(' . $book['id'] . ')" id="${books[book].id}">
-      <img class="card-img-top h-75" src="'.$book['cover'].'" alt="Book Image">
+      <img class="card-img-top h-75" src="' . $book['cover'] . '" alt="Book Image">
         <div class="card-body">
           <h5 class="card-title">' . $book['title'] . '</h5>
           <h6 class="card-subtitle text-body-secondary">' . $book['author'] . '</h6>
         </div>
-      </div>
-      <style>
-        .book-card{
-          background-color:inherit;
-        }
-        .book-card:hover{
-          box-shadow: 0 3px 5px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-        }
-      </style>
-
-        
+      </div>  
               ';
     }
     ?>
@@ -354,13 +392,42 @@ include('db.php');
 
   <nav aria-label="Page navigation">
     <ul class="pagination justify-content-center">
-      <?php for ($i = 1; $i <= $noOfPages; $i++) {
-        $class = '';
-        if ($i == $currentPage) {
-          $class = 'active';
-        }
+      <?php if ($currentPage > 1) { ?>
+        <li class="page-item">
+          <a class="page-link" href="?page=<?php echo $currentPage - 1 ?>">Previous</a>
+        </li>
+      <?php } ?>
+      <?php if ($startPage > 1) { ?>
+        <li class="page-item">
+          <a class="page-link" href="?page=1">1</a>
+        </li>
+        <?php if ($startPage > 2) { ?>
+          <li class="page-item disabled">
+            <span class="page-link">...</span>
+          </li>
+        <?php } ?>
+      <?php } ?>
+      <?php for ($i = $startPage; $i <= $endPage; $i++) {
+        $class = ($i == $currentPage) ? 'active' : '';
       ?>
-        <li class="page-item <?php echo $class ?>"><a class="page-link" href="?page=<?php echo $i ?>"><?php echo $i ?></a></li>
+        <li class="page-item <?php echo $class ?>">
+          <a class="page-link" href="?page=<?php echo $i ?>"><?php echo $i ?></a>
+        </li>
+      <?php } ?>
+      <?php if ($endPage < $noOfPages) { ?>
+        <?php if ($endPage < $noOfPages - 1) { ?>
+          <li class="page-item disabled">
+            <span class="page-link">...</span>
+          </li>
+        <?php } ?>
+        <li class="page-item">
+          <a class="page-link" href="?page=<?php echo $noOfPages ?>"><?php echo $noOfPages ?></a>
+        </li>
+      <?php } ?>
+      <?php if ($currentPage < $noOfPages) { ?>
+        <li class="page-item">
+          <a class="page-link" href="?page=<?php echo $currentPage + 1 ?>">Next</a>
+        </li>
       <?php } ?>
     </ul>
   </nav>
