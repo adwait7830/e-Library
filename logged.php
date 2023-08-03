@@ -288,14 +288,14 @@ include('db.php');
   <div class="allBooks p-2 d-flex flex-wrap align-items-center justify-content-center">
 
     <div class="container-fluid d-flex justify-content-end" style='width:84%'>
-      <select name="" id="orderSelector" onchange="Changed()">
-        <option value="" disabled selected>Sort</option>
-        <option value="alphaAsc">Alphabetically &uarr;</option>
-        <option value="alphaDesc">Alphabetically &darr;</option>
-        <option value="uploadAsc">By Upload Date &uarr;</option>
-        <option value="uploadDesc">By Upload Date &darr;</option>
-        <option value="viewsAsc">By View Count &uarr;</option>
-        <option value="viewsDesc">By View Count &darr;</option>
+      <label for="orderSelector">Sort Books</label>
+      <select class="ms-1" name="" id="orderSelector">
+        <option value="uploadAsc">Oldest First</option>
+        <option value="uploadDesc">Newest First</option>
+        <option value="alphaAsc" selected>By Name A&rarr;Z</option>
+        <option value="alphaDesc">By Name Z&rarr;A</option>
+        <option value="viewsAsc">Most Viewed</option>
+        <option value="viewsDesc">Rarely Visited</option>
       </select>
     </div>
 
@@ -307,6 +307,11 @@ include('db.php');
     $noOfBooks = $result1->num_rows;
     $booksPerPage = 8;
     $currentPage = 1;
+    $noOfPages = ceil($noOfBooks / $booksPerPage);
+    $maxVisiblePages = 5;
+
+    $startPage = max($currentPage - floor($maxVisiblePages / 2), 1);
+    $endPage = min($startPage + $maxVisiblePages - 1, $noOfPages);
 
     if (isset($_GET['page']) && is_numeric($_GET['page'])) {
       $currentPage = max(1, $_GET['page']);
@@ -314,55 +319,7 @@ include('db.php');
     $startFrom = ($currentPage - 1) * $booksPerPage;
     $stmt->close();
 
-    $column = 'id';
-    $order = 'ASC';
 
-
-    if (isset($_POST['orderSelector'])) {
-
-      switch ($_POST['orderSelector']) {
-        case 'alphaAsc':
-          $column = 'title';
-          $order = 'ASC';
-          break;
-        case 'alphaDesc':
-          $column = 'title';
-          $order = 'DESC';
-          break;
-        case 'uploadAsc':
-          $column = 'id';
-          $order = 'ASC';
-          break;
-        case 'uploadDesc':
-          $column = 'id';
-          $order = 'DESC';
-          break;
-        case 'viewsAsc':
-          $column = 'views';
-          $order = 'ASC';
-          break;
-        case 'viewDesc':
-          $column = 'views';
-          $order = 'DESC';
-          break;
-        default:
-          $column = 'id';
-          $order = 'ASC';
-      }
-
-    }
-
-    $stmt2 = $conn->prepare("SELECT * FROM all_books ORDER BY $column $order LIMIT  ?,?");
-    $stmt2->bind_param('ii', $startFrom, $booksPerPage);
-    $stmt2->execute();
-    $result = $stmt2->get_result();
-
-    $noOfBooks = $result1->num_rows;
-    $noOfPages = ceil($noOfBooks / $booksPerPage);
-    $maxVisiblePages = 5;
-
-    $startPage = max($currentPage - floor($maxVisiblePages / 2), 1);
-    $endPage = min($startPage + $maxVisiblePages - 1, $noOfPages);
 
     ?>
 
@@ -375,10 +332,18 @@ include('db.php');
         box-shadow: 0 3px 5px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
       }
     </style>
-    <?php while ($book = $result->fetch_assoc()) {
-      echo '
 
-      <div class=" book-card card m-5" style="width:15rem; height:27rem; cursor:pointer;" onclick="openBookInfo(' . $book['id'] . ')" id="${books[book].id}">
+    <div class='d-flex flex-wrap justify-content-center' id="bookContainer">
+    <?php
+      $stmt2 = $conn->prepare("SELECT * FROM all_books ORDER BY title LIMIT  ?,?");
+      $stmt2->bind_param('ii', $startFrom, $booksPerPage);
+      $stmt2->execute();
+      $result = $stmt2->get_result();
+
+      while ($book = $result->fetch_assoc()) {
+        echo '
+
+      <div class=" book-card card m-5" style="width:15rem; height:27rem; cursor:pointer;" onclick="openBookInfo(' . $book['id'] . ')">
       <img class="card-img-top h-75" src="' . $book['cover'] . '" alt="Book Image">
         <div class="card-body">
           <h5 class="card-title">' . $book['title'] . '</h5>
@@ -386,8 +351,10 @@ include('db.php');
         </div>
       </div>  
               ';
-    }
-    ?>
+      }
+      ?>
+    </div>
+
   </div>
 
   <nav aria-label="Page navigation">

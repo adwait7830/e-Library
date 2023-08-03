@@ -126,6 +126,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $stmt->execute();
         $stmt->close();
     }
+
+    if(isset($requestData['column']) && isset($requestData['order'])){
+
+        $column = $requestData['column'];
+        $order =  $requestData['order'];
+
+        
+    }
 } else {
     http_response_code(405);
     header("Location:logged.php");

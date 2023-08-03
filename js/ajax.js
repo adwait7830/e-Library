@@ -52,25 +52,42 @@ function openBookInfo(id) {
     });
 
   const overlay = document.querySelector('.overlay');
-  const pcViewCard = document.querySelector('.pc-view-card');
-  const mobileViewCard = document.querySelector('.mobile-view-card');
-
   overlay.style.display = 'block';
 
-  window.addEventListener('resize', function () {
-    const viewportWidth = window.innerWidth;
-
-    if (viewportWidth >= 992) {
-      pcViewCard.style.display = 'block';
-      mobileViewCard.style.display = 'none';
-    } else {
-      mobileViewCard.style.display = 'block';
-      pcViewCard.style.display = 'none';
-    }
-  });
+  window.addEventListener('resize', handleResize);
 
   window.dispatchEvent(new Event('resize'));
 }
+
+function handleResize() {
+  const pcViewCard = document.querySelector('.pc-view-card');
+  const mobileViewCard = document.querySelector('.mobile-view-card');
+  const viewportWidth = window.innerWidth;
+
+  if (viewportWidth >= 992) {
+    pcViewCard.style.display = 'block';
+    mobileViewCard.style.display = 'none';
+  } else {
+    mobileViewCard.style.display = 'block';
+    pcViewCard.style.display = 'none';
+  }
+}
+
+function closeBookInfo() {
+
+  const currentURL = new URL(window.location.href);
+  const newURL = `${currentURL.origin}${currentURL.pathname}${currentURL.search}`;
+  window.history.replaceState({}, '', newURL);
+
+  document.querySelector(".overlay").style.display = "none";
+  document.querySelectorAll(".bookInfo").forEach((element) => {
+    element.style.display = "none";
+  });
+  window.removeEventListener('resize', handleResize);
+
+}
+
+
 
 
 document.getElementById("addBookForm").addEventListener("submit", function (event) {
@@ -177,4 +194,45 @@ document.getElementById("editBookForm").addEventListener("submit", function (eve
     });
 });
 
+
+document.getElementById("orderSelector").addEventListener('change', function (event) {
+
+  orders = {
+
+    alphaAsc: {
+      column: 'title',
+      order: 'ASC',
+    },
+    alphaDesc: {
+      column: 'title',
+      order: 'DESC'
+    },
+    uploadAsc: {
+      column: 'id',
+      order: 'ASC',
+    },
+    uploadDesc: {
+      column: 'id',
+      order: 'DESC'
+    },
+    viewsAsc: {
+      column: 'views',
+      order: 'ASC',
+    },
+    viewsDesc: {
+      column: 'views',
+      order: 'DESC'
+    },
+
+
+  };
+
+  var selectedOrder = orders[event.target.value];
+
+  document.getElementById('bookContainer').innerHTML = `
+  
+
+  `;
+
+});
 

@@ -21,18 +21,6 @@ function toggleAddBookModal() {
   }
 }
 
-function closeBookInfo() {
-
-  const currentURL = new URL(window.location.href);
-  const newURL = `${currentURL.origin}${currentURL.pathname}${currentURL.search}`;
-  window.history.replaceState({}, '', newURL);
-
-  document.querySelector(".overlay").style.display = "none";
-  document.querySelectorAll(".bookInfo").forEach((element) => {
-    element.style.display = "none";
-  });
-
-}
 
 function editModalConfig(){
 
