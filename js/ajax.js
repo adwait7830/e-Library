@@ -1,3 +1,5 @@
+
+
 function getIdFromURL() {
   const currentURL = new URL(window.location.href);
   return currentURL.hash.substring(1);
@@ -52,8 +54,7 @@ function openBookInfo(id) {
     });
 
   const overlay = document.querySelector('.overlay');
-  overlay.style.display = 'block';
-
+  overlay.classList.toggle('d-none');
   window.addEventListener('resize', handleResize);
 
   window.dispatchEvent(new Event('resize'));
@@ -194,45 +195,72 @@ document.getElementById("editBookForm").addEventListener("submit", function (eve
     });
 });
 
+document.querySelectorAll('.contactUs').forEach((form) => {
+  form.addEventListener('submit', function (event) {
+    event.preventDefault();
+    const formData = new FormData(event.target);
 
-document.getElementById("orderSelector").addEventListener('change', function (event) {
+    fetch('services.php', {
+      method: 'POST',
+      body: formData,
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        };
+        return {};
+      })
+      .then(() => {
 
-  orders = {
+      })
+      .catch((error) => {
 
-    alphaAsc: {
-      column: 'title',
-      order: 'ASC',
-    },
-    alphaDesc: {
-      column: 'title',
-      order: 'DESC'
-    },
-    uploadAsc: {
-      column: 'id',
-      order: 'ASC',
-    },
-    uploadDesc: {
-      column: 'id',
-      order: 'DESC'
-    },
-    viewsAsc: {
-      column: 'views',
-      order: 'ASC',
-    },
-    viewsDesc: {
-      column: 'views',
-      order: 'DESC'
-    },
+        console.log(error);
 
-
-  };
-
-  var selectedOrder = orders[event.target.value];
-
-  document.getElementById('bookContainer').innerHTML = `
-  
-
-  `;
-
+      });
+  })
 });
 
+document.getElementById('searchForm').addEventListener('submit', function (event) {
+  event.preventDefault();
+  const formData = new FormData(event.target);
+  fetch('bookHandling.php', {
+    method: 'POST',
+    body: formData,
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      var resultDiv = document.getElementById('searchResult');
+      while (resultDiv.firstChild) {
+        resultDiv.removeChild(resultDiv.firstChild);
+      }
+      data.forEach(book => {
+        const bookDiv = document.createElement('div');
+        bookDiv.innerHTML = `
+        <div class=" book-card card m-5" style="width:15rem; height:27rem; cursor:pointer;" onclick="openBookInfo(${book.id})">
+        <img class="card-img-top h-75" src="${book.cover}" alt="Book Image">
+          <div class="card-body">
+            <h5 class="card-title">${book.title}</h5>
+            <h6 class="card-subtitle text-body-secondary">${book.author}</h6>
+          </div>
+        </div>
+        <style>
+      .book-card {
+        background-color: inherit;
+      }
+
+      .book-card:hover {
+        box-shadow: 0 3px 5px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+      }
+    </style>  
+        `;
+        resultDiv.appendChild(bookDiv);
+      });
+    })
+    .catch((error) => {
+
+      console.log(error);
+
+    });
+
+})

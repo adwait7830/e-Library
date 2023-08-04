@@ -53,10 +53,10 @@ include('db.php');
         <div class="modal-content d-flex flex-column align-items-center">
           <form class="modal-body contactUs">
             <h2>CONTACT US</h2>
-            <input placeholder="Write your name here.."></input>
-            <input placeholder="Let us know how to contact you back.." type='email'></input>
-            <input placeholder="What would you like to tell us.."></input>
-            <button action='' method='post' name='feedback'>Send Message</button>
+            <input placeholder="Write your name here.." required=''></input>
+            <input placeholder="Let us know how to contact you back.." type='email' required=''></input>
+            <input placeholder="What would you like to tell us.." required=''></input>
+            <button action='' method='post' name='feedback' data-bs-dismiss='modal'>Send Message</button>
           </form>
         </div>
       </div>

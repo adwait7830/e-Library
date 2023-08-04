@@ -31,11 +31,11 @@ include('db.php');
       </button>
       <div class="collapse navbar-collapse justify-content-lg-end" id="navbarID">
         <ul class="navbar-nav text-lg-center align-items-lg-center ">
-          <li class="nav-item"><a class="n-item fs-4" href="#about">All Books</a></li>
+          <li class="nav-item"><a class="n-item fs-4" onclick="showAllBooks()">All Books</a></li>
           <li class="nav-item"><a class="n-item fs-4" href="#" data-bs-toggle="modal" data-bs-target="#contactForm">Contact Us</a></li>
           <li class="nav-item"><a class="n-item fs-4" href="#about">About</a></li>
           <li class="nav-item d-none d-lg-block">
-            <button type="button" onclick="toggleProfileModal()" class=" ms-lg-2 btn rounded-circle profile-btn btn-secondary">
+            <button type="button" data-bs-toggle="modal" data-bs-target="#profileModal" class=" ms-lg-2 btn rounded-circle profile-btn btn-secondary">
               <i class="fas fa-user"></i>
             </button>
           </li>
@@ -44,17 +44,19 @@ include('db.php');
     </div>
   </nav>
 </header>
-<div class="overlay" style='display:none'></div>
+<div class="overlay d-none"></div>
+
+
 
 <div class="modal fade" id="contactForm" tabindex="-1" aria-labelledby="contactFormLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content d-flex flex-column align-items-center">
       <form class="modal-body contactUs">
         <h2>CONTACT US</h2>
-        <input placeholder="Write your name here.."></input>
-        <input placeholder="Let us know how to contact you back.." type='email'></input>
-        <input placeholder="What would you like to tell us.."></input>
-        <button action='' method='post' name='feedback'>Send Message</button>
+        <input name="name" placeholder="Write your name here.." required=''></input>
+        <input name="email" placeholder="Let us know how to contact you back.." type='email' required=''></input>
+        <input name="response" placeholder="What would you like to tell us.." required=''></input>
+        <button type="submit" name='feedback' data-bs-dismiss="modal">Send Message</button>
       </form>
     </div>
   </div>
@@ -70,16 +72,38 @@ include('db.php');
   $stmt->execute();
   $result = $stmt->get_result();
   $user = $result->fetch_assoc();
-
+  $stmt->close();
   if ($user) {
     $name = $user['name'];
     $email = $user['email'];
     $profession = $user['profession'];
   } else {
-    echo 'Error';
+    echo '
+    <div id="sessionOut" class="w-100 h-100 bg-body-tertiary position-fixed top-0">
+      <div id="sessionDialog" class="d-flex flex-column text-center align-items-center justify-content-center" >
+      <p class="m-0">Session out</p>
+      <p class="m-0">Refresh to proceed</p>
+      </div>
+    </div>
+    <style>
+    #sessionOut{
+      z-index:9999;
+      display: grid;
+      place-items: center;
+    }
+    #sessionDialog{
+      width:175px;
+      height:100px;
+      background: white;
+      box-shadow: 0 3px 5px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+      border-radius: 5px;
+    }
+    </style>
+    ';
+    session_destroy();
   }
 
-  $stmt->close();
+
   ?>
 
   <div class=' bookInfo pc-view-card'>
@@ -231,14 +255,14 @@ include('db.php');
             </div>
             <ul class="list-group list-group-flush">
               <li class="list-group-item"><button class="btn border-0" href="#collection">My Collection</button></li>
-              <li class="list-group-item"><button class="btn border-0" onclick="toggleAddBookModal()">Add a book</button></li>
+              <li class="list-group-item"><button class="btn border-0" data-bs-target="#add-modal" data-bs-toggle='modal'>Add a book</button></li>
               <li class="list-group-item"><button class="btn border-0">Edit Profile</button></li>
             </ul>
           </div>
         </div>
         <form class="modal-footer justify-content-between" action="" method="post">
           <button type="submit" class="btn btn-danger" name="log-out" onclick="log_out()">Log out<i class="fa-solid fa-right-from-bracket ms-2"></i></button>
-          <button type="button" class="btn btn-secondary" onclick="toggleProfileModal()">Close</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
         </form>
       </div>
     </div>
@@ -271,31 +295,45 @@ include('db.php');
         </div>
         <div class="modal-footer">
           <button type="submit" name='add-book' class="btn btn-primary">Add Book</button>
-          <button type="button" class="btn btn-secondary" onclick="toggleAddBookModal()">Cancel</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss='modal'>Cancel</button>
         </div>
       </form>
     </div>
   </div>
-  <div class="searchbar w-100 d-flex flex-lg-row justify-content-center align-content-center py-5">
-    <input class="w-50 rounded-pill border-0 px-2 bg-warning me-3" placeholder="Enter book title..." type="text">
-    <button class="btn btn-sm btn-warning rounded-circle"><i class="fas fa-search m-2"></i></button>
+
+  <form id="searchForm" class="my-5 container d-flex flex-row justify-content-center flex-row align-content-center" style="height: 3rem;">
+    <input id="searchIp" name="searchIp" class="w-75 bg-warning rounded-start-pill border-0 p-2" type="text" placeholder='Search by title/author'>
+    <button type="submit" id="searchBtn" class='btn btn-sm bg-warning rounded-end-pill' style='height:3rem;width:3rem'><i id='searchIcon' class="fa-solid fa-search fa-lg"></i></button>
+    <style>
+      #searchBtn:hover {
+        transform: scale(1.1);
+      }
+
+      #searchIp:focus {
+        outline: none;
+      }
+    </style>
+  </form>
+
+  <div class="container p-5 d-flex d-none flex-wrap justify-content-center" id='searchResult'>
   </div>
 
+  <div class="myCollection">
 
+  </div>
   <!-- Book are getting printed here -->
 
-
-  <div class="allBooks p-2 d-flex flex-wrap align-items-center justify-content-center">
+  <div class="p-2 d-flex flex-wrap align-items-center justify-content-center" id='allBooks'>
 
     <div class="container-fluid d-flex justify-content-end" style='width:84%'>
       <label for="orderSelector">Sort Books</label>
       <select class="ms-1" name="" id="orderSelector">
         <option value="uploadAsc">Oldest First</option>
         <option value="uploadDesc">Newest First</option>
-        <option value="alphaAsc" selected>By Name A&rarr;Z</option>
+        <option value="alphaAsc">By Name A&rarr;Z</option>
         <option value="alphaDesc">By Name Z&rarr;A</option>
-        <option value="viewsAsc">Most Viewed</option>
-        <option value="viewsDesc">Rarely Visited</option>
+        <option value="viewsDesc">Most Viewed</option>
+        <option value="viewsAsc">Rarely Visited</option>
       </select>
     </div>
 
@@ -315,6 +353,7 @@ include('db.php');
 
     if (isset($_GET['page']) && is_numeric($_GET['page'])) {
       $currentPage = max(1, $_GET['page']);
+      $currentPage = min($noOfPages, $_GET['page']);
     }
     $startFrom = ($currentPage - 1) * $booksPerPage;
     $stmt->close();
@@ -333,16 +372,20 @@ include('db.php');
       }
     </style>
 
-    <div class='d-flex flex-wrap justify-content-center' id="bookContainer">
-    <?php
-      $stmt2 = $conn->prepare("SELECT * FROM all_books ORDER BY title LIMIT  ?,?");
+    <div id='bookContainer' class='d-flex flex-wrap justify-content-center'>
+      <?php
+
+      $column = $_COOKIE['column'] ?? 'id';
+      $order = $_COOKIE['order'] ?? 'ASC';
+
+
+      $stmt2 = $conn->prepare("SELECT * FROM all_books ORDER BY $column $order  LIMIT  ?,?");
       $stmt2->bind_param('ii', $startFrom, $booksPerPage);
       $stmt2->execute();
       $result = $stmt2->get_result();
 
       while ($book = $result->fetch_assoc()) {
         echo '
-
       <div class=" book-card card m-5" style="width:15rem; height:27rem; cursor:pointer;" onclick="openBookInfo(' . $book['id'] . ')">
       <img class="card-img-top h-75" src="' . $book['cover'] . '" alt="Book Image">
         <div class="card-body">
@@ -357,7 +400,7 @@ include('db.php');
 
   </div>
 
-  <nav aria-label="Page navigation">
+  <nav id="pagination" aria-label="Page navigation">
     <ul class="pagination justify-content-center">
       <?php if ($currentPage > 1) { ?>
         <li class="page-item">
@@ -421,7 +464,6 @@ include('db.php');
 
 <script>
   <?php
-
 
   if (isset($_POST['log-out'])) {
     echo 'window.location.replace("index.php");';

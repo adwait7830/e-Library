@@ -88,11 +88,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
             $stmt = $conn->prepare('UPDATE all_books SET cover = ?, title = ?, author = ?, description = ? WHERE id = ?');
             $stmt->bind_param('ssssi', $target_file, $title, $author, $description, $id);
-        }else{
+        } else {
 
             $stmt = $conn->prepare('UPDATE all_books SET title = ?, author = ?, description = ? WHERE id = ?');
             $stmt->bind_param('sssi', $title, $author, $description, $id);
-
         }
 
         if ($stmt->execute()) {
@@ -127,12 +126,28 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $stmt->close();
     }
 
-    if(isset($requestData['column']) && isset($requestData['order'])){
+    if (isset($_POST['searchIp'])) {
 
-        $column = $requestData['column'];
-        $order =  $requestData['order'];
+        $keyword = $_POST['searchIp'];
+        $stmt = $conn->prepare("SELECT * FROM all_books");
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $books = array();
+        while ($book = $result->fetch_assoc()) {
+            if (stripos($book['author'],$keyword) !== false | stripos($book['title'],$keyword) !== false) {
 
-        
+                $books[] = array(
+                    'id'=>$book['id'],
+                    'title' => $book['title'],
+                    'author' => $book['author'],
+                    'description' => $book['description'],
+                    'cover' => $book['cover'],
+                );
+            }
+        }
+        $jsonData = json_encode($books);
+        header('Content-Type: application/json');
+        echo $jsonData;
     }
 } else {
     http_response_code(405);
