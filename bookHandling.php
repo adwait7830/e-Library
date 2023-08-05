@@ -88,10 +88,18 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
             $stmt = $conn->prepare('UPDATE all_books SET cover = ?, title = ?, author = ?, description = ? WHERE id = ?');
             $stmt->bind_param('ssssi', $target_file, $title, $author, $description, $id);
+
+            $jsonData = json_encode(array('response'=>'Cover photo received'));
+            header('Content-Type: application/json');
+            echo $jsonData;
+            
         } else {
 
             $stmt = $conn->prepare('UPDATE all_books SET title = ?, author = ?, description = ? WHERE id = ?');
             $stmt->bind_param('sssi', $title, $author, $description, $id);
+            $jsonData = json_encode(array('response'=>'Cover photo not received'));
+            header('Content-Type: application/json');
+            echo $jsonData;
         }
 
         if ($stmt->execute()) {

@@ -29,7 +29,7 @@ include('db.php');
       <button type="button" onclick="toggleProfileModal()" class=" d-lg-none ms-lg-2 btn rounded-circle profile-btn btn-secondary">
         <i class="fas fa-user"></i>
       </button>
-      <div class="collapse navbar-collapse justify-content-lg-end" id="navbarID">
+       <div class="collapse navbar-collapse justify-content-lg-end" id="navbarID">
         <ul class="navbar-nav text-lg-center align-items-lg-center ">
           <li class="nav-item"><a class="n-item fs-4" onclick="showAllBooks()">All Books</a></li>
           <li class="nav-item"><a class="n-item fs-4" href="#" data-bs-toggle="modal" data-bs-target="#contactForm">Contact Us</a></li>
@@ -173,9 +173,9 @@ include('db.php');
           <h5 class="modal-title">Edit Book Details</h5>
         </div>
         <div class="modal-body">
-          <div class="form-group">
-            <label for="newCover">Book Cover</label>
-            <input type="file" class="form-control-file" name='editCover' id="newCover">
+          <div class="form-group input-group">
+            <label class="input-group-text" for="newCover">Book Cover</label>
+            <input type="file" class="form-control" name='editCover' id="newCover">
           </div>
           <div class="form-group">
             <label for="newTitle">Title</label>
@@ -270,15 +270,15 @@ include('db.php');
 
   <div id="add-modal" class="modal z-4 add-book" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
-      <form class="modal-content" id="addBookForm" action="bookHandling.php" method="POST" enctype="multipart/form-data">
+      <form class="modal-content" id="addBookForm" enctype="multipart/form-data">
         <input type="hidden" name='addBook'>
         <div class="modal-header">
           <h5 class="modal-title">Add Book Details</h5>
         </div>
         <div class="modal-body">
-          <div class="form-group">
-            <label for="setCover">Book Cover</label>
-            <input type="file" class="form-control-file" name='setCover' required="">
+          <div class="form-group input-group">
+            <label class="input-group-text" for="setCover">Book Cover</label>
+            <input type="file" class="form-control" name='setCover' required="">
           </div>
           <div class="form-group">
             <label for="setTitle">Title</label>

@@ -109,29 +109,7 @@ document.getElementById("addBookForm").addEventListener("submit", function (even
     .then((data) => {
 
       window.location.reload();
-      const toastContainer = document.getElementById("home");
 
-      const toast = document.createElement("div");
-      toast.classList.add("toast");
-      toast.classList.add("show");
-      toast.setAttribute("role", "alert");
-      toast.setAttribute("aria-live", "assertive");
-      toast.setAttribute("aria-atomic", "true");
-
-      const toastBody = document.createElement("div");
-      toastBody.classList.add("toast-body");
-      toastBody.textContent = "Data inserted successfully!";
-
-      toast.appendChild(toastBody);
-
-      toastContainer.appendChild(toast);
-
-      setTimeout(() => {
-        toast.classList.remove("show");
-        toastContainer.removeChild(toast);
-      }, 3000);
-
-      openBookInfo()
     })
     .catch((error) => {
 
@@ -159,6 +137,7 @@ document.getElementById("dltBookForm").addEventListener('submit', function (even
     })
     .then((data) => {
       window.location.reload();
+      showToast('Book Added Successfully')
     })
     .catch(error => console.log('error'));
 
@@ -181,12 +160,11 @@ document.getElementById("editBookForm").addEventListener("submit", function (eve
       if (!response.ok) {
         throw new Error("Network response was not ok");
       };
-      return {};
+      return response.json();
     })
-    .then(() => {
+    .then((data) => {
 
-      window.location.reload();
-
+      console.log(data);
     })
     .catch((error) => {
 
@@ -264,3 +242,19 @@ document.getElementById('searchForm').addEventListener('submit', function (event
     });
 
 })
+
+
+function showToast(message) {
+  // Create a div element for the toast
+  const toast = document.createElement('div');
+  toast.classList.add('toast');
+  toast.innerText = message;
+
+  // Add the toast to the page
+  document.body.appendChild(toast);
+
+  // Automatically remove the toast after 3 seconds
+  setTimeout(() => {
+    document.body.removeChild(toast);
+  }, 3000);
+}

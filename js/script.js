@@ -100,27 +100,27 @@ function getSelector(column, order) {
 }
 
 
-document.getElementById('searchBtn').addEventListener('mouseenter',function(){
+document.getElementById('searchBtn').addEventListener('mouseenter', function () {
   document.getElementById('searchIcon').classList.toggle('fa-search');
   document.getElementById('searchIcon').classList.toggle('fa-arrow-right');
 
 });
-document.getElementById('searchBtn').addEventListener('mouseleave',function(){
+document.getElementById('searchBtn').addEventListener('mouseleave', function () {
   document.getElementById('searchIcon').classList.toggle('fa-search');
   document.getElementById('searchIcon').classList.toggle('fa-arrow-right');
 });
 
 
-document.getElementById('searchBtn').addEventListener('click',function(){
+document.getElementById('searchBtn').addEventListener('click', function () {
   var toSearch = document.getElementById('searchIp').value.trim();
-  if(toSearch && toSearch.length > 0){
+  if (toSearch && toSearch.length > 0) {
     document.getElementById('allBooks').classList.add('d-none');
     document.getElementById('pagination').classList.add('d-none');
     document.getElementById('searchResult').classList.remove('d-none');
   }
 })
 
-function showAllBooks(){
+function showAllBooks() {
   window.location.reload();
 }
 

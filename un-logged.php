@@ -80,20 +80,22 @@ include('db.php');
           <h1 class="modal-title fs-5" id="exampleModalLabel">Log in to e-library</h1>
         </div>
         <div class="modal-body">
-
           <div class="d-flex flex-column align-items-center justify-content-center d-none" id="signUpDialog">
-            <form class="d-flex flex-column align-items-center justify-content-center gap-4 w-75" action="" method="post">
+            <form class="d-flex flex-column align-items-center justify-content-center w-75" action="" method="post">
               <input type="text" class="loginField w-100" id="setName" name="setName" placeholder="Name" required="">
               <input type="text" class="loginField w-100" id="setUsername" name="setUsername" placeholder="User name" required="">
               <input type="email" class="loginField w-100" id="setEmail" name="setEmail" placeholder="Email" required="">
-              <select class="w-100" name="setProfession" id="setProfession" required="">
+              <select class="m-1 form-select w-100" name="setProfession" id="setProfession" required="">
                 <option disabled selected>Choose your profession</option>
                 <option value="Student">Student</option>
                 <option value="Working Professional">Working Professional</option>
                 <option value="Not available">Rather not to say</option>
               </select>
-              <input type="password" class="loginField w-100" id="setPassword" name="setPassword" placeholder="Password" required="">
-              <button class="btn btn-primary w-50" type="submit" name="signUp">Sign Up</button>
+              <input type="password" aria-describedby="passwordHelpBlock" class="loginField w-100" id="setPassword" name="setPassword" placeholder="Password" required="">
+              <div id="passwordHelpBlock" class="form-text">
+                Your password must be 8-20 characters long, contain letters and numbers, and must not contain spaces, special characters, or emoji.
+              </div>
+              <button class="mt-3 btn btn-primary w-50" type="submit" name="signUp">Sign Up</button>
             </form>
             <p class="mt-3">Already have an account? <a onclick="toggleLogin()" class="text-decoration-none text-black" style='cursor:pointer'>Sign in</a></p>
           </div>
