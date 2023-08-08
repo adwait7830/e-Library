@@ -78,8 +78,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $stmt->fetch();
             $stmt->close();
 
-            $imagePath = "cover/" . $imageName;
-            unlink($imagePath);
+            unlink($imageName);
 
             $target_dir = 'cover/';
             $cover_name = convertToImageUrl($title) . "." . pathinfo($cover["name"], PATHINFO_EXTENSION);
@@ -123,8 +122,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $stmt->fetch();
         $stmt->close();
 
-        $imagePath = "cover/" . $imageName;
-        unlink($imagePath);
+        unlink($imageName);
 
         $deleteSql = "DELETE FROM all_books WHERE id = ?";
         $stmt = $conn->prepare($deleteSql);
