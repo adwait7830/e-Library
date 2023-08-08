@@ -288,22 +288,6 @@
   width: 20rem;
 }
 
-.login-section {
-  display: none;
-  width: 350px;
-  height: 500px;
-  background: red;
-  overflow: hidden;
-  background-color: #573b8a;
-  border-radius: 10px;
-  box-shadow: 5px 20px 50px #000;
-}
-
-#chk {
-  display: none;
-}
-
-
 
 .btn-close:hover {
 
@@ -313,52 +297,6 @@
 
 
 
-
-
-.loginField {
-
-  background: #e0dede;
-  justify-content: center;
-  display: flex;
-  margin: 10px auto;
-  padding: 10px;
-  border: none;
-  outline: none;
-  border-radius: 5px;
-}
-
-
-
-.login-section button:hover {
-  box-shadow: 0 5px 5px 0 rgba(0, 0, 0, 0.2);
-  ;
-}
-
-.signInDialog {
-  margin-top: 70px;
-  height: 460px;
-  background: #eee;
-  border-radius: 60% / 10%;
-  transform: translateY(-180px);
-  transition: .8s ease-in-out;
-}
-
-.signInDialog label {
-  color: #573b8a;
-  transform: scale(.6);
-}
-
-#chk:checked~.signInDialog {
-  transform: translateY(-500px);
-}
-
-#chk:checked~.signInDialog label {
-  transform: scale(1);
-}
-
-#chk:checked~.signUpDialog label {
-  transform: scale(.6);
-}
 
 .contactUs {
 

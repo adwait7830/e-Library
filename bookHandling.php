@@ -89,15 +89,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $stmt = $conn->prepare('UPDATE all_books SET cover = ?, title = ?, author = ?, description = ? WHERE id = ?');
             $stmt->bind_param('ssssi', $target_file, $title, $author, $description, $id);
 
-            $jsonData = json_encode(array('response'=>'Cover photo received'));
+            $jsonData = json_encode(array('response' => 'Cover photo received'));
             header('Content-Type: application/json');
             echo $jsonData;
-            
         } else {
 
             $stmt = $conn->prepare('UPDATE all_books SET title = ?, author = ?, description = ? WHERE id = ?');
             $stmt->bind_param('sssi', $title, $author, $description, $id);
-            $jsonData = json_encode(array('response'=>'Cover photo not received'));
+            $jsonData = json_encode(array('response' => 'Cover photo not received'));
             header('Content-Type: application/json');
             echo $jsonData;
         }
@@ -134,24 +133,24 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $stmt->close();
     }
 
-    if (isset($_POST['searchIp'])) {
+    if (isset($requestData['keyword'])) {
 
-        $keyword = $_POST['searchIp'];
-        $stmt = $conn->prepare("SELECT * FROM all_books");
+        $keyword = $requestData['keyword'];
+        $stmt = $conn->prepare("SELECT * FROM all_books WHERE author LIKE ? OR title LIKE ?");
+        $keywordPattern = "%" . $keyword . "%";
+        $stmt->bind_param("ss", $keywordPattern, $keywordPattern);
         $stmt->execute();
         $result = $stmt->get_result();
         $books = array();
         while ($book = $result->fetch_assoc()) {
-            if (stripos($book['author'],$keyword) !== false | stripos($book['title'],$keyword) !== false) {
-
-                $books[] = array(
-                    'id'=>$book['id'],
-                    'title' => $book['title'],
-                    'author' => $book['author'],
-                    'description' => $book['description'],
-                    'cover' => $book['cover'],
-                );
-            }
+            
+            $books[] = array(
+                'id' => $book['id'],
+                'title' => $book['title'],
+                'author' => $book['author'],
+                'description' => $book['description'],
+                'cover' => $book['cover'],
+            );
         }
         $jsonData = json_encode($books);
         header('Content-Type: application/json');

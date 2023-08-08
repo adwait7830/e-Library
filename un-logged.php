@@ -1,5 +1,4 @@
 <?php
-session_start();
 if (ini_get('register_globals')) {
   foreach ($_SESSION as $key => $value) {
     if (isset($GLOBALS[$key]))
@@ -19,7 +18,6 @@ include('db.php');
   <link rel="icon" href="images/title.png">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-
 <body class="body">
   <div class="home">
     <nav class="navbar navbar-expand-lg d-flex justify-content-between">
@@ -81,30 +79,55 @@ include('db.php');
         </div>
         <div class="modal-body">
           <div class="d-flex flex-column align-items-center justify-content-center d-none" id="signUpDialog">
-            <form class="d-flex flex-column align-items-center justify-content-center w-75" action="" method="post">
-              <input type="text" class="loginField w-100" id="setName" name="setName" placeholder="Name" required="">
-              <input type="text" class="loginField w-100" id="setUsername" name="setUsername" placeholder="User name" required="">
-              <input type="email" class="loginField w-100" id="setEmail" name="setEmail" placeholder="Email" required="">
-              <select class="m-1 form-select w-100" name="setProfession" id="setProfession" required="">
-                <option disabled selected>Choose your profession</option>
-                <option value="Student">Student</option>
-                <option value="Working Professional">Working Professional</option>
-                <option value="Not available">Rather not to say</option>
-              </select>
-              <input type="password" aria-describedby="passwordHelpBlock" class="loginField w-100" id="setPassword" name="setPassword" placeholder="Password" required="">
-              <div id="passwordHelpBlock" class="form-text">
-                Your password must be 8-20 characters long, contain letters and numbers, and must not contain spaces, special characters, or emoji.
+
+            <form id="signUpForm" class="d-flex flex-column gap-2 align-items-center justify-content-center w-75">
+              <input type="hidden" name="signUp">
+              <div class="form-floating w-100">
+                <input type="text" class="form-control" id="setName" placeholder="Name" name="setName" required="">
+                <label for="setName">Name</label>
               </div>
-              <button class="mt-3 btn btn-primary w-50" type="submit" name="signUp">Sign Up</button>
+              <div class="form-floating w-100">
+                <input type="text" class="form-control" id="setUsername" placeholder="Username" name="setUsername" required="">
+                <label for="setUsername">Username</label>
+                <span id='setUsernameBlock' class="form-text ms-0 text-danger"></span>
+              </div>
+              <div class="form-floating w-100">
+                <input type="email" class="form-control" id="setEmail" placeholder="Email" name="setEmail" required="">
+                <label for="setEmail">Email</label>
+                <span id='setEmailBlock' class="form-text ms-0 text-danger"></span>
+              </div>
+              <div class="w-100">
+                <select class="form-select" name="setProfession" id="setProfession" required="">
+                  <option value="" disabled selected>Choose your profession</option>
+                  <option value="Student">Student</option>
+                  <option value="Working Professional">Working Professional</option>
+                  <option value="Not available">Rather not to say</option>
+                </select>
+              </div>
+              <div class="form-floating w-100">
+                <input type="password" class="form-control" aria-describedby="passwordHelpBlock" id="setPassword" placeholder="Password" name="setPassword" required="">
+                <label for="setPassword">Password</label>
+                <span id="passwordHelpBlock" class="form-text ms-0 text-danger"></span>
+              </div>
+              <button class="mt-3 btn btn-primary w-50" type="submit">Sign Up</button>
             </form>
             <p class="mt-3">Already have an account? <a onclick="toggleLogin()" class="text-decoration-none text-black" style='cursor:pointer'>Sign in</a></p>
           </div>
 
           <div class="d-flex flex-column align-items-center justify-content-center" id="signInDialog">
-            <form class="d-flex flex-column align-items-center justify-content-center gap-4 w-75" action="" method="post">
-              <input class="loginField w-100" id="username" name="username" placeholder="Username" required="">
-              <input class="loginField w-100" id="password" type="password" name="password" placeholder="Password" required="">
-              <button class="btn btn-primary w-50" name="signIn">Sign In</button>
+            <form id="signInForm" class="d-flex flex-column align-items-center justify-content-center gap-4 w-75">
+              <input type="hidden" name="signIn">
+              <div class="form-floating w-100">
+                <input type="text" class="form-control" id="username" placeholder="Username" name="username" required="">
+                <label for="username">Username</label>
+                <span id='usernameBlock' class="form-text ms-0 text-danger"></span>
+              </div>
+              <div class="form-floating w-100">
+                <input type="password" class="form-control" aria-describedby="passwordHelpBlock" id="password" placeholder="password" name="password" required="">
+                <label for="password">Password</label>
+                <span id='passwordBlock' class="form-text ms-0 text-danger"></span>
+              </div>
+              <button type="submit" class="btn btn-primary w-50">Sign In</button>
             </form>
             <p class="mt-3">New to e-Library? <a onclick="toggleLogin()" class="text-decoration-none text-black" style='cursor:pointer'>Sign up</a></p>
           </div>
@@ -172,18 +195,18 @@ include('db.php');
   </div>
 
   <div class='bookInfo mobile-view-card'>
-    <div class="card dialog position-fixed book-dialog " style="width: 18rem;">
+    <div class="card dialog position-fixed book-dialog " style="width: 19rem;">
       <div class="card-header d-flex justify-content-between">
         Book Information <button type="button" class="btn-close align-end" aria-label="Close" onclick="closeBookInfo()"></button>
       </div>
       <div class="card-body">
-        <div class="d-flex align-content-center justify-content-center">
+        <div class="cover d-flex align-content-center justify-content-center ms-auto me-auto" style="width: 70%;">
           <img src="data:image/jpeg;base64,${book.cover}" class="img-fluid h-75 w-50" alt="Image Not Available">
         </div>
-        <h2 id='title' class="card-title text-black text-center">Not Available</h2>
-        <h4 id='author' class="card-subtitle text-secondary text-center">Not Available</h4>
+        <h2 id='title' class="book-title card-title text-black text-center">Not Available</h2>
+        <h4 id='author' class="book-author card-subtitle text-secondary text-center">Not Available</h4>
         <div class="card-text-scroll mt-2">
-          <div id='description' class="card-text-scroll-inner text-center">Not Available</div>
+          <div id='description' class="book-description card-text-scroll-inner text-center">Not Available</div>
         </div>
       </div>
     </div>
@@ -248,68 +271,105 @@ include('db.php');
     }
   }
 
+  document.getElementById('setUsername').addEventListener('input', function(event) {
+    const username = event.target.value;
+    const helpBlock = document.getElementById('setUsernameBlock');
+    
+    if (/^\d+.*$/.test(username)) {
+      helpBlock.textContent = 'Username can not start with a number';
+    } else if (/\s/.test(username)) {
+      helpBlock.textContent = 'Username can not have a whitespace';
+    } else if (/[!@#$%^&*()+=\[\]{};':"\\|,.<>\/?]/.test(username)) {
+      helpBlock.textContent = 'Username can not have special characters except _';
+    } else if (/^.{0,4}$|^.{16,}$/.test(username)) {
+      helpBlock.textContent = 'Username should be 5 to 15 characters long';
+    } else {
+      helpBlock.textContent = '';
+      document.getElementById('setPassword').addEventListener('input', function(event) {
+        var pass = event.target.value;
+        const helpBlockText = document.getElementById('passwordHelpBlock');
+        if (pass === '') {
+          helpBlockText.textContent = 'Password field can not be empty'
+        } else if (/^.{0,7}$|^.{21,}$/.test(pass)) {
+          helpBlockText.textContent = 'Length should be between 8-20';
+        } else if (/^[a-zA-Z\d]*$/.test(pass)) {
+          helpBlockText.textContent = 'There should be at least one special character';
+        } else if (/^[^A-Z]*$/.test(pass)) {
+          helpBlockText.textContent = 'At least one capital letter';
+        } else if (/^[^\d]*$/.test(pass)) {
+          helpBlockText.textContent = 'There should be at least one number';
+        } else {
+          helpBlockText.textContent = '';
+          document.getElementById('signUpForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            document.getElementById('setUsernameBlock').textContent = '';
+            document.getElementById('setEmailBlock').textContent = '';
+            const formData = new FormData(event.target)
+            fetch('services.php', {
+                body: formData,
+                method: 'post'
+              })
+              .then(response => response.json())
+              .then(data => {
+                switch (data.response) {
+                  case 'registered':
+                    window.location.replace('index.php');
+                    break;
+                  case 'username':
+                    document.getElementById('setUsernameBlock').textContent = 'Username is Not Available';
+                    break;
+                  case 'email':
+                    document.getElementById('setEmailBlock').textContent = 'Email Already in Use';
+                    break;
+                }
+              })
+              .catch(error => console.error(error))
+          })
+
+        }
+
+      })
+
+    }
+  })
+
+
+
+  document.getElementById('signUpForm').addEventListener('submit', event => event.preventDefault());
+
+  document.getElementById('signInForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+    document.getElementById('passwordBlock').textContent = '';
+    document.getElementById('usernameBlock').textContent = '';
+    const formData = new FormData(event.target);
+
+    fetch('services.php', {
+        body: formData,
+        method: 'post',
+      })
+      .then(response => response.json())
+      .then(data => {
+        switch (data.response) {
+          case 'valid':
+            window.location.replace('index.php');
+            break;
+          case 'password':
+            document.getElementById('passwordBlock').textContent = 'Password Does Not Match';
+            break;
+          case 'username':
+            document.getElementById('usernameBlock').textContent = 'Invalid Username';
+            break;
+        }
+      })
+      .catch(error => console.error(error))
+  });
 
   <?php
-  if (isset($_POST['signIn'])) {
-
-    $username = $_POST['username'];
-    $password = $_POST['password'];
-    $uid = generateSessionToken();
-
-    $stmt = $conn->prepare("SELECT * FROM users WHERE username = ? AND password = ?");
 
 
-    $stmt->bind_param('ss', $username, $password);
-
-
-    try {
-      $stmt->execute();
-      $result = $stmt->get_result();
-      if ($result->num_rows > 0) {
-        $stmt->close();
-        $stmt2 = $conn->prepare("UPDATE users SET uid = ? WHERE username = ?");
-        $stmt2->bind_param('ss', $uid, $username);
-        $stmt2->execute();
-        $stmt2->close();
-        $_SESSION['token'] = $uid;
-        echo 'window.location.replace("index.php");';
-      } else {
-        echo 'window.location.replace("un-logged.php");';
-      }
-    } catch (Exception $e) {
-      echo "Error " . $e->getMessage();
-    }
-  }
-
-
-  if (isset($_POST['signUp'])) {
-
-    $uid = generateSessionToken();
-    $name = $_POST['setName'];
-    $username = $_POST['setUsername'];
-    $email = $_POST['setEmail'];
-    $profession = $_POST['setProfession'];
-    $password = $_POST['setPassword'];
-
-    $stmt = $conn->prepare("INSERT INTO users(uid,name,username,email, profession, password) VALUES(?,?,?,?,?,?)");
-    $stmt->bind_param('ssssss', $uid, $name, $username, $email, $profession, $password);
-
-    try {
-      $result = $stmt->execute();
-      if ($result) {
-        $_SESSION['token'] = $uid;
-        echo 'window.location.replace("index.php");';
-      } else {
-        echo 'window.location.replace("un-logged.php");';
-      }
-    } catch (Exception $e) {
-      echo "Error " . $e->getMessage();
-    }
-  }
   ?>
 </script>
-<script src="js/script.js" type="text/javascript"></script>
-<script src="js/ajax.js" type="text/javascript"></script>
+<script src='js/script1.js'></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://kit.fontawesome.com/8256093c76.js" crossorigin="anonymous"></script>
 

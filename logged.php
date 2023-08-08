@@ -301,19 +301,14 @@ include('db.php');
     </div>
   </div>
 
-  <form id="searchForm" class="my-5 container d-flex flex-row justify-content-center flex-row align-content-center" style="height: 3rem;">
-    <input id="searchIp" name="searchIp" class="w-75 bg-warning rounded-start-pill border-0 p-2" type="text" placeholder='Search by title/author'>
-    <button type="submit" id="searchBtn" class='btn btn-sm bg-warning rounded-end-pill' style='height:3rem;width:3rem'><i id='searchIcon' class="fa-solid fa-search fa-lg"></i></button>
-    <style>
-      #searchBtn:hover {
-        transform: scale(1.1);
-      }
-
+  <div id="searchForm" class="my-5 container d-flex flex-row justify-content-center flex-row align-content-center" style="height: 3rem;">
+    <input id="searchIp" name="searchIp" class="w-75 bg-warning rounded-pill border-0 p-2 text-center" type="text" placeholder='Search by Title/Author'>    <style>
+      
       #searchIp:focus {
         outline: none;
       }
     </style>
-  </form>
+  </div>
 
   <div class="container p-5 d-flex d-none flex-wrap justify-content-center" id='searchResult'>
   </div>
@@ -466,8 +461,9 @@ include('db.php');
   <?php
 
   if (isset($_POST['log-out'])) {
-    echo 'window.location.replace("index.php");';
     session_destroy();
+    echo 'window.location.replace("index.php");';
+    
   }
 
   if (!isset($_SESSION['token'])) {
@@ -476,8 +472,8 @@ include('db.php');
 
   ?>
 </script>
-<script src="js/script.js" type="text/javascript"></script>
-<script src="js/ajax.js" type="text/javascript"></script>
+<script src="js/script1.js" type="text/javascript"></script>
+<script src="js/script2.js" type="text/javascript"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://kit.fontawesome.com/8256093c76.js" crossorigin="anonymous"></script>
 
