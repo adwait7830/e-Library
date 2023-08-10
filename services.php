@@ -18,19 +18,23 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         $username = $_POST['username'];
         $password = $_POST['password'];
-        $stmt = $conn->prepare("SELECT password, uid FROM users WHERE username = ?");
+        $stmt = $conn->prepare("SELECT verified, password, uid FROM users WHERE username = ?");
         $stmt->bind_param('s', $username);
 
         $response = array();
         try {
             $stmt->execute();
-            $stmt->bind_result($storedPassword, $token);
+            $stmt->bind_result($verified,$storedPassword, $token);
 
             if ($stmt->fetch()) {
                 if (password_verify($password,$storedPassword)) {
-                    session_start();
+                    if($verified === 1){
+                        session_start();
                     $_SESSION['token'] = $token;
                     $response = array('response' => 'valid');
+                    }else{
+                        $response = array('response' => 'unverified');
+                    }
                 } else {
                     $response = array('response' => 'password');
                 }
@@ -101,5 +105,25 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         header('Content-Type: application/json');
         echo $jsonData;
 
+    }
+
+    if(isset($_POST['forgetPass'])){
+        $mail = $_POST['sendLinkMail'];
+
+        $stmt = $conn->prepare('SELECT uid FROM users WHERE email = ?');
+        $stmt->bind_param('s',$mail);
+        $stmt->execute();
+        $stmt->bind_result($id);
+        $response = array();
+        if($stmt->fetch()){
+            
+            $response = array('response'=>'sent');
+        }else{
+            $response = array('response'=>'email');
+        }
+
+        $jsonData = json_encode($response);
+        header('Content-Type: application/json');
+        echo $jsonData;
     }
 }

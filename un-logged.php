@@ -18,6 +18,7 @@ include('db.php');
   <link rel="icon" href="images/title.png">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
+
 <body class="body">
   <div class="home">
     <nav class="navbar navbar-expand-lg d-flex justify-content-between">
@@ -78,8 +79,9 @@ include('db.php');
           <h1 class="modal-title fs-5" id="exampleModalLabel">Log in to e-library</h1>
         </div>
         <div class="modal-body">
-          <div class="d-flex flex-column align-items-center justify-content-center d-none" id="signUpDialog">
 
+
+          <div class="d-flex flex-column align-items-center justify-content-center d-none" id="signUpDialog">
             <form id="signUpForm" class="d-flex flex-column gap-2 align-items-center justify-content-center w-75">
               <input type="hidden" name="signUp">
               <div class="form-floating w-100">
@@ -114,6 +116,7 @@ include('db.php');
             <p class="mt-3">Already have an account? <a onclick="toggleLogin()" class="text-decoration-none text-black" style='cursor:pointer'>Sign in</a></p>
           </div>
 
+
           <div class="d-flex flex-column align-items-center justify-content-center" id="signInDialog">
             <form id="signInForm" class="d-flex flex-column align-items-center justify-content-center gap-4 w-75">
               <input type="hidden" name="signIn">
@@ -128,8 +131,29 @@ include('db.php');
                 <span id='passwordBlock' class="form-text ms-0 text-danger"></span>
               </div>
               <button type="submit" class="btn btn-primary w-50">Sign In</button>
+              <span id='signInBlock' class="form-text ms-0 text-danger"></span>
             </form>
             <p class="mt-3">New to e-Library? <a onclick="toggleLogin()" class="text-decoration-none text-black" style='cursor:pointer'>Sign up</a></p>
+            <p>Forget Password? <a onclick="toggleForgetPass()" class="text-decoration-none text-black" style='cursor:pointer'>Reset</a></p>
+          </div>
+
+
+          <div class="d-flex flex-column align-items-center justify-content-center d-none" id="forgetPassDialog">
+            <div class='w-75'>
+              <p>Enter email to get reset link:</p>
+            </div>
+            <form class="d-flex flex-column align-items-center justify-content-center gap-4 w-75">
+              <input type="hidden" name='forgetPass'>
+              <div class="form-floating w-100">
+                <input type="email" class="form-control" id="sendLinkMail" placeholder="Email" name="sendLinkMail" required="">
+                <label for="sendLinkMail">Email</label>
+                <div class='d-flex align-items-center justify-content-center'>
+                <span id='sendEmailBlock' class="form-text text-danger"></span>
+                </div>
+              </div>
+              <button class="btn btn-primary">Send Link</button>
+            </form>
+            <p class="mt-3">Have Password? <a onclick="toggleForgetPass()" class="text-decoration-none text-black" style='cursor:pointer'>Sign in</a></p>
           </div>
         </div>
       </div>
@@ -145,7 +169,7 @@ include('db.php');
       while ($book = $result->fetch_assoc()) {
         echo '
 
-      <div class=" book-card card m-3" style="width:15rem; height:27rem; cursor:pointer;" onclick="openBookInfo(' . $book['id'] . ')" id="${books[book].id}">
+      <div class=" book-card card m-3" style="width:15rem; height:27rem; cursor:pointer;" onclick="openBookInfo(' . $book['id'] . ')">
       <img class="card-img-top h-75" src="' . $book['cover'] . '" alt="Book Image">
         <div class="card-body">
           <h5 class="card-title">' . $book['title'] . '</h5>
@@ -271,10 +295,38 @@ include('db.php');
     }
   }
 
+  function toggleForgetPass() {
+    document.getElementById('forgetPassDialog').classList.toggle('d-none');
+    document.getElementById('signInDialog').classList.toggle('d-none');
+  }
+
+  document.getElementById('sendLinkMail').addEventListener('input', function() {
+    var helpBlock = document.getElementById('sendEmailBlock');
+    helpBlock.textContent = '';
+    document.getElementById('forgetPassDialog').addEventListener('submit', function(event) {
+      event.preventDefault();
+      var formData = new FormData(event.target);
+      fetch('services.php', {
+          body: formData,
+          method: 'POST'
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.response === 'email') {
+            helpBlock.textContent = 'Email Not Found'
+          }
+        })
+        .catch(err => console.error(err))
+
+    })
+
+  })
+
+
   document.getElementById('setUsername').addEventListener('input', function(event) {
     const username = event.target.value;
     const helpBlock = document.getElementById('setUsernameBlock');
-    
+
     if (/^\d+.*$/.test(username)) {
       helpBlock.textContent = 'Username can not start with a number';
     } else if (/\s/.test(username)) {
@@ -321,6 +373,7 @@ include('db.php');
                   case 'email':
                     document.getElementById('setEmailBlock').textContent = 'Email Already in Use';
                     break;
+
                 }
               })
               .catch(error => console.error(error))
@@ -333,9 +386,9 @@ include('db.php');
     }
   })
 
-
-
   document.getElementById('signUpForm').addEventListener('submit', event => event.preventDefault());
+
+
 
   document.getElementById('signInForm').addEventListener('submit', function(event) {
     event.preventDefault();
@@ -359,6 +412,8 @@ include('db.php');
           case 'username':
             document.getElementById('usernameBlock').textContent = 'Invalid Username';
             break;
+          case 'unverified':
+            document.getElementById('signInBlock').textContent = 'Account not verified. Check your mail';
         }
       })
       .catch(error => console.error(error))
