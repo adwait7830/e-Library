@@ -61,9 +61,7 @@ include('db.php');
       </div>
     </div>
 
-
-
-
+    <div class="overlay d-none"></div>
 
     <div class="container intro">
       <p class="quote text-center display-1">The reading of all good books is like a conversation with the finest minds
@@ -148,12 +146,18 @@ include('db.php');
                 <input type="email" class="form-control" id="sendLinkMail" placeholder="Email" name="sendLinkMail" required="">
                 <label for="sendLinkMail">Email</label>
                 <div class='d-flex align-items-center justify-content-center'>
-                <span id='sendEmailBlock' class="form-text text-danger"></span>
+                  <span id='sendEmailBlock' class="form-text text-danger"></span>
                 </div>
               </div>
               <button class="btn btn-primary">Send Link</button>
             </form>
             <p class="mt-3">Have Password? <a onclick="toggleForgetPass()" class="text-decoration-none text-black" style='cursor:pointer'>Sign in</a></p>
+          </div>
+
+          <div class="d-flex flex-column align-items-center justify-content-center d-none" id='linkSent'>
+            <i class="fa-solid fa-check text-success" style='font-size:5rem'></i>
+            <p>Reset Link Sent</p>
+            <p>Return to <a onclick="hideLinkSent()" class="text-decoration-none text-black" style='cursor:pointer'>Sign in</a></p>
           </div>
         </div>
       </div>
@@ -300,6 +304,11 @@ include('db.php');
     document.getElementById('signInDialog').classList.toggle('d-none');
   }
 
+  function hideLinkSent() {
+    document.getElementById('linkSent').classList.add('d-none');
+    document.getElementById('signInDialog').classList.remove('d-none');
+  }
+
   document.getElementById('sendLinkMail').addEventListener('input', function() {
     var helpBlock = document.getElementById('sendEmailBlock');
     helpBlock.textContent = '';
@@ -314,6 +323,9 @@ include('db.php');
         .then(data => {
           if (data.response === 'email') {
             helpBlock.textContent = 'Email Not Found'
+          } else if (data.response === 'sent') {
+            document.getElementById('forgetPassDialog').classList.add('d-none');
+            document.getElementById('linkSent').classList.remove('d-none');
           }
         })
         .catch(err => console.error(err))

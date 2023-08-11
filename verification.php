@@ -1,13 +1,14 @@
 <?php
 require_once('db.php');
+require_once('sendMail.php');
 
 $id = $_SERVER['QUERY_STRING'];
 
 if (!empty($id)) {
-    $stmt = $conn->prepare('SELECT verified FROM users WHERE uid = ?');
+    $stmt = $conn->prepare('SELECT verified,email,name FROM users WHERE uid = ?');
     $stmt->bind_param('s', $id);
     $stmt->execute();
-    $stmt->bind_result($verified);
+    $stmt->bind_result($verified,$mail,$name);
     if ($stmt->fetch()) {
         if ($verified === 0) {
             $stmt->close();
@@ -16,6 +17,7 @@ if (!empty($id)) {
             $stmt->execute();
             session_start();
             $_SESSION['token'] = $id;
+            smtp_mailer($mail,$name,$id);
             header('Location: index.php');
         }else{
             session_start();

@@ -1,28 +1,26 @@
 <?php
 $id = $_SERVER['QUERY_STRING'];
 if (empty($id)) {
-    //header('Location: index.php');
+    header('Location: index.php');
 }
 require_once('db.php');
 $stmt = $conn->prepare('SELECT name, password FROM users WHERE uid = ? ');
-$stmt->bind_param('s',$id);
+$stmt->bind_param('s', $id);
 $stmt->execute();
-$stmt->bind_result($name,$storedPass);
+$stmt->bind_result($name, $storedPass);
 
-if($stmt->fetch()){
+if ($stmt->fetch()) {
 
-    if(isset($_POST['changePass'])){
+    if (isset($_POST['changePass'])) {
         $stmt->close();
-        $newPass = $_POST['pass'];
+        $newPass = password_hash($_POST['pass'],PASSWORD_BCRYPT);
         $stmt = $conn->prepare("UPDATE users SET pass = ? WHERE uid = ?");
-        $stmt->bind_param('ss',$newPass,$id);
+        $stmt->bind_param('ss', $newPass, $id);
         $stmt->execute();
     }
+} else {
 
-}else{
-
-    //header('Location: index.php');
-
+    header('Location: index.php');
 }
 
 ?>
@@ -46,7 +44,7 @@ if($stmt->fetch()){
             <i class="fas fa-user" style='font-size:5rem'></i>
         </div>
         <div class='mt-2'>
-            <p>Divyanshu Naugai</p>
+            <p><?php echo$name?></p>
         </div>
         <form class="d-flex flex-column align-items-center gap-3 w-100">
             <input type="hidden" name='changePass'>
@@ -97,8 +95,6 @@ if($stmt->fetch()){
             helpBlockText.textContent = 'At least one capital letter';
         } else if (/^[^\d]*$/.test(pass)) {
             helpBlockText.textContent = 'There should be at least one number';
-        } else {
-
         }
     })
     document.getElementById('cPass').addEventListener('input', function(event) {

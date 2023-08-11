@@ -89,7 +89,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 $stmt->bind_param('ssssss', $uid, $name, $username, $email, $profession, $password);
                 try {
                     $result = $stmt->execute();
-                    smtp_mailer($email,$name,$uid);
+                    smtp_mailer($email,$name,$uid,1);
                     $response = array('response' => 'registered');
                 } catch (Exception $e) {
                     $response = array('response'=>'error');
@@ -110,13 +110,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     if(isset($_POST['forgetPass'])){
         $mail = $_POST['sendLinkMail'];
 
-        $stmt = $conn->prepare('SELECT uid FROM users WHERE email = ?');
+        $stmt = $conn->prepare('SELECT uid,name FROM users WHERE email = ?');
         $stmt->bind_param('s',$mail);
         $stmt->execute();
-        $stmt->bind_result($id);
+        $stmt->bind_result($id,$name);
         $response = array();
         if($stmt->fetch()){
-            
+            smtp_mailer($mail,$name,$id,2);
             $response = array('response'=>'sent');
         }else{
             $response = array('response'=>'email');

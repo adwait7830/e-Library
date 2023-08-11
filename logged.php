@@ -44,9 +44,8 @@ include('db.php');
     </div>
   </nav>
 </header>
+
 <div class="overlay d-none"></div>
-
-
 
 <div class="modal fade" id="contactForm" tabindex="-1" aria-labelledby="contactFormLabel" aria-hidden="true">
   <div class="modal-dialog">
