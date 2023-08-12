@@ -129,9 +129,6 @@ if (isset($_POST['changePass'])) {
         if (!(pass === cPass && pass !== '')) {
             helpBlockText.textContent = 'Password does not match'
         } else {
-
-
-
         }
     })
 </script>
