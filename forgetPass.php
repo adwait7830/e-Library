@@ -8,20 +8,28 @@ $stmt = $conn->prepare('SELECT name, password FROM users WHERE uid = ? ');
 $stmt->bind_param('s', $id);
 $stmt->execute();
 $stmt->bind_result($name, $storedPass);
+if (!($stmt->fetch())) {
+    header('Location: index.php');
+}
 
-if ($stmt->fetch()) {
+$response = array();
+if (isset($_POST['changePass'])) {
 
-    if (isset($_POST['changePass'])) {
+    if ($storedPass !== $_POST['pass']) {
         $stmt->close();
-        $newPass = password_hash($_POST['pass'],PASSWORD_BCRYPT);
+        $newPass = password_hash($_POST['pass'], PASSWORD_BCRYPT);
         $stmt = $conn->prepare("UPDATE users SET pass = ? WHERE uid = ?");
         $stmt->bind_param('ss', $newPass, $id);
         $stmt->execute();
+        $response = array('response' => 'changed');
+    } else {
+        $response = array('response' => 'pass');
     }
-} else {
-
-    header('Location: index.php');
+    $jsonData = json_encode($response);
+    header('Content-Type: application/json');
+    echo $jsonData;
 }
+
 
 ?>
 <!DOCTYPE html>
@@ -44,9 +52,9 @@ if ($stmt->fetch()) {
             <i class="fas fa-user" style='font-size:5rem'></i>
         </div>
         <div class='mt-2'>
-            <p><?php echo$name?></p>
+            <p><?php echo $name ?></p>
         </div>
-        <form class="d-flex flex-column align-items-center gap-3 w-100">
+        <form class="d-flex flex-column align-items-center gap-3 w-100" id='form'>
             <input type="hidden" name='changePass'>
             <div class='form-floating w-100'>
                 <input class="form-control h-50 w-100" type="password" name="password" id='pass' placeholder="" required=''>
@@ -54,7 +62,7 @@ if ($stmt->fetch()) {
                 <span id="passwordHelpBlock" class="form-text ms-0 text-danger"></span>
             </div>
             <div class='form-floating w-100 '>
-                <input class="form-control h-50 w-100" type="password" name="cPassword" id='cPass' placeholder='' required=''>
+                <input class="form-control h-50 w-100 is-invalid" type="password" name="cPassword" id='cPass' placeholder='' required=''>
                 <label for="cPass">Confirm Password</label>
                 <span id="cPasswordHelpBlock" class="form-text ms-0 text-danger"></span>
             </div>
@@ -81,6 +89,22 @@ if ($stmt->fetch()) {
 </body>
 
 <script>
+    document.getElementById('form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        if (!document.getElementById('form').checkValidity()) {
+            event.stopPropagation()
+            console.log("invalid");
+        } else {
+            var formData = new FormData(event.target);
+            fetch('forgetPass.php', {
+                    body: formData,
+                    method: "POST"
+                })
+                .then(res => res.json())
+                .then(server => console.log(server.response))
+                .catch(err => console.error(err))
+        }
+    })
     document.getElementById('pass').addEventListener('input', function(event) {
         var pass = event.target.value;
         const helpBlockText = document.getElementById('passwordHelpBlock');
@@ -105,6 +129,8 @@ if ($stmt->fetch()) {
         if (!(pass === cPass && pass !== '')) {
             helpBlockText.textContent = 'Password does not match'
         } else {
+
+
 
         }
     })
