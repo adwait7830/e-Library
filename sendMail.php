@@ -7,7 +7,7 @@ require("PHPMailer/PHPMailer.php");
 require("PHPMailer/SMTP.php");
 
 
-function smtp_mailer($to, $name, $id, $for = 0)
+function smtp_mailer($to, $name, $id='', $for = 0)
 {
 	$mail = new PHPMailer(true);
 	$mail->IsSMTP();

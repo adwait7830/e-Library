@@ -76,10 +76,10 @@ include('db.php');
         <div class="d-flex modal-header align-items-center justify-content-center">
           <h1 class="modal-title fs-5" id="exampleModalLabel">Log in to e-library</h1>
         </div>
-        <div class="modal-body">
+        <div class="modal-body d-flex justify-content-center">
 
 
-          <div class="d-flex flex-column align-items-center justify-content-center d-none" id="signUpDialog">
+          <div class="w-100 d-flex flex-column align-items-center justify-content-center d-none" id="signUpDialog">
             <form id="signUpForm" class="d-flex flex-column gap-2 align-items-center justify-content-center w-75">
               <input type="hidden" name="signUp">
               <div class="form-floating w-100">
@@ -115,7 +115,7 @@ include('db.php');
           </div>
 
 
-          <div class="d-flex flex-column align-items-center justify-content-center" id="signInDialog">
+          <div class="w-100 d-flex flex-column align-items-center justify-content-center" id="signInDialog">
             <form id="signInForm" class="d-flex flex-column align-items-center justify-content-center gap-4 w-75">
               <input type="hidden" name="signIn">
               <div class="form-floating w-100">
@@ -136,11 +136,11 @@ include('db.php');
           </div>
 
 
-          <div class="d-flex flex-column align-items-center justify-content-center d-none" id="forgetPassDialog">
+          <div class="w-100 d-flex flex-column align-items-center justify-content-center d-none" id="forgetPassDialog">
             <div class='w-75'>
               <p>Enter email to get reset link:</p>
             </div>
-            <form class="d-flex flex-column align-items-center justify-content-center gap-4 w-75">
+            <form class="d-flex flex-column align-items-center justify-content-center gap-4 w-75" id='forgetPassForm'>
               <input type="hidden" name='forgetPass'>
               <div class="form-floating w-100">
                 <input type="email" class="form-control" id="sendLinkMail" placeholder="Email" name="sendLinkMail" required="">
@@ -149,15 +149,25 @@ include('db.php');
                   <span id='sendEmailBlock' class="form-text text-danger"></span>
                 </div>
               </div>
-              <button class="btn btn-primary">Send Link</button>
+              <button type="submit" class="btn btn-primary">Send Link</button>
             </form>
             <p class="mt-3">Have Password? <a onclick="toggleForgetPass()" class="text-decoration-none text-black" style='cursor:pointer'>Sign in</a></p>
           </div>
 
-          <div class="d-flex flex-column align-items-center justify-content-center d-none" id='linkSent'>
+          <div class="w-100 d-flex flex-column align-items-center justify-content-center d-none" id='linkSent'>
             <i class="fa-solid fa-check text-success" style='font-size:5rem'></i>
-            <p>Reset Link Sent</p>
+            <p>Reset Link Sent to Your Email</p>
             <p>Return to <a onclick="hideLinkSent()" class="text-decoration-none text-black" style='cursor:pointer'>Sign in</a></p>
+          </div>
+
+          <div class="w-100 d-flex flex-column align-items-center justify-content-center d-none" id='verificationSent'>
+            <i class="fa-solid fa-check text-success" style='font-size:5rem'></i>
+            <p>Verification Link Sent to Your Email</p>
+            <p>Return to <a onclick="hideVerificationSent()" class="text-decoration-none text-black" style='cursor:pointer'>Sign in</a></p>
+          </div>
+
+          <div class="spinner-border d-none m-5 text-primary" style="width: 3rem; height: 3rem;" id='loader' role="status">
+            <span class="visually-hidden">Loading...</span>
           </div>
         </div>
       </div>
@@ -309,28 +319,41 @@ include('db.php');
     document.getElementById('signInDialog').classList.remove('d-none');
   }
 
+  function hideVerificationSent() {
+    document.getElementById('verificationSent').classList.add('d-none');
+    document.getElementById('signUpDialog').classList.remove('d-none');
+  }
+
   document.getElementById('sendLinkMail').addEventListener('input', function() {
     var helpBlock = document.getElementById('sendEmailBlock');
     helpBlock.textContent = '';
-    document.getElementById('forgetPassDialog').addEventListener('submit', function(event) {
-      event.preventDefault();
-      var formData = new FormData(event.target);
-      fetch('services.php', {
-          body: formData,
-          method: 'POST'
-        })
-        .then(response => response.json())
-        .then(data => {
+  })
+  document.getElementById('forgetPassDialog').addEventListener('submit', function(event) {
+    var helpBlock = document.getElementById('sendEmailBlock');
+    helpBlock.textContent = '';
+    event.preventDefault();
+    var formData = new FormData(event.target);
+    document.getElementById('loader').classList.remove('d-none');
+    document.getElementById('forgetPassDialog').classList.add('d-none');
+    fetch('services.php', {
+        body: formData,
+        method: 'POST'
+      })
+      .then(response => response.json())
+      .then(data => {
+        setTimeout(() => {
           if (data.response === 'email') {
             helpBlock.textContent = 'Email Not Found'
+            document.getElementById('loader').classList.add('d-none');
+            document.getElementById('forgetPassDialog').classList.remove('d-none');
           } else if (data.response === 'sent') {
-            document.getElementById('forgetPassDialog').classList.add('d-none');
+            document.getElementById('forgetPassForm').reset();
+            document.getElementById('loader').classList.add('d-none');
             document.getElementById('linkSent').classList.remove('d-none');
           }
-        })
-        .catch(err => console.error(err))
-
-    })
+        }, 3000);
+      })
+      .catch(err => console.error(err))
 
   })
 
@@ -369,24 +392,32 @@ include('db.php');
             document.getElementById('setUsernameBlock').textContent = '';
             document.getElementById('setEmailBlock').textContent = '';
             const formData = new FormData(event.target)
+            document.getElementById('loader').classList.remove('d-none');
+            document.getElementById('signUpDialog').classList.add('d-none');
             fetch('services.php', {
                 body: formData,
                 method: 'post'
               })
               .then(response => response.json())
               .then(data => {
-                switch (data.response) {
-                  case 'registered':
-                    window.location.replace('index.php');
-                    break;
-                  case 'username':
-                    document.getElementById('setUsernameBlock').textContent = 'Username is Not Available';
-                    break;
-                  case 'email':
-                    document.getElementById('setEmailBlock').textContent = 'Email Already in Use';
-                    break;
+                setTimeout(() => {
+                  switch (data.response) {
+                    case 'registered':
+                      document.getElementById('signUpForm').reset();
+                      document.getElementById('loader').classList.add('d-none');
+                      document.getElementById('verificationSent').classList.remove('d-none');
+                      break;
+                    case 'username':
+                      document.getElementById('setUsernameBlock').textContent = 'Username is Not Available';
+                      document.getElementById('signUpDialog').classList.remove('d-none');
+                      break;
+                    case 'email':
+                      document.getElementById('setEmailBlock').textContent = 'Email Already in Use';
+                      document.getElementById('signUpDialog').classList.remove('d-none');
+                      break;
+                  }
+                }, 3000);
 
-                }
               })
               .catch(error => console.error(error))
           })

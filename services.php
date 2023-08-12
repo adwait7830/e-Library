@@ -72,13 +72,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $password = password_hash($_POST['setPassword'],PASSWORD_BCRYPT);
         $response = array();
 
-        $stmt = $conn->prepare("SELECT * FROM users WHERE username = ?");
+        $stmt = $conn->prepare("SELECT 1 FROM users WHERE username = ?");
         $stmt->bind_param('s', $username);
         $stmt->execute();
         $result = $stmt->get_result();
         if ($result->num_rows === 0){
             $stmt->close();
-            $stmt = $conn->prepare("SELECT * FROM users WHERE email = ?");
+            $stmt = $conn->prepare("SELECT 1 FROM users WHERE email = ?");
             $stmt->bind_param('s', $email);
             $stmt->execute();
             $result = $stmt->get_result();

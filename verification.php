@@ -17,7 +17,7 @@ if (!empty($id)) {
             $stmt->execute();
             session_start();
             $_SESSION['token'] = $id;
-            smtp_mailer($mail,$name,$id);
+            smtp_mailer($mail,$name);
             header('Location: index.php');
         }else{
             session_start();
