@@ -297,16 +297,10 @@ include('db.php');
 
 <script>
   function toggleLogin() {
-    var signInDialog = document.getElementById("signInDialog");
-    var signUpDialog = document.getElementById("signUpDialog");
-
-    if (signInDialog.classList.contains("d-none")) {
-      signInDialog.classList.remove("d-none");
-      signUpDialog.classList.add("d-none");
-    } else {
-      signInDialog.classList.add("d-none");
-      signUpDialog.classList.remove("d-none");
-    }
+    document.getElementById("signInDialog").classList.toggle('d-none');
+    document.getElementById('signInForm').reset();
+    document.getElementById("signUpDialog").classList.toggle('d-none');
+    document.getElementById('signUpForm').reset();
   }
 
   function toggleForgetPass() {
@@ -410,10 +404,12 @@ include('db.php');
                     case 'username':
                       document.getElementById('setUsernameBlock').textContent = 'Username is Not Available';
                       document.getElementById('signUpDialog').classList.remove('d-none');
+                      document.getElementById('loader').classList.add('d-none');
                       break;
                     case 'email':
                       document.getElementById('setEmailBlock').textContent = 'Email Already in Use';
                       document.getElementById('signUpDialog').classList.remove('d-none');
+                      document.getElementById('loader').classList.add('d-none');
                       break;
                   }
                 }, 3000);
@@ -438,34 +434,46 @@ include('db.php');
     document.getElementById('passwordBlock').textContent = '';
     document.getElementById('usernameBlock').textContent = '';
     const formData = new FormData(event.target);
-
+    document.getElementById('loader').classList.remove('d-none');
+    document.getElementById('signInDialog').classList.add('d-none');
     fetch('services.php', {
         body: formData,
         method: 'post',
       })
       .then(response => response.json())
       .then(data => {
-        switch (data.response) {
-          case 'valid':
-            window.location.replace('index.php');
-            break;
-          case 'password':
-            document.getElementById('passwordBlock').textContent = 'Password Does Not Match';
-            break;
-          case 'username':
-            document.getElementById('usernameBlock').textContent = 'Invalid Username';
-            break;
-          case 'unverified':
-            document.getElementById('signInBlock').textContent = 'Account not verified. Check your mail';
-        }
+        setTimeout(() => {
+          switch (data.response) {
+            case 'valid':
+              window.location.replace('index.php');
+              break;
+            case 'password':
+              document.getElementById('passwordBlock').textContent = 'Password Does Not Match';
+              document.getElementById('loader').classList.add('d-none');
+              document.getElementById('signInDialog').classList.remove('d-none');
+              break;
+            case 'username':
+              document.getElementById('usernameBlock').textContent = 'Invalid Username';
+              document.getElementById('loader').classList.add('d-none');
+              document.getElementById('signInDialog').classList.remove('d-none');
+              break;
+            case 'unverified':
+              document.getElementById('signInBlock').textContent = 'Account not verified. Check your mail';
+              document.getElementById('loader').classList.add('d-none');
+              document.getElementById('signInDialog').classList.remove('d-none');
+              break;
+          }
+        }, 3000);
       })
       .catch(error => console.error(error))
   });
 
-  <?php
-
-
-  ?>
+  document.getElementById('username').addEventListener('input',function(){
+    document.getElementById('usernameBlock').textContent = '';
+  })
+  document.getElementById('password').addEventListener('input',function(){
+    document.getElementById('passwordBlock').textContent = '';
+  })
 </script>
 <script src='js/script1.js'></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

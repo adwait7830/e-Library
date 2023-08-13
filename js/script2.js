@@ -264,8 +264,6 @@ document.getElementById('searchIp').addEventListener('input', function (event) {
   }
 })
 
-
-
 function showToast(message) {
   // Create a div element for the toast
   const toast = document.createElement('div');

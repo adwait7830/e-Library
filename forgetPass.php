@@ -1,37 +1,19 @@
-<?php
-$id = $_SERVER['QUERY_STRING'];
-if (empty($id)) {
-    header('Location: index.php');
-}
-require_once('db.php');
-$stmt = $conn->prepare('SELECT name, password FROM users WHERE uid = ? ');
-$stmt->bind_param('s', $id);
-$stmt->execute();
-$stmt->bind_result($name, $storedPass);
-if (!($stmt->fetch())) {
-    header('Location: index.php');
-}
-
-$response = array();
-if (isset($_POST['changePass'])) {
-
-    if ($storedPass !== $_POST['pass']) {
-        $stmt->close();
-        $newPass = password_hash($_POST['pass'], PASSWORD_BCRYPT);
-        $stmt = $conn->prepare("UPDATE users SET pass = ? WHERE uid = ?");
-        $stmt->bind_param('ss', $newPass, $id);
-        $stmt->execute();
-        $response = array('response' => 'changed');
-    } else {
-        $response = array('response' => 'pass');
+<script>
+    <?php
+    $id = $_SERVER['QUERY_STRING'];
+    if (empty($id)) {
+        echo 'window.location.replace("index.php");';
     }
-    $jsonData = json_encode($response);
-    header('Content-Type: application/json');
-    echo $jsonData;
-}
-
-
-?>
+    require_once('db.php');
+    $stmt = $conn->prepare('SELECT name FROM users WHERE uid = ? ');
+    $stmt->bind_param('s', $id);
+    $stmt->execute();
+    $stmt->bind_result($name);
+    if (!($stmt->fetch())) {
+        echo 'window.location.replace("index.php");';
+    }
+    ?>
+</script>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -58,17 +40,25 @@ if (isset($_POST['changePass'])) {
             <input type="hidden" name='changePass'>
             <div class='form-floating w-100'>
                 <input class="form-control h-50 w-100" type="password" name="password" id='pass' placeholder="" required=''>
-                <label for="pass">Password</label>
+                <label for="pass">New Password</label>
                 <span id="passwordHelpBlock" class="form-text ms-0 text-danger"></span>
             </div>
             <div class='form-floating w-100 '>
-                <input class="form-control h-50 w-100 is-invalid" type="password" name="cPassword" id='cPass' placeholder='' required=''>
+                <input class="form-control h-50 w-100" type="password" name="cPassword" id='cPass' placeholder='' required=''>
                 <label for="cPass">Confirm Password</label>
                 <span id="cPasswordHelpBlock" class="form-text ms-0 text-danger"></span>
             </div>
             <button class='btn btn-outline-success'>Submit</button>
             <p style="font-size: small; ">Jump to <a style="text-decoration:none" href="http://localhost:8080/website/e%20lib/un-logged.php">e Library</a></p>
         </form>
+        <div class="spinner-border d-none m-5 text-primary" style="width: 3rem; height: 3rem;" id='loader' role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <div class="w-100 d-flex flex-column align-items-center justify-content-center d-none" id='changeSuccess'>
+            <i class="fa-solid fa-check text-success" style='font-size:5rem'></i>
+            <p>Password Reset Successful</p>
+            <p>Redirecting to Login Screen</p>
+        </div>
     </div>
     <style>
         #bg {
@@ -89,23 +79,8 @@ if (isset($_POST['changePass'])) {
 </body>
 
 <script>
-    document.getElementById('form').addEventListener('submit', function(event) {
-        event.preventDefault();
-        if (!document.getElementById('form').checkValidity()) {
-            event.stopPropagation()
-            console.log("invalid");
-        } else {
-            var formData = new FormData(event.target);
-            fetch('forgetPass.php', {
-                    body: formData,
-                    method: "POST"
-                })
-                .then(res => res.json())
-                .then(server => console.log(server.response))
-                .catch(err => console.error(err))
-        }
-    })
     document.getElementById('pass').addEventListener('input', function(event) {
+        document.getElementById('cPass').dispatchEvent(new Event('input'));
         var pass = event.target.value;
         const helpBlockText = document.getElementById('passwordHelpBlock');
         helpBlockText.textContent = ''
@@ -119,17 +94,56 @@ if (isset($_POST['changePass'])) {
             helpBlockText.textContent = 'At least one capital letter';
         } else if (/^[^\d]*$/.test(pass)) {
             helpBlockText.textContent = 'There should be at least one number';
+        } else {
+            document.getElementById('cPass').addEventListener('input', function() {
+                var cPass = document.getElementById('cPass').value;
+                var pass = document.getElementById('pass').value;
+                const helpBlockText = document.getElementById('cPasswordHelpBlock');
+                helpBlockText.textContent = ''
+                if (pass !== cPass) {
+                    helpBlockText.textContent = 'Password does not match'
+                }
+            })
+            document.getElementById('form').addEventListener('submit', function(event) {
+                var cPass = document.getElementById('cPass').value;
+                var pass = document.getElementById('pass').value;
+                if (pass === cPass) {
+                    document.getElementById('form').classList.add('d-none');
+                    document.getElementById('loader').classList.remove('d-none');
+                    var formData = new FormData(event.target);
+                    formData.append('uid', window.location.search.split("?")[1]);
+                    fetch('services.php', {
+                            body: formData,
+                            method: "POST"
+                        })
+                        .then(res => res.json())
+                        .then(server => {
+                            setTimeout(() => {
+                                switch (server.response) {
+                                    case 'changed':
+                                        document.getElementById('loader').classList.add('d-none');
+                                        document.getElementById('changeSuccess').classList.remove('d-none');
+                                        setTimeout(() => {
+                                            window.location.replace('index.php');
+                                        }, 3000);
+                                        break;
+                                    case 'pass':
+                                        document.getElementById('passwordHelpBlock').textContent = 'Password Already in Use';
+                                        document.getElementById('form').classList.remove('d-none');
+                                        document.getElementById('loader').classList.add('d-none');
+
+                                }
+                            }, 3000);
+                        })
+                        .catch(err => console.error(err))
+
+                }
+            })
         }
     })
-    document.getElementById('cPass').addEventListener('input', function(event) {
-        var cPass = event.target.value;
-        var pass = document.getElementById('pass').value;
-        const helpBlockText = document.getElementById('cPasswordHelpBlock');
-        helpBlockText.textContent = ''
-        if (!(pass === cPass && pass !== '')) {
-            helpBlockText.textContent = 'Password does not match'
-        } else {
-        }
+
+    document.getElementById('form').addEventListener('submit', function(event) {
+        event.preventDefault();
     })
 </script>
 

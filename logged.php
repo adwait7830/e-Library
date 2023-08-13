@@ -394,7 +394,7 @@ include('db.php');
 
   </div>
 
-  <nav id="pagination" aria-label="Page navigation">
+  <nav id="pagination" aria-label="Page navigation" style='z-index:1'>
     <ul class="pagination justify-content-center">
       <?php if ($currentPage > 1) { ?>
         <li class="page-item">
@@ -414,8 +414,8 @@ include('db.php');
       <?php for ($i = $startPage; $i <= $endPage; $i++) {
         $class = ($i == $currentPage) ? 'active' : '';
       ?>
-        <li class="page-item <?php echo $class ?>">
-          <a class="page-link" href="?page=<?php echo $i ?>"><?php echo $i ?></a>
+        <li class="page-item <?php echo $class ?>" style='z-index:1'>
+          <a class="page-link"  style='z-index:1' href="?page=<?php echo $i ?>"><?php echo $i ?></a>
         </li>
       <?php } ?>
       <?php if ($endPage < $noOfPages) { ?>
