@@ -1,8 +1,6 @@
 <?php
-include('db.php');
+require_once('db.php');
 include('sendMail.php');
-
-
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
@@ -22,29 +20,25 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $stmt->bind_param('s', $username);
 
         $response = array();
-        try {
-            $stmt->execute();
-            $stmt->bind_result($verified, $storedPassword, $token);
+        $stmt->execute();
+        $stmt->bind_result($verified, $storedPassword, $uid);
 
-            if ($stmt->fetch()) {
-                if (password_verify($password, $storedPassword)) {
-                    if ($verified === 1) {
-                        session_start();
-                        $_SESSION['token'] = $token;
-                        $response = array('response' => 'valid');
-                    } else {
-                        $response = array('response' => 'unverified');
-                    }
+        if ($stmt->fetch()) {
+            $stmt->close();
+            if (password_verify($password, $storedPassword)) {
+                if ($verified === 1) {
+                    setSessionToken(id: $uid);
+                    $response = array('response' => 'valid');
                 } else {
-                    $response = array('response' => 'password');
+                    $response = array('response' => 'unverified');
                 }
             } else {
-                $response = array('response' => 'username');
+                $response = array('response' => 'password');
             }
-        } catch (Exception $e) {
-            $response = array('response' => 'error');
+        } else {
+            $response = array('response' => 'username');
         }
-        $stmt->close();
+
         $jsonData = json_encode($response);
         header('Content-Type: application/json');
         echo $jsonData;
@@ -139,23 +133,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         if (password_verify($password, $hash)) {
             $response = array('response' => 'pass');
         } else {
-
-            $newUID = '';
-            for ($i = 0; $i < 10; $i++) {
-                $newUID = generateSessionToken();
-                $stmt = $conn->prepare("SELECT 1 FROM users WHERE uid = ?");
-                $stmt->bind_param('s', $newUID);
-                if ($stmt->fetch()) {
-                    continue;
-                } else {
-                    break;
-                }
-            }
-            $stmt->close();
-
             $newHash = password_hash($password, PASSWORD_BCRYPT);
-            $stmt = $conn->prepare("UPDATE users SET password = ?,uid = ? WHERE uid = ?");
-            $stmt->bind_param('sss', $newHash, $newUID,$uid);
+            $stmt = $conn->prepare("UPDATE users SET password = ? WHERE uid = ?");
+            $stmt->bind_param('ss', $newHash, $uid);
             $stmt->execute();
             $response = array('response' => 'changed');
         }

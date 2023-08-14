@@ -1,12 +1,5 @@
 <?php
-session_start();
-if (ini_get('register_globals')) {
-  foreach ($_SESSION as $key => $value) {
-    if (isset($GLOBALS[$key]))
-      unset($GLOBALS[$key]);
-  }
-}
-include('db.php');
+require_once('db.php');
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -29,7 +22,7 @@ include('db.php');
       <button type="button" onclick="toggleProfileModal()" class=" d-lg-none ms-lg-2 btn rounded-circle profile-btn btn-secondary">
         <i class="fas fa-user"></i>
       </button>
-       <div class="collapse navbar-collapse justify-content-lg-end" id="navbarID">
+      <div class="collapse navbar-collapse justify-content-lg-end" id="navbarID">
         <ul class="navbar-nav text-lg-center align-items-lg-center ">
           <li class="nav-item"><a class="n-item fs-4" onclick="showAllBooks()">All Books</a></li>
           <li class="nav-item"><a class="n-item fs-4" href="#" data-bs-toggle="modal" data-bs-target="#contactForm">Contact Us</a></li>
@@ -65,14 +58,14 @@ include('db.php');
 
 
   <?php
-  $token = $_SESSION['token'];
-  $stmt = $conn->prepare("SELECT * FROM users WHERE uid = ?");
-  $stmt->bind_param('s', $token);
-  $stmt->execute();
-  $result = $stmt->get_result();
-  $user = $result->fetch_assoc();
-  $stmt->close();
-  if ($user) {
+  if (verifySessionToken()) {
+    $uid = getUserID();
+    $stmt = $conn->prepare("SELECT * FROM users WHERE uid = ?");
+    $stmt->bind_param('s', $uid);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $stmt->close();
+    $user = $result->fetch_assoc();
     $name = $user['name'];
     $email = $user['email'];
     $profession = $user['profession'];
@@ -301,8 +294,8 @@ include('db.php');
   </div>
 
   <div id="searchForm" class="my-5 container d-flex flex-row justify-content-center flex-row align-content-center" style="height: 3rem;">
-    <input id="searchIp" name="searchIp" class="w-75 bg-warning rounded-pill border-0 p-2 text-center" type="text" placeholder='Search by Title/Author'>    <style>
-      
+    <input id="searchIp" name="searchIp" class="w-75 bg-warning rounded-pill border-0 p-2 text-center" type="text" placeholder='Search by Title/Author'>
+    <style>
       #searchIp:focus {
         outline: none;
       }
@@ -415,7 +408,7 @@ include('db.php');
         $class = ($i == $currentPage) ? 'active' : '';
       ?>
         <li class="page-item <?php echo $class ?>" style='z-index:1'>
-          <a class="page-link"  style='z-index:1' href="?page=<?php echo $i ?>"><?php echo $i ?></a>
+          <a class="page-link" style='z-index:1' href="?page=<?php echo $i ?>"><?php echo $i ?></a>
         </li>
       <?php } ?>
       <?php if ($endPage < $noOfPages) { ?>
@@ -460,12 +453,11 @@ include('db.php');
   <?php
 
   if (isset($_POST['log-out'])) {
-    session_destroy();
+    dltSessionToken();
     echo 'window.location.replace("index.php");';
-    
   }
 
-  if (!isset($_SESSION['token'])) {
+  if (!(verifySessionToken())) {
     echo 'window.location.replace("index.php");';
   }
 

@@ -1,11 +1,5 @@
 <?php
-if (ini_get('register_globals')) {
-  foreach ($_SESSION as $key => $value) {
-    if (isset($GLOBALS[$key]))
-      unset($GLOBALS[$key]);
-  }
-}
-include('db.php');
+require_once('db.php');
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -465,7 +459,7 @@ include('db.php');
           }
         }, 3000);
       })
-      .catch(error => console.error(error))
+      .catch(error => console.error('error'))
   });
 
   document.getElementById('username').addEventListener('input',function(){

@@ -1,14 +1,3 @@
-<?php
-session_start();
-if (ini_get('register_globals'))
-{
-    foreach ($_SESSION as $key=>$value)
-    {
-        if (isset($GLOBALS[$key]))
-            unset($GLOBALS[$key]); 
-    }
-}
- ?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -63,6 +52,7 @@ if (ini_get('register_globals'))
         }
     </style>
     <script>
+        console.log("reload");
         window.addEventListener("load", function() {
 
             setTimeout(function() {
@@ -70,10 +60,10 @@ if (ini_get('register_globals'))
                 splashScreen.style.display = "none";
 
                 <?php
-                if (isset($_SESSION['token'])) {
+                require_once('db.php');
+                if (verifySessionToken()) {
                     echo 'window.location.replace("logged.php");';
                 } else {
-                    
                     echo 'window.location.replace("un-logged.php");';
                 }
                 ?>

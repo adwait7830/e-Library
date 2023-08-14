@@ -16,7 +16,7 @@ if (!empty($id)) {
             $stmt->bind_param('s', $id);
             $stmt->execute();
             session_start();
-            $_SESSION['token'] = $id;
+            setSessionToken(id:$id);
             smtp_mailer($mail,$name);
             header('Location: index.php');
         }else{
