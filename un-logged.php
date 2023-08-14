@@ -213,32 +213,46 @@ require_once('db.php');
       <div class="card-body">
         <div class="row">
           <div class="col-md-8">
-            <h2 id='title' class="book-title display-4">Not Available</h2>
-            <h3 class='book-author' id='author'>Not Available</h3>
+
+            <h2 id='title' class="placeholder-glow display-4">
+              <p class='book-title placeholder'></p>
+            </h2>
+            <h3 class="placeholder-glow" id='author'>
+              <p class='book-author placeholder'></p>
+            </h3>
             <br>
-            <h6 class="book-description" id='description'>Not Available</h6>
+            <h6 class="placeholder-glow" id='description'>
+              <p class='book-description placeholder'></p>
+            </h6>
           </div>
-          <div class="cover col-md-4">
-            <img src="" alt="Image not available" class="img-fluid">
+          <div class="book-cover placeholder-glow col-md-4">
+            <img src="" alt="Image not available" class="placeholder img-fluid">
           </div>
+
         </div>
       </div>
     </div>
   </div>
 
   <div class='bookInfo mobile-view-card'>
-    <div class="card dialog position-fixed book-dialog " style="width: 19rem;">
+    <div class="card dialog position-fixed book-dialog " style="width:175px; height: 225px;">
       <div class="card-header d-flex justify-content-between">
         Book Information <button type="button" class="btn-close align-end" aria-label="Close" onclick="closeBookInfo()"></button>
       </div>
       <div class="card-body">
-        <div class="cover d-flex align-content-center justify-content-center ms-auto me-auto" style="width: 70%;">
-          <img src="data:image/jpeg;base64,${book.cover}" class="img-fluid h-75 w-50" alt="Image Not Available">
+        <div class="book-cover d-flex align-content-center justify-content-center ms-auto me-auto" style="width: 70%;">
+          <img src="" class="placeholder img-fluid h-75 w-50" alt="Loader...">
         </div>
-        <h2 id='title' class="book-title card-title text-black text-center">Not Available</h2>
-        <h4 id='author' class="book-author card-subtitle text-secondary text-center">Not Available</h4>
+        <h2 id='title' class="card-title text-black text-center">
+          <p class='book-title placeholder'></p>
+        </h2>
+        <h4 id='author' class=" card-subtitle text-secondary text-center">
+          <p class='book-author placeholder'></p>
+        </h4>
         <div class="card-text-scroll mt-2">
-          <div id='description' class="book-description card-text-scroll-inner text-center">Not Available</div>
+          <div id='description' class=" card-text-scroll-inner text-center">
+            <p class='book-description placeholder'></p>
+          </div>
         </div>
       </div>
     </div>
@@ -262,9 +276,6 @@ require_once('db.php');
       display: none;
     }
 
-    .visible {
-      display: block !important;
-    }
   </style>
 </body>
 
@@ -304,12 +315,13 @@ require_once('db.php');
 
   function hideLinkSent() {
     document.getElementById('linkSent').classList.add('d-none');
+    document.getElementById('signInDialog').reset();
     document.getElementById('signInDialog').classList.remove('d-none');
   }
 
   function hideVerificationSent() {
     document.getElementById('verificationSent').classList.add('d-none');
-    document.getElementById('signUpDialog').classList.remove('d-none');
+    document.getElementById('signInDialog').classList.remove('d-none');
   }
 
   document.getElementById('sendLinkMail').addEventListener('input', function() {
@@ -388,10 +400,10 @@ require_once('db.php');
               })
               .then(response => response.json())
               .then(data => {
+                console.log(data);
                 setTimeout(() => {
                   switch (data.response) {
-                    case 'registered':
-                      document.getElementById('signUpForm').reset();
+                    case 'registered': 
                       document.getElementById('loader').classList.add('d-none');
                       document.getElementById('verificationSent').classList.remove('d-none');
                       break;

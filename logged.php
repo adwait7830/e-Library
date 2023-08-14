@@ -106,13 +106,20 @@ require_once('db.php');
       <div class="card-body">
         <div class="row">
           <div class="col-md-8">
-            <h2 id='title' class="book-title display-4">Not Available</h2>
-            <h3 id='author' class='book-author'>Not Available</h3>
+
+            <h2 id='title' class="placeholder-glow display-4">
+              <p class='book-title placeholder'></p>
+            </h2>
+            <h3 class="placeholder-glow" id='author'>
+              <p class='book-author placeholder'></p>
+            </h3>
             <br>
-            <h6 id='description' class='book-description'>Not Available</h6>
+            <h6 class="placeholder-glow" id='description'>
+              <p class='book-description placeholder'></p>
+            </h6>
           </div>
-          <div class="cover col-md-4">
-            <img src="" alt="Image not available" class="img-fluid">
+          <div class="book-cover placeholder-glow col-md-4">
+            <img src="" alt="Image not available" class="placeholder img-fluid">
           </div>
         </div>
       </div>
@@ -122,8 +129,8 @@ require_once('db.php');
           <button class="edit-btn btn btn-sm btn-outline-primary" onclick="editModalConfig()" data-bs-target='#edit-modal' data-bs-toggle='modal'><i class="fas fa-edit"></i> Edit</button>
         </div>
         <div class='config-btn'>
-          <button id='addBtn' class=" btn btn-sm btn-warning add-btn">Add to Collection</button>
-          <button id='removeBtn' class="btn btn-sm btn-warning remove-btn">Remove from collection</button>
+          <button class="d-none btn btn-sm btn-warning add-btn">Add to Collection</button>
+          <button class="d-none btn btn-sm btn-warning remove-btn">Remove from collection</button>
         </div>
       </div>
     </div>
@@ -135,13 +142,19 @@ require_once('db.php');
         Book Information <button type="button" class="btn-close align-end" aria-label="Close" onclick="closeBookInfo()"></button>
       </div>
       <div class="card-body d-flex flex-column align-content-center justify-content-center ">
-        <div class="cover d-flex align-items-center justify-content-center ms-auto me-auto" style="width: 70%;">
-          <img src="" class="img-fluid" alt="Cover image unavailable">
+      <div class="book-cover d-flex align-content-center justify-content-center ms-auto me-auto" style="width:175px; height: 225px;">
+          <img src="" class="placeholder img-fluid h-75 w-50" alt="Loader...">
         </div>
-        <h2 id='title' class="book-title card-title text-black text-center">Title unavailable</h2>
-        <h4 id='author' class="book-author card-subtitle text-secondary text-center">Author unavailable</h4>
-        <div class="card-text-scroll mt-2" style='height:10rem'>
-          <div id='description' class="book-description card-text-scroll-inner text-center">Description unavailable</div>
+        <h2 id='title' class="mb-0 card-title text-black text-center">
+          <p class='book-title placeholder' style='margin-bottom:2px'></p>
+        </h2>
+        <h4 id='author' class="mb-0 card-subtitle text-secondary text-center">
+          <p class='book-author placeholder'></p>
+        </h4>
+        <div class="card-text-scroll" style='margin-top:5px'>
+          <div id='description' class=" card-text-scroll-inner text-center">
+            <p class='book-description placeholder' style='margin-bottom:2px'></p>
+          </div>
         </div>
       </div>
       <div class="card-footer d-flex justify-content-between">
@@ -150,8 +163,8 @@ require_once('db.php');
           <button class="edit-btn btn btn-sm btn-outline-primary" onclick="editModalConfig()" data-bs-target='#edit-modal' data-bs-toggle='modal'><i class="fas fa-edit"></i></button>
         </div>
         <div class='config-btn'>
-          <button id='addBtn' class="btn btn-sm btn-warning add-btn">Add to Collection</button>
-          <button id='removeBtn' class="btn btn-sm btn-warning remove-btn">Remove from collection</button>
+          <button class="d-none btn btn-sm btn-warning add-btn">Add to Collection</button>
+          <button class="d-none btn btn-sm btn-warning remove-btn">Remove from collection</button>
         </div>
       </div>
     </div>
@@ -205,11 +218,7 @@ require_once('db.php');
   </div>
 
   <style>
-    .add-btn,
-    .remove-btn {
-      display: none;
-    }
-
+    
     .card-text-scroll {
       height: 200px;
       overflow-y: scroll;
