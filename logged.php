@@ -142,7 +142,7 @@ require_once('db.php');
         Book Information <button type="button" class="btn-close align-end" aria-label="Close" onclick="closeBookInfo()"></button>
       </div>
       <div class="card-body d-flex flex-column align-content-center justify-content-center ">
-      <div class="book-cover d-flex align-content-center justify-content-center ms-auto me-auto" style="width:175px; height: 225px;">
+        <div class="book-cover d-flex align-content-center justify-content-center ms-auto me-auto" style="width:175px; height: 225px;">
           <img src="" class="placeholder img-fluid h-75 w-50" alt="Loader...">
         </div>
         <h2 id='title' class="mb-0 card-title text-black text-center">
@@ -218,7 +218,6 @@ require_once('db.php');
   </div>
 
   <style>
-    
     .card-text-scroll {
       height: 200px;
       overflow-y: scroll;
@@ -255,7 +254,8 @@ require_once('db.php');
               <h6 class="card-subtitle mb-2 text-body-secondary"><?php echo $email ?></h6>
             </div>
             <ul class="list-group list-group-flush">
-              <li class="list-group-item"><button class="btn border-0" href="#collection">My Collection</button></li>
+              <li id="showCollection" class="list-group-item"><button class="btn border-0" onclick="toggleCollection()">My Collection</button></li>
+              <li id="showAllBooks" class="list-group-item d-none"><button class="btn border-0" onclick="toggleCollection()">All Books</button></li>
               <li class="list-group-item"><button class="btn border-0" data-bs-target="#add-modal" data-bs-toggle='modal'>Add a book</button></li>
               <li class="list-group-item"><button class="btn border-0">Edit Profile</button></li>
             </ul>
@@ -302,6 +302,48 @@ require_once('db.php');
     </div>
   </div>
 
+  <div id='collection' class='container mt-3 d-none'>
+
+    <div class='display-4 border-bottom'>
+      <p>My Collection</p>
+    </div>
+    <div class="p-5 d-flex flex-wrap justify-content-center">
+      <?php
+      $collection = getCollection();
+      if (count($collection) > 0) {
+        array_walk($collection, function (&$id) {
+          global $conn;
+          $stmt = $conn->prepare("SELECT title,author,cover FROM all_books WHERE id = ?");
+          $stmt->bind_param('s', $id);
+          $stmt->execute();
+          $stmt->bind_result($title, $author, $cover);
+          $stmt->fetch();
+          echo '
+        <div class=" book-card card m-5" style="width:15rem; height:27rem; cursor:pointer;" onclick="openBookInfo(' . $id . ')">
+        <img class="card-img-top h-75" src="' . $cover . '" alt="Book Image">
+          <div class="card-body">
+            <h5 class="card-title">' . $title . '</h5>
+            <h6 class="card-subtitle text-body-secondary">' . $author . '</h6>
+          </div>
+        </div>  
+                ';
+        });
+      } else {
+      ?>
+        <div class='d-flex flex-column'>
+          <div class='text-center fs-2'>
+            <p>Nothing in collection</p>
+          </div>
+          <div class='text-center fs-4'>
+            <p>Add upto 25 books to your collection</p>
+          </div>
+        </div>
+      <?php
+      }
+      ?>
+    </div>
+  </div>
+
   <div id="searchForm" class="my-5 container d-flex flex-row justify-content-center flex-row align-content-center" style="height: 3rem;">
     <input id="searchIp" name="searchIp" class="w-75 bg-warning rounded-pill border-0 p-2 text-center" type="text" placeholder='Search by Title/Author'>
     <style>
@@ -311,12 +353,9 @@ require_once('db.php');
     </style>
   </div>
 
-  <div class="container p-5 d-flex d-none flex-wrap justify-content-center" id='searchResult'>
+  <div class="container d-none p-5 d-flex flex-wrap justify-content-center" id='searchResult'>
   </div>
 
-  <div class="myCollection">
-
-  </div>
   <!-- Book are getting printed here -->
 
   <div class="p-2 d-flex flex-wrap align-items-center justify-content-center" id='allBooks'>

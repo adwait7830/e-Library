@@ -278,3 +278,16 @@ function showToast(message) {
     document.body.removeChild(toast);
   }, 3000);
 }
+
+
+function toggleCollection(){
+
+  document.getElementById('searchForm').classList.toggle('d-none');
+  document.getElementById('allBooks').classList.toggle('d-none');
+  document.getElementById('pagination').classList.toggle('d-none');
+  document.getElementById('collection').classList.toggle('d-none');
+  document.getElementById('showCollection').classList.toggle('d-none');
+  document.getElementById('showAllBooks').classList.toggle('d-none');
+
+
+}
