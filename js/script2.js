@@ -177,7 +177,7 @@ document.getElementById("editBookForm").addEventListener("submit", function (eve
     .then((response) => {
       if (!response.ok) {
         throw new Error("Network response was not ok");
-      }else{
+      } else {
         window.location.reload(true);
       }
     })
@@ -257,10 +257,47 @@ document.getElementById('searchIp').addEventListener('input', function (event) {
         });
       })
       .catch(error => console.error(error));
-  }else{
+  } else {
     document.getElementById('allBooks').classList.remove('d-none');
     document.getElementById('pagination').classList.remove('d-none');
     document.getElementById('searchResult').classList.add('d-none');
   }
 })
+
+function showAdminPanel() {
+  
+  document.getElementById('adminPanel').classList.remove('d-none');
+  document.getElementById('searchForm').classList.add('d-none');
+  document.getElementById('allBooks').classList.add('d-none');
+  document.getElementById('pagination').classList.add('d-none');
+}
+
+fetch('admin.php?type=stat')
+  .then(res => res.json())
+  .then(data => {
+    // console.log(Object.keys(data));
+    const bookChart = document.getElementById('bookChart');
+
+    new Chart(bookChart, {
+      type: 'doughnut',
+      data: {
+        labels: Object.keys(data),
+        datasets: [{
+          label: 'Professions of users',
+          data: Object.values(data),
+          borderWidth: 1
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+  })
+  .catch(err => console.error(err))
+
+
 

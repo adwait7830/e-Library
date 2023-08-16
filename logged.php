@@ -11,6 +11,9 @@ require_once('db.php');
   <link rel="stylesheet" href="style.css">
   <link rel="icon" href="images/title.png">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://kit.fontawesome.com/8256093c76.js" crossorigin="anonymous"></script>
 </head>
 <header style="background:url('images/jas-bg.jpg');">
   <nav class="navbar navbar-expand-lg navbar-light">
@@ -25,6 +28,7 @@ require_once('db.php');
       <div class="collapse navbar-collapse justify-content-lg-end" id="navbarID">
         <ul class="navbar-nav text-lg-center align-items-lg-center ">
           <li class="nav-item"><a class="n-item fs-4" onclick="showAllBooks()">All Books</a></li>
+          <li class="nav-item"><a class="n-item fs-4" onclick="showAdminPanel()">Admin Panel</a></li>
           <li class="nav-item"><a class="n-item fs-4" href="#" data-bs-toggle="modal" data-bs-target="#contactForm">Contact Us</a></li>
           <li class="nav-item"><a class="n-item fs-4" href="#about">About</a></li>
           <li class="nav-item d-none d-lg-block">
@@ -291,6 +295,172 @@ require_once('db.php');
     </div>
   </div>
 
+  <div class="d-none mt-3 container " id='adminPanel'>
+
+    <div class='container border-bottom fs-2'>
+      <h1>Admin Panel</h1>
+    </div>
+
+    <br>
+
+    <div>
+      <div class='kite px-3 mx-1 bg-info'>
+        <h3 class=''>Users</h3>
+      </div>
+      <table class="table" border="1">
+        <thead>
+          <tr>
+            <th scope='col'>Username</th>
+            <th scope='col'>Name</th>
+            <th class="text-center" scope='col'>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <?php
+          $itemsPerPage = 10; // Number of items per page
+          $currentPage = isset($_GET['usp']) ? $_GET['usp'] : 1;
+          $offset = ($currentPage - 1) * $itemsPerPage;
+
+          $stmt = $conn->prepare("SELECT * FROM users WHERE admin = 0 LIMIT ?, ?");
+          $stmt->bind_param("ii", $offset, $itemsPerPage);
+          $stmt->execute();
+          $result = $stmt->get_result();
+
+          while ($user = $result->fetch_assoc()) {
+          ?>
+            <tr>
+              <td><?php echo $user['username']; ?></td>
+              <td><?php echo $user['name']; ?></td>
+
+              <td class='btn-group d-flex justify-content-center' role='group'>
+                <button class="btn btn-sm btn-danger" onclick='removeUser(<?php echo $user["uid"]; ?>)'>Remove User</button>
+                <button class="btn btn-sm btn-primary">More Details</button>
+              </td>
+            </tr>
+          <?php
+          }
+          ?>
+        </tbody>
+      </table>
+
+      <?php
+      $stmt = $conn->prepare("SELECT COUNT(*) as total FROM users WHERE admin = 0");
+      $stmt->execute();
+      $result = $stmt->get_result();
+      $row = $result->fetch_assoc();
+      $totalItems = $row['total'];
+
+      $totalPages = ceil($totalItems / $itemsPerPage);
+      ?>
+
+      <ul class="pagination">
+        <?php for ($i = 1; $i <= $totalPages; $i++) : ?>
+          <li class="page-item <?php echo ($i == $currentPage) ? 'active' : ''; ?>">
+            <a class="page-link" href="?usp=<?php echo $i; ?>"><?php echo $i; ?></a>
+          </li>
+        <?php endfor; ?>
+      </ul>
+    </div>
+
+
+    <br>
+
+    <div class=''>
+      <div class='kite px-3 mx-1 bg-info'>
+        <h3>Admins</h3>
+      </div>
+      <table class="table" border="1">
+        <thead>
+          <tr>
+            <th scope='col'>Username</th>
+            <th scope='col'>Name</th>
+            <th class="text-center" scope='col'>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <?php
+          $itemsPerPage = 10; // Number of items per page
+          $currentPage = isset($_GET['adp']) ? $_GET['adp'] : 1;
+          $offset = ($currentPage - 1) * $itemsPerPage;
+
+          $stmt = $conn->prepare("SELECT * FROM users WHERE admin = 1 LIMIT ?, ?");
+          $stmt->bind_param("ii", $offset, $itemsPerPage);
+          $stmt->execute();
+          $result = $stmt->get_result();
+
+          while ($user = $result->fetch_assoc()) {
+          ?>
+            <tr>
+              <td><?php echo $user['username']; ?></td>
+              <td><?php echo $user['name']; ?></td>
+
+              <td class='btn-group d-flex justify-content-center' role='group'>
+                <button class="btn btn-sm btn-danger" onclick='removeUser(<?php echo $user["uid"]; ?>)'>Remove User</button>
+                <button class="btn btn-sm btn-primary">More Details</button>
+              </td>
+            </tr>
+          <?php
+          }
+          ?>
+        </tbody>
+      </table>
+
+      <?php
+      $stmt = $conn->prepare("SELECT COUNT(*) as total FROM users WHERE admin = 1");
+      $stmt->execute();
+      $result = $stmt->get_result();
+      $row = $result->fetch_assoc();
+      $totalItems = $row['total'];
+
+      $totalPages = ceil($totalItems / $itemsPerPage);
+      ?>
+
+      <ul class="pagination">
+        <?php for ($i = 1; $i <= $totalPages; $i++) : ?>
+          <li class="page-item <?php echo ($i == $currentPage) ? 'active' : ''; ?>">
+            <a class="page-link" href="?adp=<?php echo $i; ?>"><?php echo $i; ?></a>
+          </li>
+        <?php endfor; ?>
+      </ul>
+    </div>
+
+    <br>
+
+    <div class="">
+      <div class='kite px-3 mx-1 bg-info'>
+        <h3>Statistics</h3>
+      </div>
+      <div class="container d-flex justify-content-around row">
+        <!-- <canvas id="profChart" class="col-6" style="max-width: 500px; max-height: 500px; " ></canvas> -->
+        <div class='d-flex flex-column justify-content-center align-items-center' style="max-width: 500px; max-height: 500px;  ">
+          <div class='display-3'>
+            <p>
+              <?php
+              $stmt = $conn->prepare("SELECT COUNT(*) as total FROM users");
+              $stmt->execute();
+              $stmt->bind_result($totalUsers);
+              $stmt->fetch();
+              $stmt->close();
+              echo $totalUsers;
+              ?></p>
+          </div>
+          <div class="fs-1">Total Users</div>
+        </div>
+        <canvas id="bookChart" class="col-6" style="max-width: 600px; max-height: 500px; "></canvas>
+      </div>
+    </div>
+
+    <style>
+      .kite {
+        transform: skewX(-45deg);
+      }
+
+      .kite h3 {
+        transform: skewX(45deg);
+      }
+    </style>
+  </div>
+
   <div id="searchForm" class="my-5 container d-flex flex-row justify-content-center flex-row align-content-center" style="height: 3rem;">
     <input id="searchIp" name="searchIp" class="w-75 bg-warning rounded-pill border-0 p-2 text-center" type="text" placeholder='Search by Title/Author'>
     <style>
@@ -460,7 +630,6 @@ require_once('db.php');
 </script>
 <script src="js/script1.js" type="text/javascript"></script>
 <script src="js/script2.js" type="text/javascript"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://kit.fontawesome.com/8256093c76.js" crossorigin="anonymous"></script>
+
 
 </html>
