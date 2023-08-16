@@ -235,23 +235,23 @@ require_once('db.php');
   </div>
 
   <div class='bookInfo mobile-view-card'>
-    <div class="card dialog position-fixed book-dialog " style="width:175px; height: 225px;">
+    <div class="card dialog position-fixed book-dialog " style="width:19rem;">
       <div class="card-header d-flex justify-content-between">
         Book Information <button type="button" class="btn-close align-end" aria-label="Close" onclick="closeBookInfo()"></button>
       </div>
-      <div class="card-body">
-        <div class="book-cover d-flex align-content-center justify-content-center ms-auto me-auto" style="width: 70%;">
+      <div class="card-body d-flex flex-column align-content-center justify-content-center ">
+        <div class="book-cover d-flex align-content-center justify-content-center ms-auto me-auto" style="width:175px; height: 225px;">
           <img src="" class="placeholder img-fluid h-75 w-50" alt="Loader...">
         </div>
-        <h2 id='title' class="card-title text-black text-center">
-          <p class='book-title placeholder'></p>
+        <h2 id='title' class="mb-0 card-title text-black text-center">
+          <p class='book-title placeholder' style='margin-bottom:2px'></p>
         </h2>
-        <h4 id='author' class=" card-subtitle text-secondary text-center">
+        <h4 id='author' class="mb-0 card-subtitle text-secondary text-center">
           <p class='book-author placeholder'></p>
         </h4>
-        <div class="card-text-scroll mt-2">
+        <div class="card-text-scroll" style='margin-top:5px'>
           <div id='description' class=" card-text-scroll-inner text-center">
-            <p class='book-description placeholder'></p>
+            <p class='book-description placeholder' style='margin-bottom:2px'></p>
           </div>
         </div>
       </div>

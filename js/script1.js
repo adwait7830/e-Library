@@ -28,22 +28,22 @@ function openBookInfo(id) {
 
       setTimeout(() => {
 
-        document.querySelectorAll('.book-cover').forEach((element)=>{
+        document.querySelectorAll('.book-cover').forEach((element) => {
           element.innerHTML = `<img src="${book.cover}" alt="${book.title}" class="img-fluid">`;
         });
 
         document.querySelectorAll('.book-title').forEach((element) => {
           element.classList.remove('placeholder');
         });
-  
+
         document.querySelectorAll('.book-author').forEach((element) => {
           element.classList.remove('placeholder');
         });
-  
+
         document.querySelectorAll('.book-description').forEach((element) => {
           element.classList.remove('placeholder');
         });
-        
+
 
       }, 800);
     })
@@ -74,6 +74,8 @@ function handleResize() {
 
 function closeBookInfo() {
 
+
+
   const currentURL = new URL(window.location.href);
   const newURL = `${currentURL.origin}${currentURL.pathname}${currentURL.search}`;
   window.history.replaceState({}, '', newURL);
@@ -85,7 +87,7 @@ function closeBookInfo() {
   });
   window.removeEventListener('resize', handleResize);
 
-  document.querySelectorAll('.book-cover').forEach((element)=>{
+  document.querySelectorAll('.book-cover').forEach((element) => {
     element.innerHTML = `<img src="" alt="Loading..." class="img-fluid placeholder">`;
   });
 

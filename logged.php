@@ -128,10 +128,6 @@ require_once('db.php');
           <button class="dlt-btn btn btn-sm btn-outline-danger" data-bs-target='#delete-modal' data-bs-toggle='modal'><i class="fas fa-trash"></i> Delete</button>
           <button class="edit-btn btn btn-sm btn-outline-primary" onclick="editModalConfig()" data-bs-target='#edit-modal' data-bs-toggle='modal'><i class="fas fa-edit"></i> Edit</button>
         </div>
-        <div class='config-btn'>
-          <button class="d-none btn btn-sm btn-warning add-btn">Add to Collection</button>
-          <button class="d-none btn btn-sm btn-warning remove-btn">Remove from collection</button>
-        </div>
       </div>
     </div>
   </div>
@@ -161,10 +157,6 @@ require_once('db.php');
         <div class='config-btn'>
           <button class="dlt-btn btn btn-sm btn-outline-danger" data-bs-target='#delete-modal' data-bs-toggle='modal'><i class="fas fa-trash"></i></button>
           <button class="edit-btn btn btn-sm btn-outline-primary" onclick="editModalConfig()" data-bs-target='#edit-modal' data-bs-toggle='modal'><i class="fas fa-edit"></i></button>
-        </div>
-        <div class='config-btn'>
-          <button class="d-none btn btn-sm btn-warning add-btn">Add to Collection</button>
-          <button class="d-none btn btn-sm btn-warning remove-btn">Remove from collection</button>
         </div>
       </div>
     </div>
@@ -254,15 +246,12 @@ require_once('db.php');
               <h6 class="card-subtitle mb-2 text-body-secondary"><?php echo $email ?></h6>
             </div>
             <ul class="list-group list-group-flush">
-              <li id="showCollection" class="list-group-item"><button class="btn border-0" onclick="toggleCollection()">My Collection</button></li>
-              <li id="showAllBooks" class="list-group-item d-none"><button class="btn border-0" onclick="toggleCollection()">All Books</button></li>
               <li class="list-group-item"><button class="btn border-0" data-bs-target="#add-modal" data-bs-toggle='modal'>Add a book</button></li>
-              <li class="list-group-item"><button class="btn border-0">Edit Profile</button></li>
             </ul>
           </div>
         </div>
         <form class="modal-footer justify-content-between" action="" method="post">
-          <button type="submit" class="btn btn-danger" name="log-out" onclick="log_out()">Log out<i class="fa-solid fa-right-from-bracket ms-2"></i></button>
+          <button type="submit" class="btn btn-danger" name="log-out">Log out<i class="fa-solid fa-right-from-bracket ms-2"></i></button>
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
         </form>
       </div>
@@ -299,48 +288,6 @@ require_once('db.php');
           <button type="button" class="btn btn-secondary" data-bs-dismiss='modal'>Cancel</button>
         </div>
       </form>
-    </div>
-  </div>
-
-  <div id='collection' class='container mt-3 d-none'>
-
-    <div class='display-4 border-bottom'>
-      <p>My Collection</p>
-    </div>
-    <div class="p-5 d-flex flex-wrap justify-content-center">
-      <?php
-      $collection = getCollection();
-      if (count($collection) > 0) {
-        array_walk($collection, function (&$id) {
-          global $conn;
-          $stmt = $conn->prepare("SELECT title,author,cover FROM all_books WHERE id = ?");
-          $stmt->bind_param('s', $id);
-          $stmt->execute();
-          $stmt->bind_result($title, $author, $cover);
-          $stmt->fetch();
-          echo '
-        <div class=" book-card card m-5" style="width:15rem; height:27rem; cursor:pointer;" onclick="openBookInfo(' . $id . ')">
-        <img class="card-img-top h-75" src="' . $cover . '" alt="Book Image">
-          <div class="card-body">
-            <h5 class="card-title">' . $title . '</h5>
-            <h6 class="card-subtitle text-body-secondary">' . $author . '</h6>
-          </div>
-        </div>  
-                ';
-        });
-      } else {
-      ?>
-        <div class='d-flex flex-column'>
-          <div class='text-center fs-2'>
-            <p>Nothing in collection</p>
-          </div>
-          <div class='text-center fs-4'>
-            <p>Add upto 25 books to your collection</p>
-          </div>
-        </div>
-      <?php
-      }
-      ?>
     </div>
   </div>
 

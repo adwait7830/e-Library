@@ -264,30 +264,3 @@ document.getElementById('searchIp').addEventListener('input', function (event) {
   }
 })
 
-function showToast(message) {
-  // Create a div element for the toast
-  const toast = document.createElement('div');
-  toast.classList.add('toast');
-  toast.innerText = message;
-
-  // Add the toast to the page
-  document.body.appendChild(toast);
-
-  // Automatically remove the toast after 3 seconds
-  setTimeout(() => {
-    document.body.removeChild(toast);
-  }, 3000);
-}
-
-
-function toggleCollection(){
-
-  document.getElementById('searchForm').classList.toggle('d-none');
-  document.getElementById('allBooks').classList.toggle('d-none');
-  document.getElementById('pagination').classList.toggle('d-none');
-  document.getElementById('collection').classList.toggle('d-none');
-  document.getElementById('showCollection').classList.toggle('d-none');
-  document.getElementById('showAllBooks').classList.toggle('d-none');
-
-
-}

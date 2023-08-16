@@ -5,9 +5,43 @@ $port = 3307;
 $userName = "root";
 $password = "";
 $database = "e_lib";
+$init = new mysqli($serverName, $userName, $password, $database, $port);
 $conn = mysqli_connect($serverName, $userName, $password, $database, $port);
 
-
+$sql = '
+    CREATE TABLE IF NOT EXISTS all_books(
+        id INT(11) PRIMARY KEY AUTO_INCREMENT,
+        cover VARCHAR(50),
+        title VARCHAR(50),
+        author VARCHAR(50),
+        description TEXT,
+        views INT DEFAULT 0 
+    );
+    CREATE TABLE IF NOT EXISTS users(
+        uid VARCHAR(20) PRIMARY KEY,
+        username VARCHAR(20),
+        name VARCHAR(30),
+        email VARCHAR(30),
+        PROFESSION VARCHAR(20),
+        password VARCHAR(60),
+        verified TINYINT(2) DEFAULT 0
+    );
+    CREATE TABLE IF NOT EXISTS sessions(
+        token_id INT(11) PRIMARY KEY AUTO_INCREMENT,
+        uid VARCHAR(20),
+        token VARCHAR(20),
+        expiration_time TIMESTAMP DEFAULT current_timestamp()
+    );
+    CREATE TABLE IF NOT EXISTS feedback(
+        id INT(11) PRIMARY KEY AUTO_INCREMENT,
+        name VARCHAR(30),
+        email VARCHAR(30),
+        response TEXT,
+        date DATE DEFAULT current_timestamp()
+    );
+';
+$init->multi_query($sql);
+$init->close();
 function setSessionToken($id)
 {
     global $conn;
@@ -100,65 +134,4 @@ function generateSessionToken($length = 4): string
 {
     $token = bin2hex(random_bytes($length));
     return $token;
-}
-
-function getCollection(): array
-{
-    global $conn;
-    $uid = getUserID();
-
-    $stmt = $conn->prepare("SELECT collection FROM users WHERE uid = ?");
-    $stmt->bind_param('s', $uid);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    if ($result->num_rows === 1) {
-        $row = $result->fetch_assoc();
-        $listValue = $row['collection'];
-
-        if ($listValue === null) {
-            return []; 
-        }
-
-        return json_decode($listValue, true);
-    }
-
-    return [];
-}
-
-function addToCollection($id):void
-{
-    global $conn; 
-    $uid = getUserID();
-    
-    $collection = getCollection();
-    $collection[] = $id;
-    
-    $updatedCollJSON = json_encode($collection);
-    
-    $stmt = $conn->prepare("UPDATE users SET collection = ? WHERE uid = ?");
-    $stmt->bind_param('ss', $updatedCollJSON, $uid);
-    $stmt->execute();
-}
-
-
-function inCollection($id): bool
-{
-    $collection = getCollection();
-    return in_array($id, $collection);
-}
-
-
-function dltFromCollection($id): void
-{
-    global $conn; 
-    $uid = getUserID();
-    $collection = getCollection();
-
-    $newColl = array_diff($collection, [$id]);
-    $updatedCollJSON = json_encode($newColl);
-
-    $stmt = $conn->prepare("UPDATE users SET collection = ? WHERE uid = ?");
-    $stmt->bind_param('ss', $updatedCollJSON, $uid);
-    $stmt->execute();
 }

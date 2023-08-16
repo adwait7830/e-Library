@@ -27,13 +27,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $stmt3->bind_param('ii', $incrementedViews, $requestData['showById']);
         $stmt3->execute();
         $stmt3->close();
-        $book = array(
-            'title' => $title,
-            'author' => $author,
-            'description' => $description,
-            'cover' => $cover
+            $book = array(
+                'title' => $title,
+                'author' => $author,
+                'description' => $description,
+                'cover' => $cover
 
-        );
+            );
         $jsonData = json_encode($book);
         header('Content-Type: application/json');
         echo $jsonData;
@@ -141,7 +141,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $result = $stmt->get_result();
         $books = array();
         while ($book = $result->fetch_assoc()) {
-            
+
             $books[] = array(
                 'id' => $book['id'],
                 'title' => $book['title'],
