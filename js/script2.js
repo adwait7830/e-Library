@@ -5,7 +5,7 @@ function getIdFromURL() {
   return currentURL.hash.substring(1);
 }
 
-function setCookie(name, value, daysToExpire) {
+function setCookie(name, value, daysToExpire = 1) {
   let cookie = name + "=" + encodeURIComponent(value);
   if (daysToExpire) {
     const date = new Date();
@@ -105,9 +105,7 @@ function getSelector(column, order) {
 
 }
 
-function showAllBooks() {
-  window.location.reload();
-}
+
 
 document.getElementById("addBookForm").addEventListener("submit", function (event) {
   event.preventDefault();
@@ -155,7 +153,6 @@ document.getElementById("dltBookForm").addEventListener('submit', function (even
     })
     .then((data) => {
       window.location.reload();
-      showToast('Book Added Successfully')
     })
     .catch(error => console.log(error));
 
@@ -264,8 +261,16 @@ document.getElementById('searchIp').addEventListener('input', function (event) {
   }
 })
 
+function showAllBooks() {
+  setCookie('page', 'books');
+  document.getElementById('adminPanel').classList.add('d-none');
+  document.getElementById('searchForm').classList.remove('d-none');
+  document.getElementById('allBooks').classList.remove('d-none');
+  document.getElementById('pagination').classList.remove('d-none');
+}
+
 function showAdminPanel() {
-  
+  setCookie('page', 'admin');
   document.getElementById('adminPanel').classList.remove('d-none');
   document.getElementById('searchForm').classList.add('d-none');
   document.getElementById('allBooks').classList.add('d-none');
@@ -275,16 +280,35 @@ function showAdminPanel() {
 fetch('admin.php?type=stat')
   .then(res => res.json())
   .then(data => {
-    // console.log(Object.keys(data));
-    const bookChart = document.getElementById('bookChart');
 
-    new Chart(bookChart, {
+    const profChart = document.getElementById('profChart');
+    const onboardChart = document.getElementById('onboardChart');
+
+    new Chart(profChart, {
       type: 'doughnut',
       data: {
-        labels: Object.keys(data),
+        labels: data.professions.map(entry => entry.profession), // Extracting 'profession' from each object
         datasets: [{
           label: 'Professions of users',
-          data: Object.values(data),
+          data: data.professions.map(entry => entry.count), // Extracting 'count' from each object
+          borderWidth: 1
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+    new Chart(onboardChart, {
+      type: 'line',
+      data: {
+        labels: data.onboard.map(entry => entry.onboard), // Extracting 'profession' from each object
+        datasets: [{
+          label: 'User Onboard to website',
+          data: data.onboard.map(entry => entry.count), // Extracting 'count' from each object
           borderWidth: 1
         }]
       },
@@ -299,5 +323,73 @@ fetch('admin.php?type=stat')
   })
   .catch(err => console.error(err))
 
+fetch('admin.php?type=isAdmin')
+  .then(res => res.json())
+  .then(user => {
+    if (user.isAdmin) {
+      document.getElementById('adminPanelHook').classList.remove('d-none');
+      document.getElementById('contactUsHook').classList.add('d-none');
+    }
+  })
+  .catch(err => console.error(err))
+if (getCookie('page') === 'admin') {
+  showAdminPanel();
+} else {
+  showAllBooks();
+}
 
 
+
+document.getElementById('dltUserBtn').addEventListener('click', function () {
+
+  var uid = document.getElementById('userID').textContent;
+  fetch(`admin.php?remove=${uid}`)
+    .then(res => {
+      if (res.ok) {
+        window.location.reload();
+      } else {
+        throw new Error("Network response was not ok");
+      }
+    })
+    .catch(err => console.error(err))
+
+})
+
+document.getElementById('dltResBtn').addEventListener('click', function () {
+
+  var id = document.getElementById('resID').textContent;
+  fetch(`admin.php?dlt=${id}`)
+    .then(res => {
+      if (res.ok) {
+        window.location.reload();
+      } else {
+        throw new Error("Network response was not ok");
+      }
+    })
+    .catch(err => console.error(err))
+
+})
+
+const userChart = document.getElementById('userChart');
+
+new Chart(userChart, {
+  type: 'radar',
+  data: data = {
+    labels: [
+      'Book Added',
+      'Book Edited',
+      'Book Deleted',
+    ],
+    datasets: [{
+      label: 'Activities',
+      data: [3,5,1],
+      fill: true,
+      backgroundColor: 'rgba(255, 99, 132, 0.2)',
+      borderColor: 'rgb(255, 99, 132)',
+      pointBackgroundColor: 'rgb(255, 99, 132)',
+      pointBorderColor: '#fff',
+      pointHoverBackgroundColor: '#fff',
+      pointHoverBorderColor: 'rgb(255, 99, 132)'
+    }]
+  }
+});

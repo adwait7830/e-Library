@@ -28,8 +28,8 @@ require_once('db.php');
       <div class="collapse navbar-collapse justify-content-lg-end" id="navbarID">
         <ul class="navbar-nav text-lg-center align-items-lg-center ">
           <li class="nav-item"><a class="n-item fs-4" onclick="showAllBooks()">All Books</a></li>
-          <li class="nav-item"><a class="n-item fs-4" onclick="showAdminPanel()">Admin Panel</a></li>
-          <li class="nav-item"><a class="n-item fs-4" href="#" data-bs-toggle="modal" data-bs-target="#contactForm">Contact Us</a></li>
+          <li class="nav-item d-none" id='adminPanelHook'><a class="n-item fs-4" onclick="showAdminPanel()">Admin Panel</a></li>
+          <li class="nav-item" id='contactUsHook'><a class="n-item fs-4" href="#" data-bs-toggle="modal" data-bs-target="#contactForm">Contact Us</a></li>
           <li class="nav-item"><a class="n-item fs-4" href="#about">About</a></li>
           <li class="nav-item d-none d-lg-block">
             <button type="button" data-bs-toggle="modal" data-bs-target="#profileModal" class=" ms-lg-2 btn rounded-circle profile-btn btn-secondary">
@@ -331,10 +331,19 @@ require_once('db.php');
             <tr>
               <td><?php echo $user['username']; ?></td>
               <td><?php echo $user['name']; ?></td>
-
-              <td class='btn-group d-flex justify-content-center' role='group'>
-                <button class="btn btn-sm btn-danger" onclick='removeUser(<?php echo $user["uid"]; ?>)'>Remove User</button>
-                <button class="btn btn-sm btn-primary">More Details</button>
+              <td class='d-block d-sm-none'>
+                <div class='btn-group-vertical d-flex justify-content-center' role="group">
+                  <button class="btn btn-sm btn-danger" data-bs-target="#userDltModal" data-bs-toggle='modal'>Remove</button>
+                  <p class='d-none' id='userID'><?php echo $user['uid']; ?></p>
+                  <button class="btn btn-sm btn-primary" data-bs-target="#userModal" data-bs-toggle='modal'>Details</button>
+                </div>
+              </td>
+              <td class='d-none d-sm-block'>
+                <div class="btn-group d-flex justify-content-center" role='group'>
+                  <button class="btn btn-sm btn-danger" data-bs-target="#userDltModal" data-bs-toggle='modal'>Remove</button>
+                  <p class='d-none' id='userID'><?php echo $user['uid']; ?></p>
+                  <button class="btn btn-sm btn-primary" data-bs-target="#userModal" data-bs-toggle='modal'>Details</button>
+                </div>
               </td>
             </tr>
           <?php
@@ -362,10 +371,9 @@ require_once('db.php');
       </ul>
     </div>
 
-
     <br>
 
-    <div class=''>
+    <div class='container'>
       <div class='kite px-3 mx-1 bg-info'>
         <h3>Admins</h3>
       </div>
@@ -393,10 +401,8 @@ require_once('db.php');
             <tr>
               <td><?php echo $user['username']; ?></td>
               <td><?php echo $user['name']; ?></td>
-
               <td class='btn-group d-flex justify-content-center' role='group'>
-                <button class="btn btn-sm btn-danger" onclick='removeUser(<?php echo $user["uid"]; ?>)'>Remove User</button>
-                <button class="btn btn-sm btn-primary">More Details</button>
+                <button class="btn btn-sm btn-primary">Details</button>
               </td>
             </tr>
           <?php
@@ -426,28 +432,132 @@ require_once('db.php');
 
     <br>
 
-    <div class="">
+    <div class="container">
       <div class='kite px-3 mx-1 bg-info'>
         <h3>Statistics</h3>
       </div>
-      <div class="container d-flex justify-content-around row">
-        <!-- <canvas id="profChart" class="col-6" style="max-width: 500px; max-height: 500px; " ></canvas> -->
-        <div class='d-flex flex-column justify-content-center align-items-center' style="max-width: 500px; max-height: 500px;  ">
-          <div class='display-3'>
-            <p>
-              <?php
-              $stmt = $conn->prepare("SELECT COUNT(*) as total FROM users");
-              $stmt->execute();
-              $stmt->bind_result($totalUsers);
-              $stmt->fetch();
-              $stmt->close();
-              echo $totalUsers;
-              ?></p>
+
+      <div>
+        <div class="row">
+          <div class="col-lg-6 ">
+            <div id="userStat" class="d-flex flex-column justify-content-center align-items-center" style='height:400px'>
+
+              <p class="display-3">
+                <?php
+                $stmt = $conn->prepare("SELECT COUNT(*) as total FROM users");
+                $stmt->execute();
+                $stmt->bind_result($totalUsers);
+                $stmt->fetch();
+                $stmt->close();
+                echo $totalUsers;
+                ?>
+              </p>
+
+              <div class="fs-1">Total Users</div>
+            </div>
           </div>
-          <div class="fs-1">Total Users</div>
+          <div class="col-lg-6 d-flex justify-content-center " style='height:400px'>
+            <canvas id="profChart"></canvas>
+          </div>
         </div>
-        <canvas id="bookChart" class="col-6" style="max-width: 600px; max-height: 500px; "></canvas>
       </div>
+
+      <div class='w-100 bg-black mt-5' style='height:1px'></div>
+
+      <div>
+        <div class="row">
+          <div class="col-lg-6 ">
+            <div id="onboardStat" class="d-flex flex-column justify-content-center align-items-center" style='height:400px'>
+
+              <p class="display-3">
+                <?php
+                $stmt = $conn->prepare("SELECT DATEDIFF(MAX(onboard), MIN(onboard)) AS days FROM users");
+                $stmt->execute();
+                $stmt->bind_result($days);
+                $stmt->fetch();
+                $stmt->close();
+                echo floor($totalUsers / $days);
+                ?>
+              </p>
+
+              <div class="fs-1">Users Onboard per Day</div>
+            </div>
+          </div>
+          <div class="col-lg-6 d-flex justify-content-center align-items-center " style='height:400px'>
+            <canvas id="onboardChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class='container'>
+      <div class='kite px-3 mx-1 bg-info'>
+        <h3>Feedback</h3>
+      </div>
+
+      <table class="table" border="1">
+        <thead>
+          <tr>
+            <th scope='col'>Name</th>
+            <th scope='col'>Response</th>
+            <th class="text-center" scope='col'>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <?php
+          $itemsPerPage = 10; // Number of items per page
+          $currentPage = isset($_GET['fd']) ? $_GET['fd'] : 1;
+          $offset = ($currentPage - 1) * $itemsPerPage;
+
+          $stmt = $conn->prepare("SELECT * FROM feedback LIMIT ?, ?");
+          $stmt->bind_param("ii", $offset, $itemsPerPage);
+          $stmt->execute();
+          $result = $stmt->get_result();
+
+          while ($feedback = $result->fetch_assoc()) {
+          ?>
+            <tr>
+              <td><?php echo $feedback['name']; ?></td>
+              <td><?php echo $feedback['response']; ?></td>
+              <td class='d-block d-sm-none'>
+                <div class='btn-group-vertical d-flex justify-content-center' role='group'>
+                  <button class="btn btn-sm btn-danger" data-bs-target="#resDltModal" data-bs-toggle='modal'>Delete</button>
+                  <p class='d-none' id='resID'><?php echo $feedback['id']; ?></p>
+                  <button class="btn btn-sm btn-primary">Reply</button>
+                </div>
+              </td>
+              <td class='d-none d-sm-block'>
+                <div class='btn-group d-flex justify-content-center' role='group'>
+                  <button class="btn btn-sm btn-danger" data-bs-target="#resDltModal" data-bs-toggle='modal'>Delete</button>
+                  <p class='d-none' id='resID'><?php echo $feedback['id']; ?></p>
+                  <button class="btn btn-sm btn-primary">Reply</button>
+                </div>
+              </td>
+            </tr>
+          <?php
+          }
+          ?>
+        </tbody>
+      </table>
+
+      <?php
+      $stmt = $conn->prepare("SELECT COUNT(*) as total FROM feedback");
+      $stmt->execute();
+      $result = $stmt->get_result();
+      $row = $result->fetch_assoc();
+      $totalItems = $row['total'];
+
+      $totalPages = ceil($totalItems / $itemsPerPage);
+      ?>
+
+      <ul class="pagination">
+        <?php for ($i = 1; $i <= $totalPages; $i++) : ?>
+          <li class="page-item <?php echo ($i == $currentPage) ? 'active' : ''; ?>">
+            <a class="page-link" href="?fd=<?php echo $i; ?>"><?php echo $i; ?></a>
+          </li>
+        <?php endfor; ?>
+      </ul>
     </div>
 
     <style>
@@ -459,6 +569,59 @@ require_once('db.php');
         transform: skewX(45deg);
       }
     </style>
+
+    <div class="modal fade" id="userDltModal" tabindex="-1" aria-labelledby="userDltModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header ">
+            <h1 class="modal-title text-center w-100 fs-5" id="userDltModalLabel">Remove User?</h1>
+          </div>
+          <div class="modal-body d-flex justify-content-around ">
+            <button type="button" class="btn btn-danger" id='dltUserBtn'>Remove</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal fade" id="resDltModal" tabindex="-1" aria-labelledby="resDltModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header ">
+            <h1 class="modal-title text-center w-100 fs-5" id="resDltModalLabel">Delete Feedback?</h1>
+          </div>
+          <div class="modal-body d-flex justify-content-around ">
+            <button type="button" class="btn btn-danger" id='dltResBtn'>Delete</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- User Details Model -->
+    <div class="modal fade" id="userModal" tabindex="-1" aria-labelledby="userModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header ">
+            <h1 class="modal-title w-100 fs-5" id="userModalLabel">User Details</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body d-flex justify-content-around p-0 " style='height:300px'>
+            <div class="card rounded-0 border-0" style="width: 20rem;">
+              <div class="card-body">
+                <h5 class="card-title fs-2">Divyanshu Naugai</h5>
+                <h6 class="card-subtitle mb-2 text-body-secondary">Student</h6>
+                <h6 class="card-subtitle mb-2 text-body-secondary">dishunaugai@outlook.com</h6>
+                <p class="card-text">On e Library since 2-3-23</p>
+              </div>
+            </div>
+            <div style="height: 300px; width:300px">
+              <canvas id='userChart' class='w-100 h-100'></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 
   <div id="searchForm" class="my-5 container d-flex flex-row justify-content-center flex-row align-content-center" style="height: 3rem;">
