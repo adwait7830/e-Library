@@ -89,25 +89,6 @@
 
 }
 
-.profile .top-right {
-  position: fixed;
-  top: 1rem;
-  right: 1rem;
-  margin: 0;
-  transform: translateX(100%);
-  animation: slideRight 0.3s forwards
-}
-
-@keyframes slideRight {
-  0% {
-    transform: translateX(100%);
-  }
-
-  100% {
-    transform: translateX(0);
-  }
-}
-
 .dialog {
 
   position: fixed;

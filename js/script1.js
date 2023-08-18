@@ -47,9 +47,9 @@ function openBookInfo(id) {
 
       }, 800);
     })
-    .catch(error => {
-      console.log(error)
-    });
+    .catch(()=>{
+      showToast('Server Error',0);
+    })
 
   document.querySelector(".overlay").classList.remove('d-none');
   document.body.style.overflow = "hidden";
@@ -104,7 +104,23 @@ function closeBookInfo() {
   });
 
 }
-
+function showToast(msg, status = -1) {
+  var toastEl = document.querySelector('.toast');
+  switch (status) {
+    case 0:
+      toastEl.classList.add('text-bg-danger');
+      break;
+    case 1:
+      toastEl.classList.add('text-bg-success');
+      break;
+    default:
+      toastEl.classList.add('text-bg-primary');
+      break;
+  }
+  document.getElementById('toastTxt').textContent = msg;
+  var toast = new bootstrap.Toast(toastEl);
+  toast.show();
+}
 
 
 

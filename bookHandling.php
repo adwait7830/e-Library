@@ -22,18 +22,17 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $stmt->fetch();
         $stmt->close();
 
-        $stmt3 = $conn->prepare('UPDATE all_books SET views = ? WHERE id = ?');
-        $incrementedViews  = $views + 1;
-        $stmt3->bind_param('ii', $incrementedViews, $requestData['showById']);
-        $stmt3->execute();
-        $stmt3->close();
-            $book = array(
-                'title' => $title,
-                'author' => $author,
-                'description' => $description,
-                'cover' => $cover
+        $stmt = $conn->prepare('UPDATE all_books SET views = views + 1 WHERE id = ?');
+        $stmt->bind_param('i', $requestData['showById']);
+        $stmt->execute();
+        $stmt->close();
+        $book = array(
+            'title' => $title,
+            'author' => $author,
+            'description' => $description,
+            'cover' => $cover
 
-            );
+        );
         $jsonData = json_encode($book);
         header('Content-Type: application/json');
         echo $jsonData;
@@ -56,6 +55,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         if ($stmt->execute()) {
             $stmt->close();
+            $uid = getUserID();
+            $stmt = $conn->prepare('UPDATE users SET added = added + 1 WHERE uid = ?');
+            $stmt->bind_param('s', $uid);
+            $stmt->execute();
+            $stmt->close();
+            $jsonData = json_encode(array('response' => 'success'));
+            header("Content-Type: application/json");
+            echo $jsonData;
         } else {
             echo 'Error: ' . $stmt->error;
         }
@@ -87,21 +94,23 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
             $stmt = $conn->prepare('UPDATE all_books SET cover = ?, title = ?, author = ?, description = ? WHERE id = ?');
             $stmt->bind_param('ssssi', $target_file, $title, $author, $description, $id);
-
-            $jsonData = json_encode(array('response' => 'Cover photo received'));
-            header('Content-Type: application/json');
-            echo $jsonData;
+            
         } else {
 
             $stmt = $conn->prepare('UPDATE all_books SET title = ?, author = ?, description = ? WHERE id = ?');
             $stmt->bind_param('sssi', $title, $author, $description, $id);
-            $jsonData = json_encode(array('response' => 'Cover photo not received'));
-            header('Content-Type: application/json');
-            echo $jsonData;
         }
 
         if ($stmt->execute()) {
             $stmt->close();
+            $uid = getUserID();
+            $stmt = $conn->prepare('UPDATE users SET edited = edited + 1 WHERE uid = ?');
+            $stmt->bind_param('s', $uid);
+            $stmt->execute();
+            $stmt->close();
+            $jsonData = json_encode(array('response' => 'success'));
+            header("Content-Type: application/json");
+            echo $jsonData;
         } else {
             echo 'Error: ' . $stmt->error;
         }
@@ -129,6 +138,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $stmt->bind_param("i", $idToDelete);
         $stmt->execute();
         $stmt->close();
+        $uid = getUserID();
+        $stmt = $conn->prepare('UPDATE users SET deleted = deleted + 1 WHERE uid = ?');
+        $stmt->bind_param('s', $uid);
+        $stmt->execute();
+        $stmt->close();
+        $jsonData = json_encode(array('response' => 'success'));
+        header("Content-Type: application/json");
+        echo $jsonData;
     }
 
     if (isset($requestData['keyword'])) {

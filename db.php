@@ -24,7 +24,13 @@ $sql = '
         email VARCHAR(30),
         PROFESSION VARCHAR(20),
         password VARCHAR(60),
-        verified TINYINT(2) DEFAULT 0
+        verified TINYINT(2) DEFAULT 0,
+        onboard DATE DEFAULT CURRENT_DATE,
+        admin TINYINT(2) DEFAULT 0,
+        added INT(11) DEFAULT 0,
+        edited INT(11) DEFAULT 0,
+        deleted INT(11) DEFAULT 0
+
     );
     CREATE TABLE IF NOT EXISTS sessions(
         token_id INT(11) PRIMARY KEY AUTO_INCREMENT,
@@ -37,7 +43,7 @@ $sql = '
         name VARCHAR(30),
         email VARCHAR(30),
         response TEXT,
-        date DATE DEFAULT current_timestamp()
+        date DATE DEFAULT CURRENT_DATE
     );
 ';
 $init->multi_query($sql);

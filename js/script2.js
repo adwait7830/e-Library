@@ -50,14 +50,6 @@ const orders = {
   },
 
 };
-function toggleProfileModal() {
-  var profileElement = document.querySelector('.profile');
-  if (profileElement.style.display === 'none' || profileElement.style.display === '') {
-    profileElement.style.display = 'block';
-  } else {
-    profileElement.style.display = 'none';
-  }
-}
 
 function toggleAddBookModal() {
   const overlay = document.querySelector('.overlay');
@@ -66,7 +58,6 @@ function toggleAddBookModal() {
   addBookElement.classList.toggle('d-none');
 
 }
-
 
 function editModalConfig() {
 
@@ -116,22 +107,21 @@ document.getElementById("addBookForm").addEventListener("submit", function (even
     method: "POST",
     body: formData,
   })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      };
-      return {};
+    .then(res => res.json())
+    .then(server => {
+      if (server.response === 'success') {
+        showToast('Book Added Successfully', 1);
+        setTimeout(() => {
+          window.location.reload();
+        }, 1500);
+      }
     })
-    .then((data) => {
-
-      window.location.reload();
-
+    .catch(() => {
+      showToast('Server Error', 0);
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500);
     })
-    .catch((error) => {
-
-      console.log(error);
-
-    });
 });
 
 
@@ -144,17 +134,21 @@ document.getElementById("dltBookForm").addEventListener('submit', function (even
     },
     body: JSON.stringify({ dltById: getIdFromURL() }),
   })
-
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      };
-      return {};
+    .then(res => res.json())
+    .then(server => {
+      if (server.response === 'success') {
+        showToast('Book Deleted Successfully', 1);
+        setTimeout(() => {
+          window.location.reload();
+        }, 1500);
+      }
     })
-    .then((data) => {
-      window.location.reload();
+    .catch(() => {
+      showToast('Server Error', 0);
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500);
     })
-    .catch(error => console.log(error));
 
 });
 
@@ -171,18 +165,21 @@ document.getElementById("editBookForm").addEventListener("submit", function (eve
     method: "POST",
     body: formData,
   })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      } else {
-        window.location.reload(true);
+    .then(res => res.json())
+    .then(server => {
+      if (server.response === 'success') {
+        showToast('Book Edited Successfully', 1);
+        setTimeout(() => {
+          window.location.reload();
+        }, 1500);
       }
     })
-    .catch((error) => {
-
-      console.log(error);
-
-    });
+    .catch((err) => {
+      showToast('Server Error', 0);
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500);
+    })
 });
 
 document.querySelectorAll('.contactUs').forEach((form) => {
@@ -194,20 +191,21 @@ document.querySelectorAll('.contactUs').forEach((form) => {
       method: 'POST',
       body: formData,
     })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        };
-        return {};
+      .then(res => res.json())
+      .then(server => {
+        if (server.response === 'success') {
+          showToast('Feedback Submitted Successfully');
+          setTimeout(() => {
+            window.location.reload();
+          }, 1500);
+        }
       })
-      .then(() => {
-
+      .catch(() => {
+        showToast('Server Error', 0);
+        setTimeout(() => {
+          window.location.reload();
+        }, 1500);
       })
-      .catch((error) => {
-
-        console.log(error);
-
-      });
   })
 });
 
@@ -253,7 +251,9 @@ document.getElementById('searchIp').addEventListener('input', function (event) {
           resultDiv.appendChild(bookDiv);
         });
       })
-      .catch(error => console.error(error));
+      .catch(()=>{
+        showToast('Server Error',0);
+      })
   } else {
     document.getElementById('allBooks').classList.remove('d-none');
     document.getElementById('pagination').classList.remove('d-none');
@@ -321,7 +321,9 @@ fetch('admin.php?type=stat')
       }
     });
   })
-  .catch(err => console.error(err))
+  .catch(()=>{
+    showToast('Server Error',0);
+  })
 
 fetch('admin.php?type=isAdmin')
   .then(res => res.json())
@@ -331,7 +333,9 @@ fetch('admin.php?type=isAdmin')
       document.getElementById('contactUsHook').classList.add('d-none');
     }
   })
-  .catch(err => console.error(err))
+  .catch(() => {
+    showToast('Server Error', 0);
+  })
 if (getCookie('page') === 'admin') {
   showAdminPanel();
 } else {
@@ -344,14 +348,21 @@ document.getElementById('dltUserBtn').addEventListener('click', function () {
 
   var uid = document.getElementById('userID').textContent;
   fetch(`admin.php?remove=${uid}`)
-    .then(res => {
-      if (res.ok) {
-        window.location.reload();
-      } else {
-        throw new Error("Network response was not ok");
+    .then(res => res.json())
+    .then(server => {
+      if (server.response === 'success') {
+        showToast('User Removed Successfully', 1);
+        setTimeout(() => {
+          window.location.reload();
+        }, 1500);
       }
     })
-    .catch(err => console.error(err))
+    .catch(() => {
+      showToast('Server Error', 0);
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500);
+    })
 
 })
 
@@ -359,14 +370,21 @@ document.getElementById('dltResBtn').addEventListener('click', function () {
 
   var id = document.getElementById('resID').textContent;
   fetch(`admin.php?dlt=${id}`)
-    .then(res => {
-      if (res.ok) {
-        window.location.reload();
-      } else {
-        throw new Error("Network response was not ok");
+    .then(res => res.json())
+    .then(server => {
+      if (server.response === 'success') {
+        showToast('Feedback Deleted Successfully', 1);
+        setTimeout(() => {
+          window.location.reload();
+        }, 1500);
       }
     })
-    .catch(err => console.error(err))
+    .catch(() => {
+      showToast('Server Error', 0);
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500);
+    })
 
 })
 
@@ -379,49 +397,51 @@ function getDetails(uid) {
   fetch(`admin.php?id=${uid}`)
     .then(res => res.json())
     .then(user => {
-     
-        userModal.show();
-        document.querySelector('.user-name').textContent = user.name;
-        if(user.admin){
-          document.querySelector('.user-admin').classList.remove('d-none');
-        }else{
-          document.querySelector('.user-admin').classList.add('d-none');
-        }
-        document.querySelector('.user-email').textContent = user.email;
-        document.querySelector('.user-prof').textContent = user.profession;
-        document.querySelector('.user-onboard').textContent = `On e library since ${user.onboard}`;
-        if(radar){
-          radar.destroy();
-        }
-        radar = new Chart(userChart, {
-          type: 'radar',
-          data: data = {
-            labels: [
-              'Book Added',
-              'Book Edited',
-              'Book Deleted',
-            ],
-            datasets: [{
-              label: 'Activities',
-              data: [user.added,user.edited,user.deleted],
-              fill: true,
-              backgroundColor: 'rgba(99, 255, 132, 0.2)',
-              borderColor: 'rgb(99, 255, 132)',
-              pointBackgroundColor: 'rgb(99, 255, 132)',
-              pointBorderColor: '#fff',
-              pointHoverBackgroundColor: '#fff',
-              pointHoverBorderColor: 'rgb(99, 255, 132)'
 
-            }]
-          }
-        });
-      
+      userModal.show();
+      document.querySelector('.user-name').textContent = user.name;
+      if (user.admin) {
+        document.querySelector('.user-admin').classList.remove('d-none');
+      } else {
+        document.querySelector('.user-admin').classList.add('d-none');
+      }
+      document.querySelector('.user-email').textContent = user.email;
+      document.querySelector('.user-prof').textContent = user.profession;
+      document.querySelector('.user-onboard').textContent = `On e library since ${user.onboard}`;
+      if (radar) {
+        radar.destroy();
+      }
+      radar = new Chart(userChart, {
+        type: 'radar',
+        data: data = {
+          labels: [
+            'Book Added',
+            'Book Edited',
+            'Book Deleted',
+          ],
+          datasets: [{
+            label: 'Activities',
+            data: [user.added, user.edited, user.deleted],
+            fill: true,
+            backgroundColor: 'rgba(99, 255, 132, 0.2)',
+            borderColor: 'rgb(99, 255, 132)',
+            pointBackgroundColor: 'rgb(99, 255, 132)',
+            pointBorderColor: '#fff',
+            pointHoverBackgroundColor: '#fff',
+            pointHoverBorderColor: 'rgb(99, 255, 132)'
+
+          }]
+        }
+      });
+
     })
-    .catch(err => console.error(err))
+    .catch(() => {
+      showToast('Server Error', 0);
+    })
 }
 
 
-function reply(id){
+function reply(id) {
   var modal = document.getElementById("replyModal");
   var replyModal = new bootstrap.Modal(modal);
   replyModal.show();
@@ -429,31 +449,50 @@ function reply(id){
   document.getElementById('replyTo').value = id;
 }
 
-document.getElementById('clrReplyForm').addEventListener('click',function(){
+document.getElementById('clrReplyForm').addEventListener('click', function () {
   document.getElementById('replyForm').reset();
   document.getElementById('replySent').classList.add('d-none');
   document.getElementById('replyForm').classList.remove('d-none');
 })
 
 
-document.getElementById('replyForm').addEventListener('submit',function(event){
+document.getElementById('replyForm').addEventListener('submit', function (event) {
   event.preventDefault();
   document.getElementById('replyForm').classList.add('d-none');
   document.getElementById('loader').classList.remove('d-none');
   const formData = new FormData(event.target);
-  fetch('admin.php',{
-    method:"POST",
-    body:formData
+  fetch('admin.php', {
+    method: "POST",
+    body: formData
   })
-  .then(res=>res.json())
-  .then(server=>{
-    setTimeout(() => {
-      if(server.response === 'sent'){
-        document.getElementById('loader').classList.add('d-none');
-        document.getElementById('replySent').classList.remove('d-none');
-      }
-    }, 2000);
-  })
-  .catch(err=>console.error(err))
+    .then(res => res.json())
+    .then(server => {
+      setTimeout(() => {
+        if (server.response === 'sent') {
+          document.getElementById('loader').classList.add('d-none');
+          document.getElementById('replySent').classList.remove('d-none');
+        }
+      }, 2000);
+    })
+    .catch(() => {
+      showToast('Server Error', 0);
+    })
 })
 
+function showToast(msg, status = -1) {
+  var toastEl = document.querySelector('.toast');
+  switch (status) {
+    case 0:
+      toastEl.classList.add('text-bg-danger');
+      break;
+    case 1:
+      toastEl.classList.add('text-bg-success');
+      break;
+    default:
+      toastEl.classList.add('text-bg-primary');
+      break;
+  }
+  document.getElementById('toastTxt').textContent = msg;
+  var toast = new bootstrap.Toast(toastEl);
+  toast.show();
+}

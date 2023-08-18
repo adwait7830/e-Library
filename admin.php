@@ -58,6 +58,9 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
         $stmt = $conn->prepare('DELETE FROM users WHERE uid = ?');
         $stmt->bind_param('s', $uid);
         $stmt->execute();
+        $jsonData = json_encode(array('response'=>'success'));
+        header("Content-Type: application/json");
+        echo $jsonData;
     }
     if (isset($_GET['dlt'])) {
         $id = $_GET['dlt'];
@@ -65,6 +68,9 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
         $stmt = $conn->prepare('DELETE FROM feedback WHERE id = ?');
         $stmt->bind_param('i', $id);
         $stmt->execute();
+        $jsonData = json_encode(array('response'=>'success'));
+        header("Content-Type: application/json");
+        echo $jsonData;
     }
 
     if (isset($_GET['id'])) {

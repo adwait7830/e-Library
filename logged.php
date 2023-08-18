@@ -22,7 +22,7 @@ require_once('db.php');
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarID" aria-controls="navbarID" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <button type="button" onclick="toggleProfileModal()" class=" d-lg-none ms-lg-2 btn rounded-circle profile-btn btn-secondary">
+      <button type="button" data-bs-toggle="modal" data-bs-target="#profileModal" class=" d-lg-none ms-lg-2 btn rounded-circle profile-btn btn-secondary">
         <i class="fas fa-user"></i>
       </button>
       <div class="collapse navbar-collapse justify-content-lg-end" id="navbarID">
@@ -32,7 +32,7 @@ require_once('db.php');
           <li class="nav-item" id='contactUsHook'><a class="n-item fs-4" href="#" data-bs-toggle="modal" data-bs-target="#contactForm">Contact Us</a></li>
           <li class="nav-item"><a class="n-item fs-4" href="#about">About</a></li>
           <li class="nav-item d-none d-lg-block">
-            <button type="button" data-bs-toggle="modal" data-bs-target="#profileModal" class=" ms-lg-2 btn rounded-circle profile-btn btn-secondary">
+            <button type="button" data-bs-toggle="modal" data-bs-target="#profileModal" class=" ms-lg-2 btn rounded-circle btn-secondary">
               <i class="fas fa-user"></i>
             </button>
           </li>
@@ -41,6 +41,15 @@ require_once('db.php');
     </div>
   </nav>
 </header>
+
+<div class="toast align-items-center border-0 position-fixed top-0 start-50 translate-middle-x mt-3" style="z-index: 9999;" role="alert" aria-live="assertive" aria-atomic="true">
+  <div class="d-flex">
+    <div class="toast-body" >
+      <span id='toastTxt'></span>
+    </div>
+    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+  </div>
+</div>
 
 <div class="overlay d-none"></div>
 
@@ -236,21 +245,22 @@ require_once('db.php');
     }
   </style>
 
-  <div class="modal profile" id="profileModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog top-right">
+
+  <div class="modal fade " id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel" aria-hidden="true">
+    <div class="modal-dialog top-right-modal" style="width: 18rem;">
       <div class="modal-content">
         <div class="modal-header">
-          <h1 class="modal-title fs-5" id="exampleModalLabel">My Profile</h1>
+          <h1 class="modal-title fs-5" id="profileModalLabel">My Profile</h1>
         </div>
         <div class="modal-body p-0">
-          <div class="card m-0 rounded-0" style="width: 18rem;">
+          <div class="card m-0 rounded-0">
             <div class="card-body">
               <h5 class="card-title"><?php echo $name ?></h5>
               <h6 class="card-subtitle mb-2 text-body-secondary"><?php echo $profession ?></h6>
               <h6 class="card-subtitle mb-2 text-body-secondary"><?php echo $email ?></h6>
             </div>
             <ul class="list-group list-group-flush">
-              <li class="list-group-item"><button class="btn border-0" data-bs-target="#add-modal" data-bs-toggle='modal'>Add a book</button></li>
+              <li class="list-group-item"><button class="btn border-0" data-bs-target="#add-modal" data-bs-toggle="modal">Add a book</button></li>
             </ul>
           </div>
         </div>
@@ -260,7 +270,16 @@ require_once('db.php');
         </form>
       </div>
     </div>
+    <style>
+      .top-right-modal {
+        position: fixed;
+        margin: 0;
+        top: 1rem;
+        right: 1rem;
+      }
+    </style>
   </div>
+
 
   <div id="add-modal" class="modal z-4 add-book" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
