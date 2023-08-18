@@ -370,26 +370,90 @@ document.getElementById('dltResBtn').addEventListener('click', function () {
 
 })
 
-const userChart = document.getElementById('userChart');
 
-new Chart(userChart, {
-  type: 'radar',
-  data: data = {
-    labels: [
-      'Book Added',
-      'Book Edited',
-      'Book Deleted',
-    ],
-    datasets: [{
-      label: 'Activities',
-      data: [3,5,1],
-      fill: true,
-      backgroundColor: 'rgba(255, 99, 132, 0.2)',
-      borderColor: 'rgb(255, 99, 132)',
-      pointBackgroundColor: 'rgb(255, 99, 132)',
-      pointBorderColor: '#fff',
-      pointHoverBackgroundColor: '#fff',
-      pointHoverBorderColor: 'rgb(255, 99, 132)'
-    }]
-  }
-});
+const userChart = document.getElementById('userChart');
+let radar;
+function getDetails(uid) {
+  var modal = document.getElementById("userModal");
+  var userModal = new bootstrap.Modal(modal);
+  fetch(`admin.php?id=${uid}`)
+    .then(res => res.json())
+    .then(user => {
+     
+        userModal.show();
+        document.querySelector('.user-name').textContent = user.name;
+        if(user.admin){
+          document.querySelector('.user-admin').classList.remove('d-none');
+        }else{
+          document.querySelector('.user-admin').classList.add('d-none');
+        }
+        document.querySelector('.user-email').textContent = user.email;
+        document.querySelector('.user-prof').textContent = user.profession;
+        document.querySelector('.user-onboard').textContent = `On e library since ${user.onboard}`;
+        if(radar){
+          radar.destroy();
+        }
+        radar = new Chart(userChart, {
+          type: 'radar',
+          data: data = {
+            labels: [
+              'Book Added',
+              'Book Edited',
+              'Book Deleted',
+            ],
+            datasets: [{
+              label: 'Activities',
+              data: [user.added,user.edited,user.deleted],
+              fill: true,
+              backgroundColor: 'rgba(99, 255, 132, 0.2)',
+              borderColor: 'rgb(99, 255, 132)',
+              pointBackgroundColor: 'rgb(99, 255, 132)',
+              pointBorderColor: '#fff',
+              pointHoverBackgroundColor: '#fff',
+              pointHoverBorderColor: 'rgb(99, 255, 132)'
+
+            }]
+          }
+        });
+      
+    })
+    .catch(err => console.error(err))
+}
+
+
+function reply(id){
+  var modal = document.getElementById("replyModal");
+  var replyModal = new bootstrap.Modal(modal);
+  replyModal.show();
+
+  document.getElementById('replyTo').value = id;
+}
+
+document.getElementById('clrReplyForm').addEventListener('click',function(){
+  document.getElementById('replyForm').reset();
+  document.getElementById('replySent').classList.add('d-none');
+  document.getElementById('replyForm').classList.remove('d-none');
+})
+
+
+document.getElementById('replyForm').addEventListener('submit',function(event){
+  event.preventDefault();
+  document.getElementById('replyForm').classList.add('d-none');
+  document.getElementById('loader').classList.remove('d-none');
+  const formData = new FormData(event.target);
+  fetch('admin.php',{
+    method:"POST",
+    body:formData
+  })
+  .then(res=>res.json())
+  .then(server=>{
+    setTimeout(() => {
+      if(server.response === 'sent'){
+        document.getElementById('loader').classList.add('d-none');
+        document.getElementById('replySent').classList.remove('d-none');
+      }
+    }, 2000);
+  })
+  .catch(err=>console.error(err))
+})
+

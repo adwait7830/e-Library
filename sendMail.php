@@ -38,8 +38,8 @@ function smtp_mailer($to, $name, $id='', $for = 0)
 						<p>If you have any questions or need assistance, our friendly support team is here to help.</p>
 						<p>Thank you for choosing e Library by ColoredCow. Happy reading!</p>
 						<br>
-						<p>Best regards,</p>
-						<p>The ColoredCow Team</p>
+						<p>Best regards</p>
+						<p>Team ColoredCow</p>
     				</body>
     			</html>
 			";
@@ -52,8 +52,8 @@ function smtp_mailer($to, $name, $id='', $for = 0)
     			<a href='http://localhost:8080/website/e%20lib/verification.php?" . $id . "'>Verification Link</a>
     			<p>If you didn't request this verification, you can ignore this email.</p>
     			<br>
-    			<p>Thank you,</p>
-    			<p>Your Company Name</p>
+    			<p>Thank you</p>
+    			<p>Team ColoredCow </p>
     		";
 			break;
 		case 2:
@@ -68,13 +68,40 @@ function smtp_mailer($to, $name, $id='', $for = 0)
 					<p>If you didn't initiate this request, you can ignore this email.</p>
 					<p>This password reset link is valid for 1 hour.</p>
 					<br>
-					<p>Thank you,</p>
-					<p>Your Company Name</p>
+					<p>Thank you</p>
+					<p>Team ColoredCow </p>
 				</body>
 				</html>
 			";
 			break;
 	}
+	$mail->AddAddress($to);
+	$mail->SMTPOptions = array('ssl' => array(
+		'verify_peer' => false,
+		'verify_peer_name' => false,
+		'allow_self_signed' => false
+	));
+	$mail->Send();
+}
+
+//sendReply('demo subject','demo body','dishunaugai@outlook.com');
+function sendReply($subject,$body,$to){
+	$mail = new PHPMailer(true);
+	$mail->IsSMTP();
+
+	$mail->SMTPAuth = true;
+	$mail->SMTPSecure = 'tls';
+	$mail->Host = "smtp.gmail.com";
+	$mail->Port = 587;
+	$mail->IsHTML(true);
+	$mail->CharSet = 'UTF-8';
+	require_once('env.php');
+	$mail->Username = $myMail;
+	$mail->Password = $myPass;
+	$mail->SetFrom($myMail);
+	$mail->Subject = $subject;
+	$mail->Body = $body;
+
 	$mail->AddAddress($to);
 	$mail->SMTPOptions = array('ssl' => array(
 		'verify_peer' => false,

@@ -342,7 +342,7 @@ require_once('db.php');
                 <div class="btn-group d-flex justify-content-center" role='group'>
                   <button class="btn btn-sm btn-danger" data-bs-target="#userDltModal" data-bs-toggle='modal'>Remove</button>
                   <p class='d-none' id='userID'><?php echo $user['uid']; ?></p>
-                  <button class="btn btn-sm btn-primary" data-bs-target="#userModal" data-bs-toggle='modal'>Details</button>
+                  <button class="btn btn-sm btn-primary" onclick='getDetails(<?php echo $user["uid"]; ?>)'>Details</button>
                 </div>
               </td>
             </tr>
@@ -402,7 +402,7 @@ require_once('db.php');
               <td><?php echo $user['username']; ?></td>
               <td><?php echo $user['name']; ?></td>
               <td class='btn-group d-flex justify-content-center' role='group'>
-                <button class="btn btn-sm btn-primary">Details</button>
+                <button class="btn btn-sm btn-primary" onclick="getDetails(`<?php echo $user['uid']; ?>`)">Details</button>
               </td>
             </tr>
           <?php
@@ -524,14 +524,14 @@ require_once('db.php');
                 <div class='btn-group-vertical d-flex justify-content-center' role='group'>
                   <button class="btn btn-sm btn-danger" data-bs-target="#resDltModal" data-bs-toggle='modal'>Delete</button>
                   <p class='d-none' id='resID'><?php echo $feedback['id']; ?></p>
-                  <button class="btn btn-sm btn-primary">Reply</button>
+                  <button class="btn btn-sm btn-primary" onclick="reply(<?php echo $feedback['id']; ?>)">Reply</button>
                 </div>
               </td>
               <td class='d-none d-sm-block'>
                 <div class='btn-group d-flex justify-content-center' role='group'>
                   <button class="btn btn-sm btn-danger" data-bs-target="#resDltModal" data-bs-toggle='modal'>Delete</button>
                   <p class='d-none' id='resID'><?php echo $feedback['id']; ?></p>
-                  <button class="btn btn-sm btn-primary">Reply</button>
+                  <button class="btn btn-sm btn-primary" onclick="reply(<?php echo $feedback['id']; ?>)">Reply</button>
                 </div>
               </td>
             </tr>
@@ -605,18 +605,58 @@ require_once('db.php');
             <h1 class="modal-title w-100 fs-5" id="userModalLabel">User Details</h1>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
-          <div class="modal-body d-flex justify-content-around p-0 " style='height:300px'>
-            <div class="card rounded-0 border-0" style="width: 20rem;">
+          <div class="modal-body row">
+            <div class="col-md-6 card rounded-0 border-0">
               <div class="card-body">
-                <h5 class="card-title fs-2">Divyanshu Naugai</h5>
-                <h6 class="card-subtitle mb-2 text-body-secondary">Student</h6>
-                <h6 class="card-subtitle mb-2 text-body-secondary">dishunaugai@outlook.com</h6>
-                <p class="card-text">On e Library since 2-3-23</p>
+                <h5 class="card-title fs-2 user-name"></h5>
+                <h6 class='d-none text-success user-admin'>&#9733; Admin</h6>
+                <h6 class="card-subtitle mb-2 text-body-secondary user-email"></h6>
+                <h6 class="card-subtitle mb-2 text-body-secondary user-prof"></h6>
+                <p class="card-text user-onboard"></p>
               </div>
             </div>
-            <div style="height: 300px; width:300px">
-              <canvas id='userChart' class='w-100 h-100'></canvas>
+            <div class="col-md-6">
+              <canvas id="userChart" class="w-100 h-100"></canvas>
             </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="replyModal" tabindex="-1" aria-labelledby="replyModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header ">
+            <h1 class="modal-title text-center w-100 fs-5" id="replyModalLabel">Send Reply</h1>
+            <button type="button" id="clrReplyForm" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body d-flex justify-content-center">
+            <form id="replyForm" class='d-flex flex-column justify-content-center'>
+              <input type="hidden" name='reply'>
+              <input type="hidden" name='id' id='replyTo'>
+              <div class="mb-3">
+                <label for="sub" class="form-label">Subject</label>
+                <input type="text" class="form-control" name="subject" placeholder="Enter your subject of reply" required=''>
+              </div>
+              <div class="mb-3">
+                <label for="msg" class="form-label">Message</label>
+                <textarea class="form-control" name="msg" rows="3" required=''></textarea>
+                <small>Just write the main content, greetings will be added automatically while sending.</small>
+              </div>
+              <div class='d-flex justify-content-center'>
+                <button type="submit" class='btn btn-success'>Send <i class="fas fa-paper-plane"></i></button>
+              </div>
+            </form>
+
+            <div class="spinner-border d-none m-5 text-primary" style="width: 3rem; height: 3rem;" id='loader' role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+
+            <div class="w-100 d-flex flex-column align-items-center justify-content-center d-none" id='replySent'>
+              <i class="fa-solid fa-check text-success" style='font-size:5rem'></i>
+              <p>Reply Sent</p>
+            </div>
+
           </div>
         </div>
       </div>
