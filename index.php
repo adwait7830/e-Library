@@ -15,6 +15,7 @@ try {
     <link rel="stylesheet" href="style.css">
     <link rel="icon" href="images/title.png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 
 <body>
@@ -59,7 +60,6 @@ try {
         }
     </style>
     <script>
-        console.log("reload");
         window.addEventListener("load", function() {
 
             setTimeout(function() {
@@ -76,9 +76,6 @@ try {
             }, 2000);
         });
     </script>
-    <script src="js/script.js" type="text/javascript"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://kit.fontawesome.com/8256093c76.js" crossorigin="anonymous"></script>
 </body>
 
 </html>
