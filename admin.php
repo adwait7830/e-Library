@@ -4,22 +4,21 @@ require_once('db.php');
 if ($_SERVER["REQUEST_METHOD"] === "GET") {
 
 
-    if (isset($_GET['type']) && $_GET['type'] === 'isAdmin') {
+    
 
-        $uid = getUserID();
-        $stmt = $conn->prepare('SELECT admin FROM users WHERE uid = ?');
-        $stmt->bind_param('s', $uid);
-        $stmt->execute();
-        $stmt->bind_result($admin);
-        $stmt->fetch();
-        $isAdmin = $admin === 1;
-        $data = array('isAdmin' => $isAdmin);
-        $jsonData = json_encode($data);
-        header("Content-Type: application/json");
-        echo $jsonData;
-    }
+    
 
-    if (isset($_GET['type']) && $_GET['type'] === 'stat') {
+    
+    
+
+    
+}
+
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+
+    $requestData = json_decode(file_get_contents('php://input'), true);
+
+    if (isset($requestData['stats'])) {
 
         $professionData = array();
         $onboardData = array();
@@ -52,29 +51,23 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
     }
 
 
-    if (isset($_GET['remove'])) {
-        $uid = $_GET['remove'];
+    if (isset($requestData['isAdmin'])) {
 
-        $stmt = $conn->prepare('DELETE FROM users WHERE uid = ?');
+        $uid = getUserID();
+        $stmt = $conn->prepare('SELECT admin FROM users WHERE uid = ?');
         $stmt->bind_param('s', $uid);
         $stmt->execute();
-        $jsonData = json_encode(array('response' => 'success'));
-        header("Content-Type: application/json");
-        echo $jsonData;
-    }
-    if (isset($_GET['dlt'])) {
-        $id = $_GET['dlt'];
-
-        $stmt = $conn->prepare('DELETE FROM feedback WHERE id = ?');
-        $stmt->bind_param('i', $id);
-        $stmt->execute();
-        $jsonData = json_encode(array('response' => 'success'));
+        $stmt->bind_result($admin);
+        $stmt->fetch();
+        $isAdmin = $admin === 1;
+        $data = array('isAdmin' => $isAdmin);
+        $jsonData = json_encode($data);
         header("Content-Type: application/json");
         echo $jsonData;
     }
 
-    if (isset($_GET['id'])) {
-        $uid = $_GET['id'];
+    if (isset($requestData['userById'])) {
+        $uid = $requestData['userById'];
 
         $stmt = $conn->prepare('
         SELECT 
@@ -106,11 +99,32 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
         header("Content-Type: application/json");
         echo $jsonData;
     }
-}
 
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
-    $requestData = json_decode(file_get_contents('php://input'), true);
+
+    if (isset($requestData['removeById'])) {
+        $uid = $requestData['removeById'];
+
+        $stmt = $conn->prepare('DELETE FROM users WHERE uid = ?');
+        $stmt->bind_param('s', $uid);
+        $stmt->execute();
+        $jsonData = json_encode(array('response' => 'success'));
+        header("Content-Type: application/json");
+        echo $jsonData;
+    }
+
+    if (isset($requestData['dltById'])) {
+        $id = $requestData['dltById'];
+
+        $stmt = $conn->prepare('DELETE FROM feedback WHERE id = ?');
+        $stmt->bind_param('i', $id);
+        $stmt->execute();
+        $jsonData = json_encode(array('response' => 'success'));
+        header("Content-Type: application/json");
+        echo $jsonData;
+    }
+
+
 
     if (isset($_POST['reply'])) {
 

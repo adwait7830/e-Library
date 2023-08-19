@@ -1,5 +1,9 @@
 <?php
-require_once('db.php');
+try {
+  require_once('db.php');
+} catch (\Throwable $th) {
+  header('Location: serverDown.php');
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -480,6 +484,12 @@ require_once('db.php');
   document.getElementById('password').addEventListener('input',function(){
     document.getElementById('passwordBlock').textContent = '';
   })
+
+  <?php
+  if(verifySessionToken()){
+    echo 'window.location.replace("index.php")';
+  }
+   ?>
 </script>
 <script src='js/script1.js'></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

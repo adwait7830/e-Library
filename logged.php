@@ -1,6 +1,11 @@
 <?php
-require_once('db.php');
+try {
+  require_once('db.php');
+} catch (\Throwable $th) {
+  header('Location: serverDown.php');
+}
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -663,7 +668,7 @@ require_once('db.php');
             <div class='d-flex justify-content-center w-100'>
               <input id="searchUser" class="form-control me-2" type="search" placeholder="Search User" aria-label="Search">
             </div>
-            <div class='container' >
+            <div class='container'>
               <table class="d-none table" id="userSearchTable">
                 <thead>
                   <tr>

@@ -277,7 +277,13 @@ function showAdminPanel() {
   document.getElementById('pagination').classList.add('d-none');
 }
 
-fetch('admin.php?type=stat')
+fetch('admin.php', {
+  method: "POST",
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({ stats: '' })
+})
   .then(res => res.json())
   .then(data => {
 
@@ -325,7 +331,13 @@ fetch('admin.php?type=stat')
     showToast('Server Error', 0);
   })
 
-fetch('admin.php?type=isAdmin')
+fetch('admin.php', {
+  method: "POST",
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({ isAdmin: '' })
+})
   .then(res => res.json())
   .then(user => {
     if (user.isAdmin) {
@@ -347,7 +359,13 @@ if (getCookie('page') === 'admin') {
 document.getElementById('dltUserBtn').addEventListener('click', function () {
 
   var uid = document.getElementById('userID').textContent;
-  fetch(`admin.php?remove=${uid}`)
+  fetch(`admin.php`, {
+    method: "POST",
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ removeById: uid })
+  })
     .then(res => res.json())
     .then(server => {
       if (server.response === 'success') {
@@ -369,7 +387,13 @@ document.getElementById('dltUserBtn').addEventListener('click', function () {
 document.getElementById('dltResBtn').addEventListener('click', function () {
 
   var id = document.getElementById('resID').textContent;
-  fetch(`admin.php?dlt=${id}`)
+  fetch(`admin.php`, {
+    method: "POST",
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ dltById: id })
+  })
     .then(res => res.json())
     .then(server => {
       if (server.response === 'success') {
@@ -394,7 +418,13 @@ let radar;
 function getDetails(uid) {
   var modal = document.getElementById("userModal");
   var userModal = new bootstrap.Modal(modal);
-  fetch(`admin.php?id=${uid}`)
+  fetch(`admin.php`, {
+    method: "POST",
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ userById: uid })
+  })
     .then(res => res.json())
     .then(user => {
 
@@ -545,22 +575,25 @@ document.getElementById('searchUser').addEventListener('input', (event) => {
 })
 
 
-function createAdmin(uid){
+function createAdmin(uid) {
 
-  fetch('admin.php',{
-    method:"POST",
-    body:JSON.stringify({addAdmin:uid})
+  fetch('admin.php', {
+    method: "POST",
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ addAdmin: uid })
   })
-  .then(res=>res.json())
-  .then(server=>{
-    if(server.response === 'success'){
-      showToast('Administrator Added Successfully', 1);
+    .then(res => res.json())
+    .then(server => {
+      if (server.response === 'success') {
+        showToast('Administrator Added Successfully', 1);
         setTimeout(() => {
           window.location.reload();
         }, 1500);
-    }
-  })
-  .catch(() => {
-    showToast('Server Error', 0);
-  })
+      }
+    })
+    .catch(() => {
+      showToast('Server Error', 0);
+    })
 }

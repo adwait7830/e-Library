@@ -48,6 +48,8 @@ $sql = '
 ';
 $init->multi_query($sql);
 $init->close();
+
+
 function setSessionToken($id)
 {
     global $conn;

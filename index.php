@@ -1,3 +1,10 @@
+<?php
+try {
+  require_once('db.php');
+} catch (\Throwable $th) {
+  header('Location: serverDown.php');
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -60,7 +67,6 @@
                 splashScreen.style.display = "none";
 
                 <?php
-                require_once('db.php');
                 if (verifySessionToken()) {
                     echo 'window.location.replace("logged.php");';
                 } else {
