@@ -44,7 +44,7 @@ require_once('db.php');
 
 <div class="toast align-items-center border-0 position-fixed top-0 start-50 translate-middle-x mt-3" style="z-index: 9999;" role="alert" aria-live="assertive" aria-atomic="true">
   <div class="d-flex">
-    <div class="toast-body" >
+    <div class="toast-body">
       <span id='toastTxt'></span>
     </div>
     <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
@@ -393,8 +393,13 @@ require_once('db.php');
     <br>
 
     <div class='container'>
-      <div class='kite px-3 mx-1 bg-info'>
-        <h3>Admins</h3>
+      <div class='row mx-1'>
+        <div class='col-9 kite px-3 mb-2 bg-info'>
+          <h3 class='m-0'>Admins</h3>
+        </div>
+        <div id="addAdminBtn" class='col-3 btn d-flex justify-content-center align-items-center kite mb-2 bg-warning'>
+          <h6 class="m-0">Add <i class="fa-solid fa-plus"></i></h6>
+        </div>
       </div>
       <table class="table" border="1">
         <thead>
@@ -582,9 +587,14 @@ require_once('db.php');
     <style>
       .kite {
         transform: skewX(-45deg);
+        border-radius: 5px;
       }
 
       .kite h3 {
+        transform: skewX(45deg);
+      }
+
+      .kite h6 {
         transform: skewX(45deg);
       }
     </style>
@@ -636,6 +646,38 @@ require_once('db.php');
             </div>
             <div class="col-md-6">
               <canvas id="userChart" class="w-100 h-100"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="addAdminModal" tabindex="-1" aria-labelledby="addAdminModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header ">
+            <h1 class="modal-title w-100 fs-5" id="addAdminModalLabel">Add Administrator</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class='d-flex justify-content-center w-100'>
+              <input id="searchUser" class="form-control me-2" type="search" placeholder="Search User" aria-label="Search">
+            </div>
+            <div class='container' >
+              <table class="d-none table" id="userSearchTable">
+                <thead>
+                  <tr>
+                    <th scope='col'>Name</th>
+                    <th scope='col'>Username</th>
+                    <th scope='col'>Action</th>
+                  </tr>
+                </thead>
+                <tbody id='searchUserResult'></tbody>
+              </table>
+
+              <div id="searchTableAlt" class='py-4 text-center fs-5'>
+                Search User by Name or Username to Make Them Administrator
+              </div>
             </div>
           </div>
         </div>

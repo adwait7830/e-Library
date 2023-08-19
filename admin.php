@@ -58,7 +58,7 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
         $stmt = $conn->prepare('DELETE FROM users WHERE uid = ?');
         $stmt->bind_param('s', $uid);
         $stmt->execute();
-        $jsonData = json_encode(array('response'=>'success'));
+        $jsonData = json_encode(array('response' => 'success'));
         header("Content-Type: application/json");
         echo $jsonData;
     }
@@ -68,7 +68,7 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
         $stmt = $conn->prepare('DELETE FROM feedback WHERE id = ?');
         $stmt->bind_param('i', $id);
         $stmt->execute();
-        $jsonData = json_encode(array('response'=>'success'));
+        $jsonData = json_encode(array('response' => 'success'));
         header("Content-Type: application/json");
         echo $jsonData;
     }
@@ -110,6 +110,8 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
+    $requestData = json_decode(file_get_contents('php://input'), true);
+
     if (isset($_POST['reply'])) {
 
         $id = $_POST['id'];
@@ -127,7 +129,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 				<body>
 					<p>Hello, " . $name . "</p>
 					<p>We thank you to contacting us.</p>
-					<p>".$msg."</p>
+					<p>" . $msg . "</p>
 					<br>
 					<p>Thank you</p>
 					<p>Team ColoredCow </p>
@@ -135,9 +137,45 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 			</html>
         ";
         require_once('sendMail.php');
-        sendReply($subject,$body,$email);
-        $jsonData = json_encode(array('response'=>'sent'));
+        sendReply($subject, $body, $email);
+        $jsonData = json_encode(array('response' => 'sent'));
         header("Content-Type: application/json");
+        echo $jsonData;
+    }
+
+
+    if (isset($requestData['keyword'])) {
+
+        $keyword = $requestData['keyword'];
+        $stmt = $conn->prepare("SELECT * FROM users WHERE (username LIKE ? OR name LIKE ?) AND admin = 0");
+        $keywordPattern = "%" . $keyword . "%";
+        $stmt->bind_param("ss", $keywordPattern, $keywordPattern);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $users = array();
+        while ($user = $result->fetch_assoc()) {
+
+            $users[] = array(
+                'uid' => $user['uid'],
+                'name' => $user['name'],
+                'username' => $user['username'],
+            );
+        }
+
+        $jsonData = json_encode($users);
+        header('Content-Type: application/json');
+        echo $jsonData;
+    }
+
+    if (isset($requestData['addAdmin'])) {
+
+        $uid = $requestData['addAdmin'];
+        $stmt = $conn->prepare('UPDATE users SET admin = 1 WHERE uid = ?');
+        $stmt->bind_param('s',$uid);
+        $stmt->execute();
+        $stmt->close();
+        $jsonData = json_encode(array('response'=>'success'));
+        header('Content-Type: application/json');
         echo $jsonData;
     }
 }

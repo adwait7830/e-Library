@@ -251,8 +251,8 @@ document.getElementById('searchIp').addEventListener('input', function (event) {
           resultDiv.appendChild(bookDiv);
         });
       })
-      .catch(()=>{
-        showToast('Server Error',0);
+      .catch(() => {
+        showToast('Server Error', 0);
       })
   } else {
     document.getElementById('allBooks').classList.remove('d-none');
@@ -321,8 +321,8 @@ fetch('admin.php?type=stat')
       }
     });
   })
-  .catch(()=>{
-    showToast('Server Error',0);
+  .catch(() => {
+    showToast('Server Error', 0);
   })
 
 fetch('admin.php?type=isAdmin')
@@ -495,4 +495,72 @@ function showToast(msg, status = -1) {
   document.getElementById('toastTxt').textContent = msg;
   var toast = new bootstrap.Toast(toastEl);
   toast.show();
+}
+
+document.getElementById('addAdminBtn').addEventListener('click', () => {
+
+  let modal = document.getElementById("addAdminModal");
+  let addAdminModal = new bootstrap.Modal(modal);
+  addAdminModal.show();
+
+})
+
+document.getElementById('searchUser').addEventListener('input', (event) => {
+
+  let keyword = event.target.value.trim();
+
+  if (keyword !== '') {
+    document.getElementById('userSearchTable').classList.remove('d-none');
+    document.getElementById('searchTableAlt').classList.add('d-none');
+    fetch('admin.php', {
+      body: JSON.stringify({ keyword: keyword }),
+      method: "POST"
+    })
+      .then(res => res.json())
+      .then(users => {
+        let resultBody = document.getElementById('searchUserResult');
+        while (resultBody.firstChild) {
+          resultBody.removeChild(resultBody.firstChild);
+        }
+        users.forEach(user => {
+          let userRow = document.createElement('tr');
+          userRow.innerHTML = `
+          <td>${user.name}</td>
+          <td>${user.username}</td>
+          <td><button class='btn btn-sm btn-primary' onclick='createAdmin(${user.uid})'>Make Admin</button></td>
+          `;
+          resultBody.appendChild(userRow);
+        });
+
+      })
+      .catch(() => {
+        showToast('Server Error', 0);
+      })
+
+  } else {
+    document.getElementById('userSearchTable').classList.add('d-none');
+    document.getElementById('searchTableAlt').classList.remove('d-none');
+  }
+
+})
+
+
+function createAdmin(uid){
+
+  fetch('admin.php',{
+    method:"POST",
+    body:JSON.stringify({addAdmin:uid})
+  })
+  .then(res=>res.json())
+  .then(server=>{
+    if(server.response === 'success'){
+      showToast('Administrator Added Successfully', 1);
+        setTimeout(() => {
+          window.location.reload();
+        }, 1500);
+    }
+  })
+  .catch(() => {
+    showToast('Server Error', 0);
+  })
 }
