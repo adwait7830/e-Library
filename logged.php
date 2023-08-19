@@ -142,7 +142,7 @@ try {
         </div>
       </div>
       <div class="card-footer d-flex justify-content-between">
-        <div class='config-btn'>
+        <div class='d-none config-btn'>
           <button class="dlt-btn btn btn-sm btn-outline-danger" data-bs-target='#delete-modal' data-bs-toggle='modal'><i class="fas fa-trash"></i> Delete</button>
           <button class="edit-btn btn btn-sm btn-outline-primary" onclick="editModalConfig()" data-bs-target='#edit-modal' data-bs-toggle='modal'><i class="fas fa-edit"></i> Edit</button>
         </div>
@@ -172,7 +172,7 @@ try {
         </div>
       </div>
       <div class="card-footer d-flex justify-content-between">
-        <div class='config-btn'>
+        <div class='d-none config-btn'>
           <button class="dlt-btn btn btn-sm btn-outline-danger" data-bs-target='#delete-modal' data-bs-toggle='modal'><i class="fas fa-trash"></i></button>
           <button class="edit-btn btn btn-sm btn-outline-primary" onclick="editModalConfig()" data-bs-target='#edit-modal' data-bs-toggle='modal'><i class="fas fa-edit"></i></button>
         </div>
