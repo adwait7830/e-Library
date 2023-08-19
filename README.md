@@ -22,8 +22,15 @@ To run the e Library application locally, follow these steps:
 
 1. Clone this repository to your local machine.
 2. Configure the database settings in the `db.php` file.
-3. Start a local web server (e.g., using PHP's built-in server).
-4. Access the application through your web browser.
+3. Create a new file called `env.php` and add these two variables
+   ```
+   <?php
+      $myMail = "your_mail"; //your mail which will become the sender for any mail
+      $myPass = "your_key"; //You can get this from security settings of your Google account
+   ?>
+   ```
+5. Start a local web server (e.g., using PHP's built-in server).
+6. Access the application through your web browser.
 
 ## Usage
 1. Open your web browser and navigate to http://localhost.
