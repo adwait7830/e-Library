@@ -1,4 +1,8 @@
 <?php
+if ($_SERVER['REQUEST_METHOD'] == 'GET' && realpath(__FILE__) == realpath($_SERVER['SCRIPT_FILENAME'])) {
+	header('HTTP/1.0 403 Forbidden', TRUE, 403);
+	die(header('location: index.php'));
+}
 
 use PHPMailer\PHPMailer\PHPMailer;
 
@@ -7,7 +11,7 @@ require("PHPMailer/PHPMailer.php");
 require("PHPMailer/SMTP.php");
 
 
-function smtp_mailer($to, $name, $id='', $for = 0)
+function smtp_mailer($to, $name, $id = '', $for = 0)
 {
 	$mail = new PHPMailer(true);
 	$mail->IsSMTP();
@@ -23,7 +27,7 @@ function smtp_mailer($to, $name, $id='', $for = 0)
 	$mail->Password = $myPass;
 	$mail->SetFrom($myMail);
 	$mail->Subject = 'Welcome to e Library by ColoredCow!';
-			$mail->Body = "
+	$mail->Body = "
     			<html>
     				<body>
         				<p>Hello " . $name . ",</p>
@@ -85,7 +89,8 @@ function smtp_mailer($to, $name, $id='', $for = 0)
 }
 
 //sendReply('demo subject','demo body','dishunaugai@outlook.com');
-function sendReply($subject,$body,$to){
+function sendReply($subject, $body, $to)
+{
 	$mail = new PHPMailer(true);
 	$mail->IsSMTP();
 

@@ -172,6 +172,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         echo $jsonData;
     }
 } else {
-    http_response_code(405);
-    header("Location:logged.php");
+   
+    header("Location:index.php");
+    exit;
 }

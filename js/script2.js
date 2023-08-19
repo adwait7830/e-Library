@@ -343,7 +343,7 @@ fetch('admin.php', {
     if (user.isAdmin) {
       document.getElementById('adminPanelHook').classList.remove('d-none');
       document.getElementById('contactUsHook').classList.add('d-none');
-      document.querySelectorAll('config-btn').forEach(config=>{
+      document.querySelectorAll('.config-btn').forEach(config=>{
         config.classList.remove('d-none');
       })
     }

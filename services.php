@@ -143,4 +143,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         header('Content-Type: application/json');
         echo $jsonData;
     }
+}else{
+    header('Location: index.php');
+    exit;
 }

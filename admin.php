@@ -1,19 +1,6 @@
 <?php
 require_once('db.php');
 
-if ($_SERVER["REQUEST_METHOD"] === "GET") {
-
-
-    
-
-    
-
-    
-    
-
-    
-}
-
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     $requestData = json_decode(file_get_contents('php://input'), true);
@@ -192,4 +179,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         header('Content-Type: application/json');
         echo $jsonData;
     }
+}else{
+    header('Location: index.php');
+    exit;
 }
