@@ -1,11 +1,12 @@
 <script>
     <?php
-    $id = $_SERVER['QUERY_STRING'];
-    if (empty($id)) {
+    $encodedId = $_SERVER['QUERY_STRING'];
+    if (empty($encodedId)) {
         echo 'window.location.replace("index.php");';
     }
     require_once('db.php');
     $stmt = $conn->prepare('SELECT name FROM users WHERE uid = ? ');
+    $id = base64_decode($encodedId);
     $stmt->bind_param('s', $id);
     $stmt->execute();
     $stmt->bind_result($name);
@@ -111,7 +112,7 @@
                     document.getElementById('form').classList.add('d-none');
                     document.getElementById('loader').classList.remove('d-none');
                     var formData = new FormData(event.target);
-                    formData.append('uid', window.location.search.split("?")[1]);
+                    formData.append('uid', atob(window.location.search.split("?")[1]));
                     fetch('services.php', {
                             body: formData,
                             method: "POST"

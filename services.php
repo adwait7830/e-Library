@@ -109,7 +109,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $stmt->bind_result($id, $name);
         $response = array();
         if ($stmt->fetch()) {
-            smtp_mailer($mail, $name, $id, 2);
+            $encodedId = base64_encode($id);
+            smtp_mailer($mail, $name, $encodedId, 2);
             $response = array('response' => 'sent');
         } else {
             $response = array('response' => 'email');
